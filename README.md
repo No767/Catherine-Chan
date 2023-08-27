@@ -4,7 +4,7 @@
 
 # Catherine-Chan
 
-[![Required Python Version](https://img.shields.io/badge/Python-3.8%20|%203.9%20|%203.10%20|%203.11-blue?logo=python&logoColor=white)](https://github.com/No767/Catherine-Chan/blob/main/pyproject.toml) ![Read the Docs](https://img.shields.io/readthedocs/catherine-chan?label=Docs&logo=readthedocs&logoColor=white) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver) ![GitHub](https://img.shields.io/github/license/No767/Catherine-Chan?label=License&logo=github) [![Catherine](https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink)]()
+[![Required Python Version](https://img.shields.io/badge/Python-3.8%20|%203.9%20|%203.10%20|%203.11-blue?logo=python&logoColor=white)](https://github.com/No767/Catherine-Chan/blob/main/pyproject.toml) [![Lint](https://github.com/No767/Catherine-Chan/actions/workflows/lint.yml/badge.svg)](https://github.com/No767/Catherine-Chan/actions/workflows/lint.yml) ![Read the Docs](https://img.shields.io/readthedocs/catherine-chan?label=Docs&logo=readthedocs&logoColor=white) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver) ![GitHub](https://img.shields.io/github/license/No767/Catherine-Chan?label=License&logo=github) [![Catherine](https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink)]()
 
 The modern all-in-one toolkit for LGBTQ+ folks
 
