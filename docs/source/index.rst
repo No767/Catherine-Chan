@@ -13,6 +13,13 @@ Catherine-Chan
 
    guides/dev/index
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Motivation
+
+   motivation
+
 .. figure:: /_static/pride_smaller.png
    :align: right
 
