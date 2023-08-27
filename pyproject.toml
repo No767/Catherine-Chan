@@ -26,6 +26,14 @@ ruff = "^0.0.285"
 watchfiles = "^0.19.0"
 pyinstrument = "^4.5.1"
 
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "7.1.2"
+sphinx-autobuild = "^2021.3.14"
+furo = "^2023.8.19"
+sphinx-copybutton = "^0.5.2"
+sphinxext-opengraph = "^0.8.2"
+
 [tool.isort]
 profile = 'black'
 
