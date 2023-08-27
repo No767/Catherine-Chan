@@ -4,7 +4,6 @@ from libs.cog_utils.commons import register_user
 from libs.cog_utils.pronouns import build_approve_embed
 
 APPROVAL_CHANNEL_ID = 1145189567331315803
-import asyncpg
 
 
 # This modal is in here to avoid circular imports
