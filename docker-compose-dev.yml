@@ -1,0 +1,15 @@
+version: "3.9"
+name: "catherine-dev"
+services:
+  postgres:
+    container_name: Catherine-Postgres-Dev
+    image: postgres:15 
+    env_file:
+      - .env
+    volumes:
+      - dev_postgres_volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  dev_postgres_volume:
