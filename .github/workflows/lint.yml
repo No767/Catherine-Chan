@@ -44,8 +44,8 @@ jobs:
           
       - name: Run Pyright
         run: |
-          poetry run pyright Bot
+          poetry run pyright bot
 
       - name: Run Ruff
         run: |
-          poetry run ruff Bot
+          poetry run ruff bot
