@@ -55,7 +55,7 @@ skips = ["B311", "B101"]
 
 [tool.ruff]
 ignore = ["E501", "N999", "E402"]
-select = ["E", "F", "N"]
+select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 
 [build-system]
 requires = ["poetry-core"]
