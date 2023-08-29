@@ -181,10 +181,12 @@ class CatherinePages(discord.ui.View):
         """go to the previous page"""
         await self.show_checked_page(interaction, self.current_page - 1)
 
+    # Shows the current button
     @discord.ui.button(label="Current", style=discord.ButtonStyle.grey, disabled=True)
     async def go_to_current_page(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
+        """show current page"""
         pass
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
