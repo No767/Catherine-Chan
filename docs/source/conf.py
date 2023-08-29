@@ -42,6 +42,3 @@ html_theme_options = {
 }
 
 ogp_site_url = "https://catherine-chan.readthedocs.io"
-# ogp_image = (
-#     "https://raw.githubusercontent.com/No767/Kumiko/dev/assets/kumiko-resized-round.png"
-# )
