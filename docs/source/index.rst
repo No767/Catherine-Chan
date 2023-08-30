@@ -42,7 +42,7 @@ Features
 * Full pronouns.page integration
 * Resources for support
 
-If there is a feature that you would like to see, please open an feature requests ticket on GitHub.
+If there is a feature that you would like to see, please either suggest it within the `Discord Server <https://discord.gg/ns3e74frqn>`_ or preferably make a `feature request ticket <https://github.com/No767/Catherine-Chan/issues/>`_ on GitHub.
 
 Guides
 ------
@@ -55,7 +55,7 @@ Resources and Links
 -------------------
 
 - `GitHub <https://github.com/No767/Catherine-Chan>`_
-- Discord Server
+- `Discord Server <https://discord.gg/ns3e74frqn>`_
 
 Project Links
 ^^^^^^^^^^^^^
