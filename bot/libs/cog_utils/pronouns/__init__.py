@@ -28,7 +28,10 @@ def parse_pronouns(entry: List[str]) -> str:
 
 
 def build_approve_embed(
-    sentence: str, example_sentence: str, user: Union[discord.User, discord.Member]
+    sentence: str,
+    example_sentence: str,
+    user: Union[discord.User, discord.Member],
+    show_pfp: bool = True,
 ) -> Embed:
     embed = Embed(color=discord.Colour.from_rgb(255, 61, 255))
     embed.title = "New Pronouns Example Suggestion"
@@ -36,7 +39,8 @@ def build_approve_embed(
         f"**Sentence**: \n{sentence}\n\n**Example Sentence**: \n{example_sentence}"
     )
     embed.add_field(name="Suggested By", value=user.mention)
-    embed.set_thumbnail(url=user.display_avatar.url)
+    if show_pfp:
+        embed.set_thumbnail(url=user.display_avatar.url)
     embed.set_footer(text="Created at")
     embed.timestamp = utcnow()
     return embed

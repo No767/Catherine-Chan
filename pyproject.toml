@@ -34,6 +34,15 @@ furo = "^2023.8.19"
 sphinx-copybutton = "^0.5.2"
 sphinxext-opengraph = "^0.8.2"
 
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.1"
+nox = "^2023.4.22"
+nox-poetry = "^1.0.3"
+pytest-cov = "^4.1.0"
+dpytest = "^0.7.0"
+
 [tool.isort]
 profile = 'black'
 
