@@ -1,0 +1,8 @@
+ignore:
+  - "bot/libs/ui/**"
+  - "bot/libs/utils/pages/**"
+  - "bot/libs/utils/logger.py"
+  - "bot/libs/utils/time.py"
+  - "bot/cogs/**"
+  - "bot/catherinecore.py"
+  - "bot/catherinebot.py"

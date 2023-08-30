@@ -32,7 +32,7 @@ def test_parse_pronouns(pronouns_entry):
 
 @pytest.mark.asyncio
 async def test_build_approve_embed(bot):
-    res = build_approve_embed("Hey", "Hey", bot.users[0], False)
+    res = build_approve_embed("Hey", "Hey", bot.users[0])
     await dpytest.message("!approve")
     assert dpytest.verify().message().embed(res)
 

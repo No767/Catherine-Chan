@@ -33,5 +33,5 @@ class Embeds(commands.Cog):
 
     @commands.command(name="approve")
     async def approve(self, ctx):
-        e = build_approve_embed("Hey", "Hey", ctx.author, False)
+        e = build_approve_embed("Hey", "Hey", ctx.author)
         await ctx.send(embed=e)
