@@ -139,14 +139,6 @@ class CatherinePages(discord.ui.View):
         await interaction.followup.send(
             "An unknown error occurred, sorry", ephemeral=True
         )
-        # if interaction.response.is_done():
-        #     await interaction.followup.send(
-        #         "An unknown error occurred, sorry", ephemeral=True
-        #     )
-        # else:
-        #     await interaction.response.send_message(
-        #         "An unknown error occurred, sorry", ephemeral=True
-        #     )
 
     async def start(
         self, *, content: Optional[str] = None, ephemeral: bool = False
