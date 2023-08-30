@@ -31,6 +31,7 @@ class Support(commands.Cog):
 
     # TODO - Update this will more resources
     @app_commands.command(name="support")
+    @app_commands.describe(type="The type of support your are looking for")
     async def support(
         self,
         interaction: discord.Interaction,
