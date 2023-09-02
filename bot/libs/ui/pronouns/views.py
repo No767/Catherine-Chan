@@ -21,6 +21,7 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
             label="Example Sentence",
             placeholder="Enter your example sentence with all of the correct pronouns here.",
             default=self.sentence.value,
+            style=discord.TextStyle.long,
             min_length=1,
             max_length=250,
         )

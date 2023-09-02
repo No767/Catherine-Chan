@@ -11,8 +11,9 @@ import pytest
 from conftest import bot  # type: ignore
 from libs.cog_utils.pronouns import (
     build_approve_embed,
+    convert_to_proper_sentence,
     parse_pronouns,
-    parse_tester_sentence,
+    parse_pronouns_sentence,
 )
 
 new_bot = bot
@@ -37,14 +38,24 @@ async def test_build_approve_embed(bot):
     assert dpytest.verify().message().embed(res)
 
 
-def test_parse_tester_sentence():
-    sentence = "$subject_pronouns is doing a nice thing."
-    parsed_sen = "she is doing a nice thing."
-    res = parse_tester_sentence(
-        sentence,
-        subjective_pronouns="she",
-        objective_pronoun="her",
-        possessive_pronoun="she",
-        reflective_pronoun="she",
+def test_parse_pronouns_sentence():
+    replacements = {
+        "$subjective_pronoun": "she",
+        "$objective_pronoun": "her",
+        "$possessive_pronoun": "she",
+        "$reflective_pronoun": "she",
+        "$name": "Noelle",
+    }
+    sentence = "$subjective_pronoun is a very good person. nothing can stop $objective_pronoun. $name is a cutiepie."
+    parsed_sentence = parse_pronouns_sentence(replacements, sentence)
+    converted = convert_to_proper_sentence(parsed_sentence)
+    assert (
+        converted
+        == "She is a very good person. Nothing can stop her. Noelle is a cutiepie."
     )
-    assert res == parsed_sen
+
+
+def test_convert_to_proper_sentence():
+    sentence = "you are a good person. this is fun. yay."
+    converted = convert_to_proper_sentence(sentence)
+    assert converted == "You are a good person. This is fun. Yay."
