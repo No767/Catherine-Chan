@@ -82,6 +82,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         OFFSET FLOOR(RANDOM() * (
             SELECT COUNT(*)
             FROM pronouns_examples
+            WHERE approved = True
         ))
         LIMIT 1;
         """
