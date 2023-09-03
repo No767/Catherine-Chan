@@ -33,6 +33,7 @@ class Catherine(commands.Bot):
                 type=discord.ActivityType.watching, name="for some eggs to hatch!"
             ),
             command_prefix="uwu-oneechan",
+            help_command=None,
             intents=intents,
             *args,
             **kwargs,
