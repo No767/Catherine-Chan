@@ -18,7 +18,7 @@ def present_info(record: Dict[str, Any]):
     separated_values = [
         f"**{snake_case_to_title(k)}**: {parse_values(v)}"
         for k, v in record.items()
-        if k not in ["id", "views"]
+        if k not in ["user_id", "views"]
     ]
     desc = "\n"
     joined_values = "\n".join(separated_values)

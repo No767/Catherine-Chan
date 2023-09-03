@@ -4,7 +4,11 @@ from pathlib import Path
 another_path = Path(__file__).parents[2].joinpath("bot")
 sys.path.append(str(another_path))
 
-from libs.cog_utils.profiles import parse_values, present_info, snake_case_to_title
+from libs.cog_utils.pride_profiles import (
+    parse_values,
+    present_info,
+    snake_case_to_title,
+)
 
 RECORD = {"id": 454357482102587393, "views": 0, "name": "Noelle"}
 

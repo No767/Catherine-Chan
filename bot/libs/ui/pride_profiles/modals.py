@@ -1,6 +1,6 @@
 import asyncpg
 import discord
-from libs.cog_utils.profiles import snake_case_to_title
+from libs.cog_utils.pride_profiles import snake_case_to_title
 
 
 class EditProfileModal(discord.ui.Modal, title="Edit Profile"):

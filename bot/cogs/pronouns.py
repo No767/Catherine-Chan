@@ -27,7 +27,6 @@ from yarl import URL
 APPROVAL_CHANNEL_ID = 1145189567331315803
 
 
-# TODO - Make an AI based sentence tester. Yolky's idea not mine
 class Pronouns(commands.GroupCog, name="pronouns"):
     """Your to-go module for pronouns!"""
 
@@ -75,7 +74,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
     )
     async def test(self, interaction: discord.Interaction, name: str) -> None:
         """Basically a pronouns tester command"""
-        # Based off of this query: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/tags.py#L182
+        # Based off of this query: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/tags.py#L182-L191
         query = """
         SELECT sentence
         FROM pronouns_examples
@@ -114,6 +113,8 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         - $name is really cute! $subjective_pronoun looks really good in that outfit!
         - $name is a cutiepie uwu! $subjective_pronoun looks likes $subjective_pronoun is ready to go!
         - $name is a very lovely person!
+        
+        If you need this for later reference, these variables can be found [here](https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html)
         """
         view = SuggestionView(self.bot, self.pool)
         await interaction.response.send_message(embed=embed, view=view)
@@ -251,14 +252,14 @@ class Pronouns(commands.GroupCog, name="pronouns"):
     async def inclusive(
         self, interaction: discord.Interaction, term: Optional[str] = None
     ) -> None:
-        """Provides inclusive terms for users"""
+        """Provides inclusive terms for users to learn about"""
         url = URL("https://en.pronouns.page/api/inclusive")
         if term:
             url = url / "search" / term
         async with self.session.get(url) as r:
             data = await r.json(loads=orjson.loads)
             if len(data) == 0:
-                await interaction.response.send_message("No nouns were found")
+                await interaction.response.send_message("No inclusive terms were found")
                 return
             converted = [
                 PronounsInclusiveEntry(

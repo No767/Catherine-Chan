@@ -143,5 +143,6 @@ class SuggestionView(discord.ui.View):
     async def start(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ) -> None:
+        await interaction.delete_original_response()
         modal = SuggestPronounsExamplesModal(self.bot, self.pool)
         await interaction.response.send_modal(modal)

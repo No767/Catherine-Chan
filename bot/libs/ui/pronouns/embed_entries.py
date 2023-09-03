@@ -69,10 +69,19 @@ class PronounsNounsEmbedEntry:
         self.neutr_plural = entry.neutr_plural
 
     def to_dict(self):
-        desc = f"**Masc**: {self.masc}\n**Fem**: {self.fem}\n**Neutr**: {self.neutr}\n"
-        desc += f"**Masc Plural**: {self.masc_plural}\n**Fem Plural**: {self.fem_plural}\n**Neutr Plural**: {self.neutr_plural}"
+        desc = f"""
+        **Masculine**: {self.masc or None}
+        **Feminine**: {self.fem or None}
+        **Neutral**: {self.neutr or None}
+        
+        **--**
+        
+        **Masculine Plural**: {self.masc_plural or None}
+        **Feminine Plural**: {self.fem_plural or None}
+        **Neutral Plural**: {self.neutr_plural or None}
+        """
         data = {
-            "title": f"{self.masc} -- {self.fem} -- {self.neutr}",
+            "title": f"{self.masc} / {self.fem}",
             "description": desc,
         }
         return data
