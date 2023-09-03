@@ -10,7 +10,7 @@ from libs.cog_utils.pride_profiles import (
     snake_case_to_title,
 )
 
-RECORD = {"id": 454357482102587393, "views": 0, "name": "Noelle"}
+RECORD = {"user_id": 454357482102587393, "views": 0, "name": "Noelle"}
 
 
 def test_snake_case_to_title():

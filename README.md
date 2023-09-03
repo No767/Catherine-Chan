@@ -18,9 +18,9 @@ Catherine-Chan is the all in one tookit for LGBTQ+ folks and allies. Catherine-C
 
 - [x] Pronouns Tester
 - [x] Pride Profile creator (create profiles to let others know about your pronouns and more)
-- [x] Full pronouns.page integration
+- [x] Informative pronouns and LGBTQ+ terms dictionary
 - [x] Resources for support
-- [ ] HRT measurements and tracker
+- [x] ToneTags support
 
 And so much more! If you want to suggest a feature, please open up an feature requests report on GitHub!
 
