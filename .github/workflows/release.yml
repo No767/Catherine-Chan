@@ -10,14 +10,18 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: '0'
-    - name: Create Tag + Bump Version
-      uses: mathieudutour/github-tag-action@v6.1
-      with:
-        github_token: ${{ secrets.PAT_TOKEN }}
-        release_branches: stable
-        default_bump: minor
-        custom_release_rules: "Release:major,Update:minor,Fix:patch"
+
+    - name: Bump version and push tag
+      uses: anothrNick/github-tag-action@1.64.0
       id: tag_version
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: stable
+        MAJOR_STRING_TOKEN: Release
+        MINOR_STRING_TOKEN: Update
+        PATCH_STRING_TOKEN: Fix
+        NONE_STRING_TOKEN: None
     - name: Release New Version
       uses: ncipollo/release-action@v1
       with:

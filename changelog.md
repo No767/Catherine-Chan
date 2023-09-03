@@ -1,6 +1,4 @@
-# :tada: Catherine-Chan 0.1.1 :tada:
-
-**Note**: The full changelog will be kept the same, but all this release does is to fix the release workflows.
+# :tada: Catherine-Chan 0.1.0 :tada:
 
 The first stable version of Catherine-Chan. As of now, the codebase is extremely stable, and pretty much replaces Jade's PrideBot. This version rebuilds the whole entire bot using discord.py and all of the internals now use PostgreSQL. There are still features that are planned to be included by as of now, this version pretty much mimics PrideBot.
 
