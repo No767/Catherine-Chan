@@ -1,4 +1,6 @@
-# :tada: Catherine-Chan 0.1.0 :tada:
+# :tada: Catherine-Chan 0.1.1 :tada:
+
+**Note**: The full changelog will be kept the same, but all this release does is to fix the release workflows.
 
 The first stable version of Catherine-Chan. As of now, the codebase is extremely stable, and pretty much replaces Jade's PrideBot. This version rebuilds the whole entire bot using discord.py and all of the internals now use PostgreSQL. There are still features that are planned to be included by as of now, this version pretty much mimics PrideBot.
 
@@ -6,6 +8,7 @@ Since this a full re-implementation, the rest of this section will be the differ
 
 ## ✨ TD;LR
 
+- Fixes some release stuff.
 - Reimplement everything that PrideBot has to offer to PostgreSQL (massive performance boost w/ asyncpg)
 - Better interfaces for all of the commands
 - The first version that pretty much has everything PrideBot has
