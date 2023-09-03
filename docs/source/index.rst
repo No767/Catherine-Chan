@@ -12,6 +12,7 @@ Catherine-Chan
    :caption: Guides
 
    guides/dev/index
+   guides/user/index
 
 .. toctree::
    :maxdepth: 2
@@ -50,6 +51,7 @@ Guides
 Are you interested in contributing to Catherine-Chan as a developer? Or are you interested in learning the different features of Catherine-chan? This is the place to get started!
 
 - :doc:`guides/dev/index`
+- :doc:`guides/user/index`
 
 Resources and Links
 -------------------

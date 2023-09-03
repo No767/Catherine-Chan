@@ -76,11 +76,13 @@ Now on to the last part: comparing the both of them. Here's a table comparing th
 +========================+================+==========+
 | Discord Framework      | discord.py     | Pycord   |
 +------------------------+----------------+----------+
+| Memory Usage           | 57MB (v0.1.0)  | Unknown  |
++------------------------+----------------+----------+
 | Database               | PostgreSQL     | MongoDB  |
 +------------------------+----------------+----------+
 | Database Driver        | asyncpg        | pymongo  |
 +------------------------+----------------+----------+
-| Documented (code)?     | Extensively    | None     |
+| Documented (code)?     | Mostly         | None     |
 +------------------------+----------------+----------+
 | Documented (features)? | Mostly         | Mostly   |
 +------------------------+----------------+----------+
