@@ -11,7 +11,7 @@ on:
 
 env:
   POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/postgres
-  TARGET_REVISION: rev2
+  TARGET_REVISION: rev3
 
   
 jobs: 
