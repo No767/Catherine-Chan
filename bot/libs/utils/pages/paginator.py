@@ -136,14 +136,9 @@ class CatherinePages(discord.ui.View):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item
     ) -> None:
-        if interaction.response.is_done():
-            await interaction.followup.send(
-                "An unknown error occurred, sorry", ephemeral=True
-            )
-        else:
-            await interaction.response.send_message(
-                "An unknown error occurred, sorry", ephemeral=True
-            )
+        await interaction.followup.send(
+            "An unknown error occurred, sorry", ephemeral=True
+        )
 
     async def start(
         self, *, content: Optional[str] = None, ephemeral: bool = False
@@ -161,6 +156,14 @@ class CatherinePages(discord.ui.View):
             kwargs.setdefault("content", content)
 
         self._update_labels(0)
+
+        # Fixes the issue of somehow the interaction failing for /pronouns profile
+        if self.interaction.response.is_done():
+            await self.interaction.followup.send(
+                **kwargs, view=self, ephemeral=ephemeral
+            )
+            self.followup = await self.interaction.original_response()
+            return
 
         await self.interaction.response.send_message(
             **kwargs, view=self, ephemeral=ephemeral
@@ -181,11 +184,12 @@ class CatherinePages(discord.ui.View):
         """go to the previous page"""
         await self.show_checked_page(interaction, self.current_page - 1)
 
+    # Shows the current button
     @discord.ui.button(label="Current", style=discord.ButtonStyle.grey, disabled=True)
     async def go_to_current_page(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
-        pass
+        """show current page"""
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
     async def go_to_next_page(

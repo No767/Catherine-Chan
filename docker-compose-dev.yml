@@ -5,7 +5,7 @@ services:
     container_name: Catherine-Postgres-Dev
     image: postgres:15 
     env_file:
-      - .env
+      - bot/.env
     volumes:
       - dev_postgres_volume:/var/lib/postgresql/data
     ports:

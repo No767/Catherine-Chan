@@ -1,4 +1,5 @@
-from typing import List, Union
+import re
+from typing import Dict, List, Union
 
 import discord
 from discord.utils import utcnow
@@ -42,17 +43,17 @@ def build_approve_embed(
     return embed
 
 
-def parse_tester_sentence(
-    sentence: str,
-    subjective_pronouns: str,
-    objective_pronoun: str,
-    possessive_pronoun: str,
-    reflective_pronoun: str,
-):
-    # I can't think of any other way to do this. But my idea is using Regex for this.
-    return (
-        sentence.replace("$subject_pronouns", subjective_pronouns)
-        .replace("$objective_pronouns", objective_pronoun)
-        .replace("$possessive_pronouns", possessive_pronoun)
-        .replace("$reflective_pronouns", reflective_pronoun)
-    )
+# Thank you stack overflow
+# code comes from this: https://stackoverflow.com/a/15175239/16526522
+def parse_pronouns_sentence(replacements: Dict[str, str], sentence: str) -> str:
+    regex = re.compile("(%s[s]?)" % "|".join(map(re.escape, replacements.keys())))
+    return regex.sub(lambda mo: replacements[mo.group()], sentence)
+
+
+def convert_to_proper_sentence(sentence: str) -> str:
+    regex = re.compile(r"((?<=[\.\?!]\s)(\w+)|(^\w+))")
+
+    def cap(match: re.Match):
+        return match.group().capitalize()
+
+    return regex.sub(cap, sentence)

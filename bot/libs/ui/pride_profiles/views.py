@@ -5,6 +5,8 @@ from libs.utils import ErrorEmbed, SuccessEmbed
 
 from .selects import SelectPrideCategory
 
+NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
+
 
 class ConfirmRegisterView(discord.ui.View):
     def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool) -> None:
@@ -19,9 +21,7 @@ class ConfirmRegisterView(discord.ui.View):
             self.interaction.user.id,
         ):
             return True
-        await interaction.response.send_message(
-            "This menu cannot be controlled by you, sorry!", ephemeral=True
-        )
+        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
         return False
 
     @discord.ui.button(
@@ -82,9 +82,7 @@ class ConfigureView(discord.ui.View):
             self.interaction.user.id,
         ):
             return True
-        await interaction.response.send_message(
-            "This menu cannot be controlled by you, sorry!", ephemeral=True
-        )
+        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
         return False
 
     @discord.ui.button(label="Finish", style=discord.ButtonStyle.green, row=1)
@@ -108,9 +106,7 @@ class DeleteProfileView(discord.ui.View):
             self.interaction.user.id,
         ):
             return True
-        await interaction.response.send_message(
-            "This menu cannot be controlled by you, sorry!", ephemeral=True
-        )
+        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
         return False
 
     @discord.ui.button(

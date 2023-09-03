@@ -27,7 +27,6 @@ from yarl import URL
 APPROVAL_CHANNEL_ID = 1145189567331315803
 
 
-# TODO - Make an AI based sentence tester. Yolky's idea not mine
 class Pronouns(commands.GroupCog, name="pronouns"):
     """Your to-go module for pronouns!"""
 
@@ -75,13 +74,14 @@ class Pronouns(commands.GroupCog, name="pronouns"):
     )
     async def test(self, interaction: discord.Interaction, name: str) -> None:
         """Basically a pronouns tester command"""
-        # Based off of this query: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/tags.py#L182
+        # Based off of this query: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/tags.py#L182-L191
         query = """
         SELECT sentence
         FROM pronouns_examples
         OFFSET FLOOR(RANDOM() * (
             SELECT COUNT(*)
             FROM pronouns_examples
+            WHERE approved = True
         ))
         LIMIT 1;
         """
@@ -96,12 +96,26 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         """Suggest an example sentence for others to use"""
         embed = Embed()
         embed.title = "Suggestions Instructions"
-        embed.description = (
-            "Hey there! Make sure you read the instructions before you start!"
-            "\n\nIn order to provide an example, you will need to follow the templating language used."
-            "You essentially use these as variables so when others use your sentence, it will be formatted correctly. Here is the list:\n"
-            "None"
-        )
+        embed.description = """
+        Hey there! **Make sure you read the instructions before you start!**
+        
+        In order to provide an example, you will need to follow the templating system used. You essentially use these as variables so when others use your sentence, it will be formatted correctly. Here is the list:
+        
+        - Name: `$name`
+        - Subjective Pronoun: `$subjective_pronoun` (Subjective / Nominative pronouns include ones like he, she, they, it, etc)
+        - Objective Pronoun: `$objective_pronoun` (Objective pronouns include them, him, her, etc)
+        - Possessive Pronoun: `$possessive_pronoun` (Possessive pronouns include his, hers, theirs, etc)
+        - Possessive Determiner: `$possessive_determiner` (Possessive determiners include his, her, their, etc)
+        - Reflective Pronoun: `$reflective_pronoun` (Reflective pronouns include himself, herself, themselves, etc)
+        
+        Some examples can look like this (note that names are not fully capitalized correctly yet):
+        
+        - $name is really cute! $subjective_pronoun looks really good in that outfit!
+        - $name is a cutiepie uwu! $subjective_pronoun looks likes $subjective_pronoun is ready to go!
+        - $name is a very lovely person!
+        
+        If you need this for later reference, these variables can be found [here](https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html)
+        """
         view = SuggestionView(self.bot, self.pool)
         await interaction.response.send_message(embed=embed, view=view)
 
@@ -238,14 +252,14 @@ class Pronouns(commands.GroupCog, name="pronouns"):
     async def inclusive(
         self, interaction: discord.Interaction, term: Optional[str] = None
     ) -> None:
-        """Provides inclusive terms for users"""
+        """Provides inclusive terms for users to learn about"""
         url = URL("https://en.pronouns.page/api/inclusive")
         if term:
             url = url / "search" / term
         async with self.session.get(url) as r:
             data = await r.json(loads=orjson.loads)
             if len(data) == 0:
-                await interaction.response.send_message("No nouns were found")
+                await interaction.response.send_message("No inclusive terms were found")
                 return
             converted = [
                 PronounsInclusiveEntry(

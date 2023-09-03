@@ -4,6 +4,7 @@ import discord
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
+from discord.utils import oauth_url
 from libs.utils import human_timedelta
 
 
@@ -48,6 +49,17 @@ class Meta(commands.Cog):
             name="Catherine Build Version", value=str(self.bot.version), inline=True
         )
         await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="invite")
+    async def invite(self, interaction: discord.Interaction) -> None:
+        """Get Catherine-Chan's invite link"""
+        # This should be filled in by the time the bot is fully ready
+        if self.bot.application is None:
+            return
+        invite_url = oauth_url(client_id=self.bot.application.id)
+        await interaction.response.send_message(
+            f"Invite Catherine-Chan using this link: {invite_url}"
+        )
 
 
 async def setup(bot: Catherine) -> None:

@@ -80,12 +80,16 @@ class PronounsProfileLangMenu(discord.ui.Select["PronounsProfilePages"]):
             self.add_option(label=f"{lang_name}", value=entry)
 
     async def callback(self, interaction: discord.Interaction):
-        assert self.view is not None
-        value = self.values[0]
-        if value == "en":
-            await self.view.rebind(PronounsProfilePageSource(locale="en"), interaction)
-        else:
-            await self.view.rebind(PronounsProfilePageSource(locale=value), interaction)
+        if self.view is not None:
+            value = self.values[0]
+            if value == "en":
+                await self.view.rebind(
+                    PronounsProfilePageSource(locale="en"), interaction
+                )
+            else:
+                await self.view.rebind(
+                    PronounsProfilePageSource(locale=value), interaction
+                )
 
 
 class PronounsProfilePages(CatherinePages):

@@ -21,10 +21,27 @@ langcodes = {extras = ["data"], version = "^3.3.0"}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.3.3"
-pyright = "^1.1.323"
-ruff = "^0.0.285"
-watchfiles = "^0.19.0"
+pyright = "^1.1.325"
+ruff = "^0.0.286"
+watchfiles = "^0.20.0"
 pyinstrument = "^4.5.1"
+
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "7.1.2"
+sphinx-autobuild = "^2021.3.14"
+furo = "^2023.8.19"
+sphinx-copybutton = "^0.5.2"
+sphinxext-opengraph = "^0.8.2"
+
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.1"
+nox = "^2023.4.22"
+nox-poetry = "^1.0.3"
+pytest-cov = "^4.1.0"
+dpytest = "^0.7.0"
 
 [tool.isort]
 profile = 'black'
@@ -47,7 +64,7 @@ skips = ["B311", "B101"]
 
 [tool.ruff]
 ignore = ["E501", "N999", "E402"]
-select = ["E", "F", "N"]
+select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 
 [build-system]
 requires = ["poetry-core"]

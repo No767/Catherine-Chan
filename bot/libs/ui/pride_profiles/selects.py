@@ -24,4 +24,3 @@ class SelectPrideCategory(discord.ui.Select):
         value = self.values[0]
         edit_modal = EditProfileModal(value, self.pool)
         await interaction.response.send_modal(edit_modal)
-        return

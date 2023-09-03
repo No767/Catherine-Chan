@@ -2,8 +2,8 @@ import discord
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from libs.cog_utils.profiles import present_info
-from libs.ui.profiles import (
+from libs.cog_utils.pride_profiles import present_info
+from libs.ui.pride_profiles import (
     ConfigureView,
     ConfirmRegisterView,
     DeleteProfileView,
@@ -13,8 +13,8 @@ from libs.ui.profiles import (
 from libs.utils import ConfirmEmbed, Embed
 
 
-class Profiles(commands.GroupCog, name="profiles"):
-    """Create profiles to let others know who you are!"""
+class PrideProfiles(commands.GroupCog, name="pride-profiles"):
+    """Create pride profiles to let others know who you are!"""
 
     def __init__(self, bot: Catherine) -> None:
         self.bot = bot
@@ -40,7 +40,7 @@ class Profiles(commands.GroupCog, name="profiles"):
             rows = await conn.fetchrow(query, user.id)
             if rows is None:
                 await interaction.response.send_message(
-                    "You or the user has no profile. Run `/profiles register` in order to do so"
+                    "You or the user has no profile. Run `/pride-profiles register` in order to do so"
                 )
                 return
 
@@ -90,7 +90,7 @@ class Profiles(commands.GroupCog, name="profiles"):
     @app_commands.command(name="search")
     @app_commands.describe(name="The preferred name to search")
     async def search(self, interaction: discord.Interaction, name: str) -> None:
-        """Searches for a profile using the given name"""
+        """Searches for a pride profile using the given name"""
 
         query = """
         SELECT user_id, name, pronouns
@@ -118,4 +118,4 @@ class Profiles(commands.GroupCog, name="profiles"):
 
 
 async def setup(bot: Catherine) -> None:
-    await bot.add_cog(Profiles(bot))
+    await bot.add_cog(PrideProfiles(bot))

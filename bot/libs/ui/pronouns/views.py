@@ -4,7 +4,6 @@ from libs.cog_utils.commons import register_user
 from libs.cog_utils.pronouns import build_approve_embed
 
 APPROVAL_CHANNEL_ID = 1145189567331315803
-import asyncpg
 
 
 # This modal is in here to avoid circular imports
@@ -22,6 +21,7 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
             label="Example Sentence",
             placeholder="Enter your example sentence with all of the correct pronouns here.",
             default=self.sentence.value,
+            style=discord.TextStyle.long,
             min_length=1,
             max_length=250,
         )
@@ -44,20 +44,23 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
             )
             if status is not None:
                 channel: discord.TextChannel = self.bot.get_channel(APPROVAL_CHANNEL_ID)
-                assert isinstance(channel, discord.TextChannel)
-                await channel.send(
-                    embed=build_approve_embed(
-                        self.sentence.value,
-                        self.example_sentence.value,
-                        interaction.user,
-                    ),
-                    view=ApprovePronounsExampleView(
-                        self.sentence.value, int(status), interaction.user.id, self.pool
-                    ),
-                )
-                await interaction.response.send_message(
-                    "Successfully suggested sentence", ephemeral=True
-                )
+                if isinstance(channel, discord.TextChannel):
+                    await channel.send(
+                        embed=build_approve_embed(
+                            self.sentence.value,
+                            self.example_sentence.value,
+                            interaction.user,
+                        ),
+                        view=ApprovePronounsExampleView(
+                            self.sentence.value,
+                            int(status),
+                            interaction.user.id,
+                            self.pool,
+                        ),
+                    )
+                    await interaction.response.send_message(
+                        "Successfully suggested sentence", ephemeral=True
+                    )
             else:
                 await interaction.response.send_message(
                     "The sentence you are trying to suggest already exists!",
@@ -140,5 +143,6 @@ class SuggestionView(discord.ui.View):
     async def start(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ) -> None:
+        await interaction.delete_original_response()
         modal = SuggestPronounsExamplesModal(self.bot, self.pool)
         await interaction.response.send_modal(modal)

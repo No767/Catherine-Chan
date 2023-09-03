@@ -1,4 +1,5 @@
 import discord
+from libs.cog_utils.pronouns import convert_to_proper_sentence, parse_pronouns_sentence
 
 
 class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
@@ -30,12 +31,16 @@ class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
         self.add_item(self.rp)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        # TODO - Regex based solution
-        complete_sentence = (
-            self.sentence.replace("$subjective_pronoun", self.sp.value.lower())
-            .replace("$objective_pronoun", self.op.value.lower())
-            .replace("$possessive_pronoun", self.pp.value.lower())
-            .replace("$reflective_pronoun", self.rp.value.lower())
-            .replace("$name", self.name)
-        )
+        # The new Regex-based solution to the pronouns tester command
+        # Original: https://github.com/LilbabxJJ-1/PrideBot/blob/master/commands/pronouns.py#L15
+        replacements = {
+            "$subjective_pronoun": self.sp.value.lower(),
+            "$objective_pronoun": self.op.value.lower(),
+            "$possessive_pronoun": self.pp.value.lower(),
+            "$possessive_determiner": self.pd.value.lower(),
+            "$reflective_pronoun": self.rp.value.lower(),
+            "$name": self.name.lower(),
+        }
+        parsed_sentence = parse_pronouns_sentence(replacements, self.sentence)
+        complete_sentence = convert_to_proper_sentence(parsed_sentence)
         await interaction.response.send_message(complete_sentence)

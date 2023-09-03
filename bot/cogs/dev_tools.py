@@ -25,7 +25,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
     def display_emoji(self) -> discord.PartialEmoji:
         return discord.PartialEmoji(name="\U0001f6e0")
 
-    @commands.hybrid_command(name="sync")
+    @commands.command(name="sync", hidden=True)
     @commands.guild_only()
     @commands.check_any(commands.is_owner(), is_nat())
     async def sync(
