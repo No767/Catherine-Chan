@@ -23,11 +23,14 @@ class ErrorHandler(commands.Cog):
     def build_error_embed(self, error: AppCommandError) -> ErrorEmbed:
         error_traceback = "\n".join(traceback.format_exception_only(type(error), error))
         embed = ErrorEmbed()
-        desc = (
-            "Uh oh! It seems like the command ran into an issue! For support, please visit [Catherine-Chan's Support Server](https://discord.gg/ns3e74frqn) to get help!\n\n",
-            f"**Error**: \n```{error_traceback}```",
-        )
-        embed.description = "\n".join(desc)
+        embed.description = f"""
+        Uh oh! It seems like the command ran into an issue! For support, please visit [Catherine-Chan's Support Server](https://discord.gg/ns3e74frqn) to get help!
+        
+        **Error**:
+        ```
+        {error_traceback}
+        ```
+        """
         embed.set_footer(text="Happened At")
         embed.timestamp = utcnow()
         return embed
@@ -46,16 +49,15 @@ class ErrorHandler(commands.Cog):
             if is_bot is True
             else "Missing Permissions"
         )
-        desc = "It looks like you are missing the following permissions in order to run the command:\n" ",".join(
-            missing_perms
-        ).rstrip(
-            ","
-        )
+        desc = f"""
+        It looks like you are missing the following permissions in order to run the command:
+        {','.join(missing_perms).rstrip(',')}
+        """
         if is_bot:
-            desc = (
-                "IT looks like Catherine-Chan is missing these permissions:\n"
-                ",".join(missing_perms).rstrip(",")
-            )
+            desc = f"""
+            It looks like Catherine-Chan is missing these permissions:
+            {','.join(missing_perms).rstrip(',')}
+            """
 
         embed = ErrorEmbed()
         embed.title = title
