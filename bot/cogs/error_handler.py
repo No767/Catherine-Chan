@@ -75,6 +75,13 @@ class ErrorHandler(commands.Cog):
         tree = self.bot.tree
         tree.on_error = self._old_tree_error
 
+    @commands.Cog.listener()
+    async def on_command_error(
+        self, ctx: commands.Context, error: commands.CommandError
+    ) -> None:
+        if isinstance(error, commands.CommandNotFound):
+            pass
+
     async def on_app_command_error(
         self, interaction: discord.Interaction, error: AppCommandError
     ) -> None:

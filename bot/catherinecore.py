@@ -32,7 +32,7 @@ class Catherine(commands.Bot):
             activity=discord.Activity(
                 type=discord.ActivityType.watching, name="for some eggs to hatch!"
             ),
-            command_prefix="~",
+            command_prefix="uwu-oneechan",
             intents=intents,
             *args,
             **kwargs,
@@ -94,7 +94,8 @@ class Catherine(commands.Bot):
             await self.load_extension(cog)
 
         if self.dev_mode is True and _fsw is True:
-            self.logger.info("Dev mode is enabled. Loading FSWatcher")
+            self.logger.info("Dev mode is enabled. Loading Jishaku and FSWatcher")
+            await self.load_extension("jishaku")
             self.loop.create_task(self.fs_watcher())
 
     async def on_ready(self):
