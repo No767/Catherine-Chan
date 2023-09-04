@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "catherine-chan"
-version = "0.1.0"
+version = "0.1.1"
 description = "An informational LGBTQ based discord bot"
 authors = ["No767 <73260931+No767@users.noreply.github.com>"]
 readme = "README.md"
@@ -25,6 +25,7 @@ pyright = "^1.1.325"
 ruff = "^0.0.286"
 watchfiles = "^0.20.0"
 pyinstrument = "^4.5.1"
+jishaku = "^2.5.1"
 
 
 [tool.poetry.group.docs.dependencies]
