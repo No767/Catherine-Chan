@@ -26,4 +26,4 @@ async def setup():
 @pytest.mark.asyncio
 async def test_load_blacklist(setup):
     res = await load_blacklist(setup)
-    assert isinstance(res, dict) and len(res) >= 0
+    assert isinstance(res, dict) and len(res) > 0
