@@ -1,12 +1,13 @@
 import asyncio
 import os
+from pathlib import Path
 
 import asyncpg
 import discord
 from aiohttp import ClientSession
 from catherinecore import Catherine
 from dotenv import load_dotenv
-from libs.utils import CatherineLogger
+from libs.utils import CatherineLogger, read_env
 
 # Only used for Windows development
 if os.name == "nt":
@@ -24,6 +25,7 @@ load_dotenv()
 TOKEN = os.environ["TOKEN"]
 DEV_MODE = os.getenv("DEV_MODE") in ("True", "TRUE")
 POSTGRES_URI = os.environ["POSTGRES_URI"]
+ENV_PATH = Path(__file__).parent / ".env"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -34,7 +36,11 @@ async def main() -> None:
         dsn=POSTGRES_URI, min_size=25, max_size=25, command_timeout=60
     ) as pool:
         async with Catherine(
-            intents=intents, session=session, pool=pool, dev_mode=DEV_MODE
+            config=read_env(ENV_PATH),
+            intents=intents,
+            session=session,
+            pool=pool,
+            dev_mode=DEV_MODE,
         ) as bot:
             await bot.start(TOKEN)
 

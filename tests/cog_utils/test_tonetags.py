@@ -105,6 +105,6 @@ async def test_get_tonetags(setup):
     new_res = await get_tonetags("kop", setup)
     assert new_res is None
 
-    res_again = await get_tonetags("jk", setup)
+    res_again = await get_tonetags("jkkkkklmao", setup)
 
     assert "Tonetag not found. Did you mean:" in res_again

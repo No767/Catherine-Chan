@@ -1,5 +1,6 @@
 import logging
 import signal
+from typing import Dict, Optional
 
 import asyncpg
 import discord
@@ -21,6 +22,7 @@ from pathlib import Path
 class Catherine(commands.Bot):
     def __init__(
         self,
+        config: Dict[str, Optional[str]],
         intents: discord.Intents,
         session: ClientSession,
         pool: asyncpg.Pool,
@@ -40,8 +42,20 @@ class Catherine(commands.Bot):
         )
         self.dev_mode = dev_mode
         self.logger: logging.Logger = logging.getLogger("discord")
+        self._config = config
         self._session = session
         self._pool = pool
+
+    @property
+    def config(self) -> Dict[str, Optional[str]]:
+        """Global configuration dictionary read from .env files
+
+        This is used to access API keys, and many others from the bot.
+
+        Returns:
+            Dict[str, str]: A dictionary of configuration values
+        """
+        return self._config
 
     @property
     def session(self) -> ClientSession:
