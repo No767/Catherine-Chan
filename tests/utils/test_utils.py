@@ -17,9 +17,9 @@ def test_is_docker():
 
 
 def test_read_env():
-    if is_docker():
-        config = read_env(ENV_PATH)
+    read_from_file = False
+    if is_docker() or read_from_file is False:
+        config = read_env(ENV_PATH, False)
         assert config["SHELL"] == "/bin/bash" or "/bin/zsh"
-        return
     config = read_env(ENV_PATH)
     assert isinstance(config, dict)
