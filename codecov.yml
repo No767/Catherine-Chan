@@ -3,6 +3,10 @@ ignore:
   - "bot/libs/utils/pages/**"
   - "bot/libs/utils/logger.py"
   - "bot/libs/utils/time.py"
+  # Although one coro is tested, the another can't be tested. We need to look up the blacklist cache which is held on the bot.
+  # So basically we will just have to ignore this one.
+  - "bot/libs/utils/blacklist.py"
+  - "bot/libs/cog_utils/blacklist/**" # There is no way to test checks...
   - "bot/cogs/**"
   - "bot/catherinecore.py"
   - "bot/catherinebot.py"
