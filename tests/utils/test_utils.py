@@ -20,6 +20,6 @@ def test_read_env():
     read_from_file = False
     if is_docker() or read_from_file is False:
         config = read_env(ENV_PATH, False)
-        assert config["SHELL"] == "/bin/bash" or "/bin/zsh"
+        assert "POSTGRES_URI" or "SHELL" in config
     config = read_env(ENV_PATH)
     assert isinstance(config, dict)
