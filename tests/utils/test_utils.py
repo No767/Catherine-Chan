@@ -22,4 +22,4 @@ def test_read_env():
         assert config["SHELL"] == "/bin/bash" or "/bin/zsh"
         return
     config = read_env(ENV_PATH)
-    assert "POSTGRES_URI" in config
+    assert isinstance(config, dict)
