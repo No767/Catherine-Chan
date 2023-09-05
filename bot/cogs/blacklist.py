@@ -5,6 +5,7 @@ from discord.ext import commands
 from libs.cog_utils.blacklist import is_owner
 
 ID_DESCRIPTION = "User or Guild ID to add"
+HANGOUT_GUILD_ID = discord.Object(id=1145897416160194590)
 
 
 class Blacklist(commands.GroupCog, name="blacklist"):
@@ -19,6 +20,7 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="add")
     @app_commands.describe(id=ID_DESCRIPTION)
     async def add(self, interaction: discord.Interaction, id: str):
@@ -35,6 +37,7 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="remove")
     @app_commands.describe(id=ID_DESCRIPTION)
     async def remove(self, interaction: discord.Interaction, id: str):
@@ -52,6 +55,7 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="status")
     @app_commands.describe(id=ID_DESCRIPTION, status="New status")
     async def status(self, interaction: discord.Interaction, id: int, status: bool):
