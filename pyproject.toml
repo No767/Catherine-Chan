@@ -21,7 +21,7 @@ langcodes = {extras = ["data"], version = "^3.3.0"}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
-pyright = "^1.1.325"
+pyright = "^1.1.326"
 ruff = "^0.0.287"
 watchfiles = "^0.20.0"
 pyinstrument = "^4.5.1"
