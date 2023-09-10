@@ -1,14 +1,14 @@
-# 🛠️ Catherine-Chan 0.2.2 🛠️
+# 🛠️ Catherine-Chan 0.2.3 🛠️
 
-Rollback on quoting PostgreSQL URIs. Despite being recommended by the asyncpg author, this apparently breaks most of the scheme.
+Apparently forgetting to update the prod.txt requirements...
 
 ## ✨ TD;LR
 
-- Rollback on ensuring that PostgerSQL URIS are quoted properly as per asyncpg recommendation
+- Updated prod.txt requirements
 
 ## 🛠️ Changes
 
-- Rollback on ensuring that PostgerSQL URIS are quoted properly as per asyncpg recommendation
+- Updated prod.txt requirements
 
 ## ✨ Additions
 
