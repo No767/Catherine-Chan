@@ -1,6 +1,7 @@
 import asyncio
 import os
 from pathlib import Path
+from urllib.parse import quote
 
 import asyncpg
 import discord
@@ -28,7 +29,7 @@ TOKEN = os.environ["TOKEN"]
 DEV_MODE = os.getenv("DEV_MODE") in ("True", "TRUE")
 IPC_SECRET_KEY = os.environ["IPC_SECRET_KEY"]
 IPC_HOST = os.environ["IPC_HOST"]
-POSTGRES_URI = os.environ["POSTGRES_URI"]
+POSTGRES_URI = quote(os.environ["POSTGRES_URI"])
 
 
 intents = discord.Intents.default()
