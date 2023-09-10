@@ -16,7 +16,7 @@ from libs.ui.pronouns import (
 from libs.utils import Embed
 from yarl import URL
 
-APPROVAL_CHANNEL_ID = 1145189567331315803
+APPROVAL_CHANNEL_ID = 1150575176006782976
 
 
 class Pronouns(commands.GroupCog, name="pronouns"):
