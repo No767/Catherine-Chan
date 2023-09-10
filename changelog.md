@@ -1,23 +1,23 @@
-# 🛠️ Catherine-Chan 0.1.1 🛠️
+# :sparkles: Catherine-Chan 0.2.0 :sparkles:
 
-Bugfix version to generally fix up smaller issues and improve dev experience.
+This release focuses on implementing the blacklisting system, as well patching up old parts of the code to be ready for production use.
 
 ## ✨ TD;LR
 
-- Added the missing feature of being able to to load only the `.env` file or only the current shell's env 
-- Pretty much disabled prefixed commands
+- Blacklist system - If you are on it, you effectively cannot even use the bot
 
 ## 🛠️ Changes
 
-- Added the missing feature of being able to to load only the `.env` file or only the current shell's env 
-- Disable the default prefixed help command (we don't need this for slash commands)
-- Mute unwanted prefixed command errors
-- Make the prefix now something unlikely that you will use.
+- Moved the informative pronouns commands into a separate `dictionary` group. (Makes more sense bc they fetch from a dict anyways)
+- Updated doc requirements.txt
+- Update release workflows to hopefully work better now
+- Align code to best practices
 
 ## ✨ Additions
 
-- Added the missing feature of being able to to load only the `.env` file or only the current shell's env 
-- Added Jishaku for dev stuff
+- Added IPC (using `discord-ext-ipcx`) in order to provide healthchecks
+- Added Blacklisting system
+- New `dictionary` cog
 
 ## ➖ Removals
 

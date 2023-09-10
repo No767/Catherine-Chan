@@ -11,7 +11,7 @@ on:
 
 env:
   POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/postgres
-  TARGET_REVISION: rev3
+  TARGET_REVISION: rev4
 
   
 jobs: 
@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # - name: Setup Codecov Uploader
       #   run: |

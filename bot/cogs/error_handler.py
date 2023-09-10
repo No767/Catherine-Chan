@@ -79,8 +79,7 @@ class ErrorHandler(commands.Cog):
     async def on_command_error(
         self, ctx: commands.Context, error: commands.CommandError
     ) -> None:
-        if isinstance(error, commands.CommandNotFound):
-            pass
+        return
 
     async def on_app_command_error(
         self, interaction: discord.Interaction, error: AppCommandError

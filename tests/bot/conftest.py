@@ -30,9 +30,9 @@ def pytest_sessionfinish(session, exitstatus):
 
     # dat files are created when using attachements
     print("\n-------------------------\nClean dpytest_*.dat files")
-    fileList = glob.glob("./dpytest_*.dat")
-    for filePath in fileList:
+    file_list = glob.glob("./dpytest_*.dat")
+    for file_path in file_list:
         try:
-            os.remove(filePath)
+            os.remove(file_path)
         except Exception:
-            print("Error while deleting file : ", filePath)
+            print("Error while deleting file : ", file_path)
