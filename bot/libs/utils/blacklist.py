@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 import asyncpg
 
@@ -45,3 +45,25 @@ async def get_or_fetch_blacklist(bot, id: int, pool: asyncpg.Pool) -> bool:
         return False
     bot.blacklist_cache[id] = record["blacklist_status"]
     return record["blacklist_status"]
+
+
+async def get_or_fetch_full_blacklist(
+    bot, pool: asyncpg.Pool
+) -> Optional[Dict[int, bool]]:
+    cache = bot.blacklist_cache
+
+    # We can guarantee these to be 1:1 mappings
+    if len(cache) != 0:
+        return cache
+
+    query = """
+    SELECT id, blacklist_status
+    FROM blacklist;
+    """
+    records = await pool.fetch(query)
+    if len(records) == 0:
+        return None
+
+    converted_records = {record["id"]: record["blacklist_status"] for record in records}
+    bot.replace_blacklist_cache(converted_records)
+    return converted_records

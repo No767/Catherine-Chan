@@ -1,4 +1,8 @@
-from .blacklist import get_or_fetch_blacklist, load_blacklist
+from .blacklist import (
+    get_or_fetch_blacklist,
+    get_or_fetch_full_blacklist,
+    load_blacklist,
+)
 from .embeds import ConfirmEmbed, Embed, ErrorEmbed, SuccessEmbed
 from .logger import CatherineLogger
 from .time import human_timedelta
@@ -15,4 +19,5 @@ __all__ = [
     "is_docker",
     "read_env",
     "get_or_fetch_blacklist",
+    "get_or_fetch_full_blacklist",
 ]

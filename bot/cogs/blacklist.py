@@ -3,6 +3,8 @@ from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
 from libs.cog_utils.blacklist import is_owner
+from libs.ui.blacklist import BlacklistPages
+from libs.utils import get_or_fetch_full_blacklist
 
 ID_DESCRIPTION = "User or Guild ID to add"
 HANGOUT_GUILD_ID = discord.Object(id=1145897416160194590)
@@ -17,6 +19,22 @@ class Blacklist(commands.GroupCog, name="blacklist"):
         self.id_description = "User or Guild ID to add"
         self.done_msg = "Done."
         super().__init__()
+
+    @is_owner()
+    @app_commands.guild_only()
+    @app_commands.guilds(HANGOUT_GUILD_ID)
+    @app_commands.command(name="view")
+    async def view(self, interaction: discord.Interaction):
+        """View the global blacklist"""
+        blacklist = await get_or_fetch_full_blacklist(interaction.client, self.pool)
+        if blacklist is None:
+            await interaction.response.send_message("No blacklist entries found")
+            return
+
+        cache_to_list = [{k: v} for k, v in blacklist.items()]
+
+        pages = BlacklistPages(entries=cache_to_list, interaction=interaction)
+        await pages.start()
 
     @is_owner()
     @app_commands.guild_only()

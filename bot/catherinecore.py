@@ -134,6 +134,9 @@ class Catherine(commands.Bot):
     def remove_from_blacklist_cache(self, id: int) -> None:
         self._blacklist_cache.pop(id)
 
+    def replace_blacklist_cache(self, new_cache: Dict[int, bool]) -> None:
+        self._blacklist_cache = new_cache
+
     async def get_or_fetch_member(
         self, guild: discord.Guild, member_id: int
     ) -> Optional[discord.Member]:
