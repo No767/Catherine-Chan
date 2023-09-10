@@ -11,7 +11,7 @@ def parse_tonetag(tonetag: str) -> str:
     Returns:
         str: Parsed and cleaned up result
     """
-    return re.sub(r"^[/]", "", tonetag, re.IGNORECASE)
+    return re.sub(r"^/", "", tonetag, re.IGNORECASE)
 
 
 def format_options(rows: Union[List[Dict[str, str]], None]) -> str:
