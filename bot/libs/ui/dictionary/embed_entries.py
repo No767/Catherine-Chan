@@ -1,10 +1,15 @@
-from .structs import PronounsInclusiveEntry, PronounsNounsEntry, PronounsTermsEntry
+from .structs import (
+    DictInclusiveEntry,
+    DictNounsEntry,
+    DictPronounsPageEntry,
+    DictTermsEntry,
+)
 
 
-class PronounsTermsEmbedEntry:
+class DictTermsEmbedEntry:
     __slots__ = ("term", "original", "definition", "locale", "flags", "category")
 
-    def __init__(self, entry: PronounsTermsEntry):
+    def __init__(self, entry: DictTermsEntry):
         self.term = entry.term
         self.original = entry.original
         self.definition = entry.definition
@@ -26,10 +31,10 @@ class PronounsTermsEmbedEntry:
         return data
 
 
-class PronounsInclusiveEmbedEntry:
+class DictInclusiveEmbedEntry:
     __slots__ = ("instead_of", "say", "because", "categories", "clarification")
 
-    def __init__(self, entry: PronounsInclusiveEntry):
+    def __init__(self, entry: DictInclusiveEntry):
         self.instead_of = entry.instead_of
         self.say = entry.say
         self.because = entry.because
@@ -57,10 +62,10 @@ class PronounsInclusiveEmbedEntry:
         return data
 
 
-class PronounsNounsEmbedEntry:
+class DictNounsEmbedEntry:
     __slots__ = ("masc", "fem", "neutr", "masc_plural", "fem_plural", "neutr_plural")
 
-    def __init__(self, entry: PronounsNounsEntry):
+    def __init__(self, entry: DictNounsEntry):
         self.masc = entry.masc
         self.fem = entry.fem
         self.neutr = entry.neutr
@@ -83,5 +88,30 @@ class PronounsNounsEmbedEntry:
         data = {
             "title": f"{self.masc} / {self.fem}",
             "description": desc,
+        }
+        return data
+
+
+class DictPPEntry:
+    def __init__(self, entry: DictPronounsPageEntry):
+        self.dict_entry = entry
+
+    def to_dict(self):
+        data = {
+            "title": self.dict_entry["term"],
+            "description": self.dict_entry["definition"],
+            "fields": [
+                {
+                    "name": "Original",
+                    "value": self.dict_entry["original"],
+                    "inline": True,
+                },
+                {"name": "Locale", "value": self.dict_entry["locale"], "inline": True},
+                {
+                    "name": "Category",
+                    "value": self.dict_entry["category"],
+                    "inline": True,
+                },
+            ],
         }
         return data
