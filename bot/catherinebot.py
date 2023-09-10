@@ -26,13 +26,14 @@ ENV_PATH = Path(__file__).parent / ".env"
 
 TOKEN = os.environ["TOKEN"]
 DEV_MODE = os.getenv("DEV_MODE") in ("True", "TRUE")
+ENABLE_MESSAGE_CONTENT = os.getenv("ENABLE_MESSAGE_CONTENT") in ("True", "TRUE")
 IPC_SECRET_KEY = os.environ["IPC_SECRET_KEY"]
 IPC_HOST = os.environ["IPC_HOST"]
 POSTGRES_URI = os.environ["POSTGRES_URI"]
 
 
 intents = discord.Intents.default()
-if DEV_MODE is True:
+if DEV_MODE is True or ENABLE_MESSAGE_CONTENT is True:
     intents.message_content = True
 
 
