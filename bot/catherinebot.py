@@ -32,7 +32,8 @@ POSTGRES_URI = os.environ["POSTGRES_URI"]
 
 
 intents = discord.Intents.default()
-intents.message_content = True
+if DEV_MODE is True:
+    intents.message_content = True
 
 
 async def main() -> None:
