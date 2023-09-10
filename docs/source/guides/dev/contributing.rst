@@ -94,7 +94,6 @@ Git Commit Styleguides
 
 - If updating any other files that aren't project files or not important (stuff like README.md, contributing.md, etc), add the [skip ci] label in the front
 - With each new commit, the message should be more or less describing the changes. Please don't write useless commit messages...
-- If releasing tags, have it in this style. ``Release: v[version number]``, ``Update: v[version number]``, and ``Fix: v[version number]``. Release is a major release. This means it bumps from 1.0.0 to 2.0.0. Minor means it bumps up the version from 1.4 to 1.5 for example. And fix just applies a patch, which would be 1.4.1 to 1.4.2.
 
 Source Control Branching Models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -111,7 +110,7 @@ In order to automate the release system, you have to make sure that in order to 
  =============================================================== ===================== 
                 Type of Release, Update, or Patch                       Example        
  =============================================================== ===================== 
-  Major Release (For updates that are not backwards compatible)   ``Release: v2.0.0``  
-    Minor Release (For updates that are backwards compatible)     ``Update: v2.5.0``   
-   Patch Release (For critical security patches and bug fixes)      ``Fix: v2.5.1``    
+  Major Release (For updates that are not backwards compatible)   ``v2.0.0 #major``  
+    Minor Release (For updates that are backwards compatible)     ``v2.5.0 #minor``   
+   Patch Release (For critical security patches and bug fixes)    ``v2.5.1 #patch``    
  =============================================================== ===================== 
