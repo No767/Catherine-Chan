@@ -1,6 +1,6 @@
-# 🛠️ Catherine-Chan 0.2.1 🛠️
+# 🛠️ Catherine-Chan 0.2.2 🛠️
 
-Very small bugfix release to ensure that PostgreSQL URIs are quoted properly
+Very small bugfix release to ensure that PostgreSQL URIs are quoted properly. This should fix it on the migration runner now.
 
 ## ✨ TD;LR
 

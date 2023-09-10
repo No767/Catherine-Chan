@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from pathlib import Path
+from urllib.parse import quote
 
 import asyncpg
 from asyncpg_trek import Direction, execute, plan
@@ -13,7 +14,7 @@ MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 
 load_dotenv(dotenv_path=ENV_PATH)
 
-POSTGRES_URI = os.environ["POSTGRES_URI"]
+POSTGRES_URI = quote(os.environ["POSTGRES_URI"])
 TARGET_REVISION = os.environ["TARGET_REVISION"]
 logging.basicConfig(
     level=logging.INFO,
