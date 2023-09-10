@@ -22,10 +22,14 @@ else:
 
 load_dotenv()
 
+ENV_PATH = Path(__file__).parent / ".env"
+
 TOKEN = os.environ["TOKEN"]
 DEV_MODE = os.getenv("DEV_MODE") in ("True", "TRUE")
+IPC_SECRET_KEY = os.environ["IPC_SECRET_KEY"]
+IPC_HOST = os.environ["IPC_HOST"]
 POSTGRES_URI = os.environ["POSTGRES_URI"]
-ENV_PATH = Path(__file__).parent / ".env"
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -37,6 +41,8 @@ async def main() -> None:
     ) as pool:
         async with Catherine(
             config=read_env(ENV_PATH),
+            ipc_secret_key=IPC_SECRET_KEY,
+            ipc_host=IPC_HOST,
             intents=intents,
             session=session,
             pool=pool,

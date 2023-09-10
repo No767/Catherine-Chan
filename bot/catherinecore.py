@@ -8,7 +8,7 @@ import discord
 from aiohttp import ClientSession
 from cogs import EXTENSIONS, VERSION
 from discord.app_commands import CommandTree
-from discord.ext import commands
+from discord.ext import commands, ipcx
 from libs.ui.pronouns import ApprovePronounsExampleView
 from libs.utils import get_or_fetch_blacklist, load_blacklist
 
@@ -48,6 +48,8 @@ class Catherine(commands.Bot):
     def __init__(
         self,
         config: Dict[str, Optional[str]],
+        ipc_secret_key: str,
+        ipc_host: str,
         intents: discord.Intents,
         session: ClientSession,
         pool: asyncpg.Pool,
@@ -69,6 +71,7 @@ class Catherine(commands.Bot):
         )
         self.dev_mode = dev_mode
         self.logger: logging.Logger = logging.getLogger("discord")
+        self.ipc = ipcx.Server(self, host=ipc_host, secret_key=ipc_secret_key)
         self._blacklist_cache: Dict[int, bool] = {}
         self._config = config
         self._session = session
@@ -171,6 +174,8 @@ class Catherine(commands.Bot):
             self.logger.debug(f"Loaded extension: {cog}")
             await self.load_extension(cog)
 
+        await self.ipc.start()
+
         if self.dev_mode is True and _fsw is True:
             self.logger.info("Dev mode is enabled. Loading Jishaku and FSWatcher")
             await self.load_extension("jishaku")
@@ -181,3 +186,13 @@ class Catherine(commands.Bot):
             self.uptime = discord.utils.utcnow()
         curr_user = None if self.user is None else self.user.name
         self.logger.info(f"{curr_user} is fully ready!")
+
+    async def on_ipc_ready(self):
+        self.logger.info(
+            "Standard IPC Server started on %s:%s", self.ipc.host, self.ipc.port
+        )
+        self.logger.info(
+            "Multicast IPC server started on %s:%s",
+            self.ipc.host,
+            self.ipc.multicast_port,
+        )
