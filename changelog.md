@@ -1,14 +1,16 @@
-# 🛠️ Catherine-Chan 0.2.3 🛠️
+# 🛠️ Catherine-Chan 0.2.4 🛠️
 
-Apparently forgetting to update the prod.txt requirements...
-
+Smaller bugfix update to fix any incosisentity 
 ## ✨ TD;LR
 
-- Updated prod.txt requirements
+- Fixed small issues
 
 ## 🛠️ Changes
 
-- Updated prod.txt requirements
+- Renamed the `/info` command to `/about` and include more information
+- Only allow `message_content` intents on development or if enabled
+- Added invite links for the official bot
+- Update docs as per usual
 
 ## ✨ Additions
 
