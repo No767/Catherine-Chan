@@ -91,6 +91,8 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         embed.description = """
         Hey there! **Make sure you read the instructions before you start!**
         
+        **Once you are done, please click the finish button to finish the suggestion**
+        
         In order to provide an example, you will need to follow the templating system used. You essentially use these as variables so when others use your sentence, it will be formatted correctly. Here is the list:
         
         - Name: `$name`
@@ -106,9 +108,9 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         - $name is a cutiepie uwu! $subjective_pronoun looks likes $subjective_pronoun is ready to go!
         - $name is a very lovely person!
         
-        If you need this for later reference, these variables can be found [here](https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html)
+        If you need this for later reference, these variables can be found here: https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html
         """
-        view = SuggestionView(self.bot, self.pool)
+        view = SuggestionView(self.bot, interaction, self.pool)
         await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.command(name="profile")

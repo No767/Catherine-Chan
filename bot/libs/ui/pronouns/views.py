@@ -3,7 +3,8 @@ import discord
 from libs.cog_utils.commons import register_user
 from libs.cog_utils.pronouns import build_approve_embed
 
-APPROVAL_CHANNEL_ID = 1145189567331315803
+APPROVAL_CHANNEL_ID = 1150575176006782976
+NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
 
 # This modal is in here to avoid circular imports
@@ -60,6 +61,10 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
                     )
                     await interaction.response.send_message(
                         "Successfully suggested sentence", ephemeral=True
+                    )
+                else:
+                    await interaction.response.send_message(
+                        "Suggestion failed due to improper setup on Noelle's end."
                     )
             else:
                 await interaction.response.send_message(
@@ -131,10 +136,20 @@ class ApprovePronounsExampleView(discord.ui.View):
 
 
 class SuggestionView(discord.ui.View):
-    def __init__(self, bot, pool: asyncpg.Pool):
+    def __init__(self, bot, interaction: discord.Interaction, pool: asyncpg.Pool):
         self.bot = bot
+        self.interaction = interaction
         self.pool = pool
         super().__init__()
+
+    async def interaction_check(self, interaction: discord.Interaction, /):
+        if interaction.user and interaction.user.id in (
+            self.interaction.client.application.owner.id,  # type: ignore
+            self.interaction.user.id,
+        ):
+            return True
+        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
+        return False
 
     @discord.ui.button(
         label="Start",
@@ -143,6 +158,16 @@ class SuggestionView(discord.ui.View):
     async def start(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ) -> None:
-        await interaction.delete_original_response()
         modal = SuggestPronounsExamplesModal(self.bot, self.pool)
         await interaction.response.send_modal(modal)
+
+    @discord.ui.button(
+        label="Finish",
+        style=discord.ButtonStyle.green,
+    )
+    async def finish(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ) -> None:
+        await interaction.response.defer()
+        await interaction.delete_original_response()
+        self.stop()

@@ -30,6 +30,7 @@ And so much more! If you want to suggest a feature, please open up a feature req
 ## Inviting the Bot
 
 Catherine-Chan is live! You can invite her into your server with the following link: [Invite Link](https://discord.com/oauth2/authorize?client_id=1142620675517984808&scope=bot+applications.commands)
+
 ## Support
 
 If you would like to support me as a developer, please consider supporting me on [KoFi](https://ko-fi.com/no767). The money will go towards to hosting Catherine-Chan and all other server-related costs so you can expect the bot to be up 24/7!
