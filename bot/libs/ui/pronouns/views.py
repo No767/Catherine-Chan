@@ -62,6 +62,10 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
                     await interaction.response.send_message(
                         "Successfully suggested sentence", ephemeral=True
                     )
+                else:
+                    await interaction.response.send_message(
+                        "Suggestion failed due to improper setup on Noelle's end."
+                    )
             else:
                 await interaction.response.send_message(
                     "The sentence you are trying to suggest already exists!",
