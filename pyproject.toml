@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "catherine-chan"
-version = "0.2.4"
+version = "0.2.5"
 description = "An informational LGBTQ based discord bot"
 authors = ["No767 <73260931+No767@users.noreply.github.com>"]
 readme = "README.md"

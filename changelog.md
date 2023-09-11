@@ -1,16 +1,15 @@
-# 🛠️ Catherine-Chan 0.2.4 🛠️
+# 🛠️ Catherine-Chan 0.2.5 🛠️
 
-Smaller bugfix update to fix any incosisentity 
+A even smaller bug fix in order to ensure that the pronouns suggestion system now works properly
+
 ## ✨ TD;LR
 
-- Fixed small issues
+- Fixed the pronouns suggestion command not working when you start it  
 
 ## 🛠️ Changes
 
-- Renamed the `/info` command to `/about` and include more information
-- Only allow `message_content` intents on development or if enabled
-- Added invite links for the official bot
-- Update docs as per usual
+- Added a finish button to the `/pronouns suggest-examples` command
+- All views now have proper interactions checks (take an L Lala)
 
 ## ✨ Additions
 
