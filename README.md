@@ -15,7 +15,8 @@ The modern all-in-one toolkit for LGBTQ+ folks
 Catherine-Chan is the all in one tookit for LGBTQ+ folks and allies. Catherine-Chan provides a wide varity of features, such as creating pride profiles, definitions for the LGBTQ+ community, and many others. 
 
 > [!IMPORTANT]
-> I would prefer if you do not run instances of Catherine-Chan. Just use the `>invite` command or use the Top.gg invite to have the bot on your server instead. The code provided is for educational use and for others to provide suggestions, catch issues, and feedback only.
+> I would prefer if you do not run instances of Catherine-Chan. Just use the `/invite` command or use the Top.gg invite to have the bot on your server instead. The code provided is for educational use and for others to provide suggestions, catch issues, and feedback only.
+
 ## Features
 
 - [x] Pronouns Tester
@@ -24,12 +25,11 @@ Catherine-Chan is the all in one tookit for LGBTQ+ folks and allies. Catherine-C
 - [x] Resources for support
 - [x] ToneTags support
 
-And so much more! If you want to suggest a feature, please open up an feature requests report on GitHub!
+And so much more! If you want to suggest a feature, please open up a feature requests report on GitHub!
 
 ## Inviting the Bot
 
-Currently Catherine-Chan is still in development, but generally should be stable enough to run. Catherine is not fully production ready so there may be bugs that need to be ironed out.
-
+Catherine-Chan is live! You can invite her into your server with the following link: [Invite Link](https://discord.com/oauth2/authorize?client_id=1142620675517984808&scope=bot+applications.commands)
 ## Support
 
 If you would like to support me as a developer, please consider supporting me on [KoFi](https://ko-fi.com/no767). The money will go towards to hosting Catherine-Chan and all other server-related costs so you can expect the bot to be up 24/7!

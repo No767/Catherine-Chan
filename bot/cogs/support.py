@@ -28,7 +28,7 @@ class Support(commands.Cog):
         Enby_eautiful - https://discord.gg/j8MCnEC64S
         """
         embed.set_footer(
-            text="If you are enjoying Catherine-Chan, please consider to tell your friends about this bot! If you can't, then you can still show your support by upvoting on Top.gg! [insert topgg link]",
+            text="If you are enjoying Catherine-Chan, please consider to tell your friends about this bot! If you can't, then you can still show your support by upvoting on Top.gg!",
             icon_url="https://cdn.discordapp.com/emojis/1096897624432443392.webp?size=128&quality=lossless",
         )
         await interaction.response.send_message(embed=embed)
