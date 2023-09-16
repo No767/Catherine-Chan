@@ -1,19 +1,18 @@
-# 🛠️ Catherine-Chan 0.2.5 🛠️
+# 🛠️ Catherine-Chan 0.2.6 🛠️
 
-A even smaller bug fix in order to ensure that the pronouns suggestion system now works properly
+More smaller bugfix to ensure that the blacklist and dev tools commands are not being synced globally.
 
 ## ✨ TD;LR
 
-- Fixed the pronouns suggestion command not working when you start it  
+- Fixed blacklist and sync commands showing up in public commands
 
 ## 🛠️ Changes
 
-- Added a finish button to the `/pronouns suggest-examples` command
-- All views now have proper interactions checks (take an L Lala)
+- Fixed blacklist and sync commands showing up in public commands
 
 ## ✨ Additions
 
-- None
+- Reload all extensions cmd. This allows for essentially 0 downtime when all needs to be done is to pull the changes, reload all extensions, and then sync as needed
 
 ## ➖ Removals
 
