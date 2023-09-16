@@ -12,7 +12,7 @@ More smaller bugfix to ensure that the blacklist and dev tools commands are not 
 
 ## ✨ Additions
 
-- None
+- Reload all extensions cmd. This allows for essentially 0 downtime when all needs to be done is to pull the changes, reload all extensions, and then sync as needed
 
 ## ➖ Removals
 

@@ -2,6 +2,7 @@ from typing import Literal, Optional
 
 import discord
 from catherinecore import Catherine
+from cogs import EXTENSIONS
 from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context, Greedy
@@ -65,6 +66,16 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
                 ret += 1
 
         await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
+
+    @commands.guild_only()
+    @commands.is_owner()
+    @commands.hybrid_command(name="reload-all", hidden=True)
+    @app_commands.guilds(HANGOUT_GUILD_ID)
+    async def reload_all(self, ctx: commands.Context) -> None:
+        """Reloads all cogs. Used in production to not produce any downtime"""
+        for extension in EXTENSIONS:
+            await self.bot.reload_extension(extension)
+        await ctx.send("Successfully reloaded all extensions live")
 
 
 async def setup(bot: Catherine):
