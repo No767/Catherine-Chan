@@ -22,8 +22,8 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
-    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="view")
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     async def view(self, interaction: discord.Interaction):
         """View the global blacklist"""
         blacklist = await get_or_fetch_full_blacklist(interaction.client, self.pool)
@@ -38,8 +38,8 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
-    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="add")
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.describe(id=ID_DESCRIPTION)
     async def add(self, interaction: discord.Interaction, id: str):
         """Add to global blacklist"""
@@ -55,8 +55,8 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
-    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="remove")
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.describe(id=ID_DESCRIPTION)
     async def remove(self, interaction: discord.Interaction, id: str):
         """Remove from global blacklist"""
@@ -73,8 +73,8 @@ class Blacklist(commands.GroupCog, name="blacklist"):
 
     @is_owner()
     @app_commands.guild_only()
-    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.command(name="status")
+    @app_commands.guilds(HANGOUT_GUILD_ID)
     @app_commands.describe(id=ID_DESCRIPTION, status="New status")
     async def status(self, interaction: discord.Interaction, id: int, status: bool):
         """Update from global blacklist"""
