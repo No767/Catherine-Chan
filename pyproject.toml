@@ -25,7 +25,7 @@ psutil = "^5.9.5"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
 pyright = "^1.1.327"
-ruff = "^0.0.289"
+ruff = "^0.0.290"
 watchfiles = "^0.20.0"
 pyinstrument = "^4.5.3"
 jishaku = "^2.5.1"
