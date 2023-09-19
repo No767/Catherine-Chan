@@ -3,7 +3,6 @@ from typing import Literal, Optional
 import discord
 from catherinecore import Catherine
 from cogs import EXTENSIONS
-from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context, Greedy
 
@@ -22,8 +21,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.guild_only()
     @commands.is_owner()
-    @commands.hybrid_command(name="sync", hidden=True)
-    @app_commands.guilds(HANGOUT_GUILD_ID)
+    @commands.command(name="sync", hidden=True)
     async def sync(
         self,
         ctx: Context,
@@ -69,8 +67,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.guild_only()
     @commands.is_owner()
-    @commands.hybrid_command(name="reload-all", hidden=True)
-    @app_commands.guilds(HANGOUT_GUILD_ID)
+    @commands.command(name="reload-all", hidden=True)
     async def reload_all(self, ctx: commands.Context) -> None:
         """Reloads all cogs. Used in production to not produce any downtime"""
         for extension in EXTENSIONS:
