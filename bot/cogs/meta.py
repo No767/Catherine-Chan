@@ -103,6 +103,22 @@ class Meta(commands.Cog):
             f"Invite Catherine-Chan using this link: {invite_url}"
         )
 
+    @app_commands.command(name="support")
+    async def support(self, interaction: discord.Interaction):
+        """Ways you can support Catherine-Chan!"""
+        invite_url = oauth_url(client_id=self.bot.application.id)  # type: ignore # By the time the bot is ready, the app id is already there
+        desc = f"""
+        **Upvoting on Top.gg**: [Insert coming top.gg link]
+        **Joining the support server**: https://discord.gg/ns3e74frqn
+        **Inviting Catherine-Chan to you server**: {invite_url}
+        
+        And there are more ways you can show your support! Check out the [support page](https://github.com/No767/Catherine-Chan#support) on how you can support the developer!
+        """
+        embed = Embed()
+        embed.title = "Ways you can support"
+        embed.description = desc
+        await interaction.response.send_message(embed=embed)
+
 
 async def setup(bot: Catherine) -> None:
     await bot.add_cog(Meta(bot))
