@@ -63,30 +63,27 @@ class Meta(commands.Cog):
     async def about(self, interaction: discord.Interaction) -> None:
         """Shows some basic info about Catherine-Chan"""
         total_members = 0
-        total_unique = len(self.bot.users)
 
         for guild in self.bot.guilds:
             total_members += guild.member_count or 0
 
         # For Kumiko, it's done differently
-        # R. Danny's way of doing it is probably clos enough anyways
+        # R. Danny's way of doing it is probably close enough anyways
         memory_usage = self.process.memory_full_info().uss / 1024**2
         cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
 
         revisions = self.get_last_commits()
         embed = Embed()
         embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)  # type: ignore
-        embed.title = "Bot Invite"
-        embed.url = "https://discord.com/oauth2/authorize?client_id=1142620675517984808&scope=bot+applications.commands"
+        embed.title = "Support Server Invite"
+        embed.url = "https://discord.gg/ns3e74frqn"
         embed.description = f"Latest Changes (Stable):\n {revisions}"
         embed.set_footer(
             text=f"Made with discord.py v{discord.__version__}",
             icon_url="https://cdn.discordapp.com/emojis/596577034537402378.png?size=128",
         )
         embed.add_field(name="Servers Count", value=len(self.bot.guilds))
-        embed.add_field(
-            name="User Count", value=f"{total_members} total\n{total_unique} unique"
-        )
+        embed.add_field(name="User Count", value=f"{total_members} total")
         embed.add_field(
             name="Process", value=f"{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU"
         )
@@ -105,6 +102,22 @@ class Meta(commands.Cog):
         await interaction.response.send_message(
             f"Invite Catherine-Chan using this link: {invite_url}"
         )
+
+    @app_commands.command(name="support")
+    async def support(self, interaction: discord.Interaction):
+        """Ways you can support Catherine-Chan!"""
+        invite_url = oauth_url(client_id=self.bot.application.id)  # type: ignore # By the time the bot is ready, the app id is already there
+        desc = f"""
+        **Upvoting on Top.gg**: [Insert coming top.gg link]
+        **Joining the support server**: https://discord.gg/ns3e74frqn
+        **Inviting Catherine-Chan to you server**: {invite_url}
+        
+        And there are more ways you can show your support! Check out the [support page](https://github.com/No767/Catherine-Chan#support) on how you can support the developer!
+        """
+        embed = Embed()
+        embed.title = "Ways you can support"
+        embed.description = desc
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot: Catherine) -> None:

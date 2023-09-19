@@ -20,6 +20,15 @@ Catherine-Chan
    :caption: Motivation
 
    motivation
+   
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Terms of Service
+
+   terms-of-service/tos.rst
+   terms-of-service/privacy-policy.rst
+
 
 .. figure:: /_static/pride_smaller.png
    :align: right
