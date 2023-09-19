@@ -33,9 +33,9 @@ class Support(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="support")
+    @app_commands.command(name="pride-support")
     @app_commands.describe(type="The type of support your are looking for")
-    async def support(
+    async def pride_support(
         self,
         interaction: discord.Interaction,
         type: Literal["HRT", "Therapy", "Hotlines", "Coming Out"],
