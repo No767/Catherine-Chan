@@ -41,7 +41,7 @@ Above shown in Figure 1, is the project structure. Some folders will need to hav
     * ``cog_utils`` - All the utilities functions, coroutines, and others get placed here. This sub-package in turn contains sub-packages that each relate to a specific cog. For example, if I wanted to write utilities for the extension ``support.py``, then it would be placed under ``cog_utils/support``.
     * ``ui`` - All of the `UI components <https://discordpy.readthedocs.io/en/latest/interactions/api.html#bot-ui-kit>`_ of all of the cogs get placed here. The way that this sub-package is structured is exactly the same as the structure for ``cog_utils``.
     * ``utils`` - All of the utility functions, coroutines, and others that are not related to a specific cog get placed here. 
-        * ``pages`` - Catherine-Chan's custom ``discord-ext-menu`` paginator and all utilities for that are located here. The paginator is a modified version of `RoboDanny's paginator <https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/utils/paginator.py#L30>`_ that is modified to work for interactions only.
+        * ``pages`` - Catherine-Chan's custom ``discord-ext-menu`` paginator and all utilities for that are located here. The paginator is a modified version of `RoboDanny's paginator <https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/utils/paginator.py#L30C1-L233C20>`_ that is modified to work for interactions only.
 * ``docker`` - Contains the Dockerfiles that can be used to build Catherine-Chan.
 * ``envs`` - ENV file templates
 * ``tests`` - All unit tests go in here. These are separated by feature. 

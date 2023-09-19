@@ -141,9 +141,11 @@ Now on to the last part: comparing the both of them. Here's a table comparing th
 +------------------------+----------------+----------+
 | Database Driver        | asyncpg        | pymongo  |
 +------------------------+----------------+----------+
-| Documented (code)?     | Mostly         | None     |
+| Documented (code)?     | Somewhat       | None     |
 +------------------------+----------------+----------+
 | Documented (features)? | Mostly         | Mostly   |
++------------------------+----------------+----------+
+| Unit Tests?            | Yes (100%)     | No (0%)  |
 +------------------------+----------------+----------+
 | Uvloop accelerated?    | Yes            | No       |
 +------------------------+----------------+----------+
