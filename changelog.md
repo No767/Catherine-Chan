@@ -1,18 +1,21 @@
-# 🛠️ Catherine-Chan 0.2.6 🛠️
+# 🛠️ Catherine-Chan 0.2.7 🛠️
 
-More smaller bugfix to ensure that the blacklist and dev tools commands are not being synced globally.
+Finally the blacklist and dev tool commands are not synced globally. This release aims to fix that and adds some QoL improvements.
 
 ## ✨ TD;LR
 
-- Fixed blacklist and sync commands showing up in public commands
+- Fixed blacklist commands showing up in public commands **for real this time**
 
 ## 🛠️ Changes
 
-- Fixed blacklist and sync commands showing up in public commands
+- Fixed blacklist and sync commands showing up in public commands **for real this time**
+- Migrate the sync and reload commands to be exclusively prefixed commands. This is done at the recommendation of Umbra and Nanika
+- Switched the `/about` title URL to the support server invite link
+- Renamed `/support` to be `/pride-support`
 
 ## ✨ Additions
 
-- Reload all extensions cmd. This allows for essentially 0 downtime when all needs to be done is to pull the changes, reload all extensions, and then sync as needed
+- A small little `/support` command to show ways you can better support Catherine-Chan
 
 ## ➖ Removals
 
