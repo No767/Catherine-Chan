@@ -28,7 +28,7 @@ class Blacklist(commands.Cog):
     @blacklist.command(name="view")
     async def view(self, interaction: discord.Interaction):
         """View the global blacklist"""
-        blacklist = await get_or_fetch_full_blacklist(interaction.client, self.pool)
+        blacklist = await get_or_fetch_full_blacklist(self.bot, self.pool)
         if blacklist is None:
             await interaction.response.send_message("No blacklist entries found")
             return
