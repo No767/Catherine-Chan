@@ -7,8 +7,7 @@ from discord.ext import commands
 from libs.utils import Embed
 
 
-# Yep making it better Jade
-class Support(commands.Cog):
+class PrideSupport(commands.Cog):
     """Commands for getting support as a person (not for this bot)"""
 
     def __init__(self, bot: Catherine):
@@ -92,4 +91,4 @@ class Support(commands.Cog):
 
 
 async def setup(bot: Catherine) -> None:
-    await bot.add_cog(Support(bot))
+    await bot.add_cog(PrideSupport(bot))
