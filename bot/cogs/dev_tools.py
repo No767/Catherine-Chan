@@ -6,8 +6,6 @@ from cogs import EXTENSIONS
 from discord.ext import commands
 from discord.ext.commands import Context, Greedy
 
-HANGOUT_GUILD_ID = discord.Object(id=1145897416160194590)
-
 
 class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
     """Tools for developing Catherine-Chan (pulled from Kumiko directly)"""

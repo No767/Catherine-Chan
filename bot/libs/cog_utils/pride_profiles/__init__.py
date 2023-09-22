@@ -14,7 +14,7 @@ def parse_values(value: Any) -> str:
     return value.capitalize()
 
 
-def present_info(record: Dict[str, Any]):
+def present_info(record: Dict[str, Any]) -> str:
     separated_values = [
         f"**{snake_case_to_title(k)}**: {parse_values(v)}"
         for k, v in record.items()

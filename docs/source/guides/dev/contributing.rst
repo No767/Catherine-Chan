@@ -33,8 +33,6 @@ Static Typing (aka Type Hinting)
 
 For the most part, Catherine-Chan's codebase is fully typed. Pyright in this case is used to check whether the code is typed and meets standards or not. If you are using VS Code, then you can enable this on VSC by clicking on the ``{}`` icon in your status bar.
 
-The only exception to this is where circular imports can occur. And this most commonly happens with the ``Catherine`` class (due to how the project is structured). If you find that you have circular imports with that class, please make sure to leave a comment above the line that it happens.
-
 Formatting
 ^^^^^^^^^^^
 

@@ -1,22 +1,22 @@
-# 🛠️ Catherine-Chan 0.2.7 🛠️
+# 🛠️ Catherine-Chan 0.2.8 🛠️
 
-Finally the blacklist and dev tool commands are not synced globally. This release aims to fix that and adds some QoL improvements.
+Fix one small tiny bug that thanks to Sarth on the Python Discord server, has been resolved.
 
 ## ✨ TD;LR
 
-- Fixed blacklist commands showing up in public commands **for real this time**
+- Fixed bot args not having proper typehints
 
 ## 🛠️ Changes
 
-- Fixed blacklist and sync commands showing up in public commands **for real this time**
-- Migrate the sync and reload commands to be exclusively prefixed commands. This is done at the recommendation of Umbra and Nanika
-- Switched the `/about` title URL to the support server invite link
-- Renamed `/support` to be `/pride-support`
+- Fixed bot args not having proper typehints
+- Renamed `support.py` to `pride_support.py` (to reflect the support command now the one used by Catherine-Chan)
+- Renamed `Support` cog to `PrideSupport` (to reflect the filename changes)
+- Updated some typehints
 
 ## ✨ Additions
 
-- A small little `/support` command to show ways you can better support Catherine-Chan
+- None
 
 ## ➖ Removals
 
--  None
+- Any dead code

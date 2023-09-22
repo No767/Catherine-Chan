@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import asyncpg
 import discord
 from libs.cog_utils.commons import register_user
@@ -6,10 +10,13 @@ from libs.cog_utils.pronouns import build_approve_embed
 APPROVAL_CHANNEL_ID = 1150575176006782976
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
+if TYPE_CHECKING:
+    from bot.catherinecore import Catherine
+
 
 # This modal is in here to avoid circular imports
 class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example"):
-    def __init__(self, bot, pool: asyncpg.Pool) -> None:
+    def __init__(self, bot: Catherine, pool: asyncpg.Pool) -> None:
         super().__init__(custom_id="suggest_pronouns_example:modal")
         self.sentence = discord.ui.TextInput(
             label="Sentence",
@@ -44,8 +51,8 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
                 query, interaction.user.id, self.sentence.value
             )
             if status is not None:
-                channel: discord.TextChannel = self.bot.get_channel(APPROVAL_CHANNEL_ID)
-                if isinstance(channel, discord.TextChannel):
+                channel = self.bot.get_channel(APPROVAL_CHANNEL_ID)
+                if channel is not None and isinstance(channel, discord.TextChannel):
                     await channel.send(
                         embed=build_approve_embed(
                             self.sentence.value,
@@ -136,7 +143,9 @@ class ApprovePronounsExampleView(discord.ui.View):
 
 
 class SuggestionView(discord.ui.View):
-    def __init__(self, bot, interaction: discord.Interaction, pool: asyncpg.Pool):
+    def __init__(
+        self, bot: Catherine, interaction: discord.Interaction, pool: asyncpg.Pool
+    ):
         self.bot = bot
         self.interaction = interaction
         self.pool = pool

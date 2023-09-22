@@ -1,6 +1,11 @@
-from typing import Dict, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Dict, Optional
 
 import asyncpg
+
+if TYPE_CHECKING:
+    from bot.catherinecore import Catherine
 
 
 async def load_blacklist(pool: asyncpg.Pool) -> Dict[int, bool]:
@@ -20,8 +25,7 @@ async def load_blacklist(pool: asyncpg.Pool) -> Dict[int, bool]:
     return {record["id"]: record["blacklist_status"] for record in records}
 
 
-# Circular import so bot is untyped
-async def get_or_fetch_blacklist(bot, id: int, pool: asyncpg.Pool) -> bool:
+async def get_or_fetch_blacklist(bot: Catherine, id: int, pool: asyncpg.Pool) -> bool:
     """Gets or fetches a user's blacklist status
 
     Args:
@@ -48,7 +52,7 @@ async def get_or_fetch_blacklist(bot, id: int, pool: asyncpg.Pool) -> bool:
 
 
 async def get_or_fetch_full_blacklist(
-    bot, pool: asyncpg.Pool
+    bot: Catherine, pool: asyncpg.Pool
 ) -> Optional[Dict[int, bool]]:
     cache = bot.blacklist_cache
 
