@@ -49,7 +49,7 @@ async def edit_tonetag(
 
 async def create_tonetag(
     indicator: str, definition: str, author_id: int, pool: asyncpg.Pool
-):
+) -> str:
     query = """
     WITH tonetag_insert AS (
         INSERT INTO tonetags (indicator, definition, author_id)
