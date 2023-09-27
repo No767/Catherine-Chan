@@ -21,6 +21,8 @@ langcodes = {extras = ["data"], version = "^3.3.0"}
 discord-ext-ipcx = "^0.1.1"
 pygit2 = "^1.13.0"
 psutil = "^5.9.5"
+prometheus-client = "^0.17.1"
+prometheus-async = "^22.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"

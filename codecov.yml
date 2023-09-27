@@ -7,6 +7,7 @@ ignore:
   # So basically we will just have to ignore this one.
   - "bot/libs/utils/blacklist.py"
   - "bot/libs/cog_utils/blacklist/**" # There is no way to test checks...
+  - "bot/libs/cog_utils/prometheus_metrics/**" # There is simply no way to test for stuff like Gauges, etc.
   - "bot/cogs/**"
   - "bot/catherinecore.py"
   - "bot/catherinebot.py"

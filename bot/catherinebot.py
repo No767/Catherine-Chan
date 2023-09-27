@@ -33,6 +33,7 @@ POSTGRES_URI = os.environ["POSTGRES_URI"]
 
 
 intents = discord.Intents.default()
+intents.members = True
 if DEV_MODE is True or ENABLE_MESSAGE_CONTENT is True:
     intents.message_content = True
 

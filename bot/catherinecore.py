@@ -9,8 +9,15 @@ from aiohttp import ClientSession
 from cogs import EXTENSIONS, VERSION
 from discord.app_commands import CommandTree
 from discord.ext import commands, ipcx
+from libs.cog_utils.prometheus_metrics import (
+    Metrics,
+    create_gauges,
+    create_guild_gauges,
+    fill_gauges,
+)
 from libs.ui.pronouns import ApprovePronounsExampleView
 from libs.utils import get_or_fetch_blacklist, load_blacklist
+from prometheus_async.aio.web import start_http_server
 
 # Some weird import logic to ensure that watchfiles is there
 _fsw = True
@@ -27,6 +34,7 @@ except ImportError:
 class CatherineCommandTree(CommandTree):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         bot: Catherine = interaction.client  # type: ignore # Pretty much returns the subclass anyways. I checked - Noelle
+        bot.metrics.on_app_command_counter.inc()
         if (
             bot.owner_id == interaction.user.id
             or bot.application_id == interaction.user.id
@@ -72,6 +80,9 @@ class Catherine(commands.Bot):
         self.dev_mode = dev_mode
         self.logger: logging.Logger = logging.getLogger("discord")
         self.ipc = ipcx.Server(self, host=ipc_host, secret_key=ipc_secret_key)
+        self.metrics: Metrics = create_gauges()
+        self._ipc_host = ipc_host
+        self._metrics_port = 6789
         self._blacklist_cache: Dict[int, bool] = {}
         self._config = config
         self._session = session
@@ -169,12 +180,19 @@ class Catherine(commands.Bot):
 
         self._blacklist_cache = await load_blacklist(self.pool)
         self.add_view(ApprovePronounsExampleView("", 0, 10, self.pool))
+        self.logger.info("Loaded blacklist cache")
 
         for cog in EXTENSIONS:
             self.logger.debug(f"Loaded extension: {cog}")
             await self.load_extension(cog)
 
         await self.ipc.start()
+        await start_http_server(addr=self._ipc_host, port=6789)
+        self.logger.info(
+            "Prometheus Server started on %s:%s", self._ipc_host, self._metrics_port
+        )
+
+        fill_gauges(self)
 
         if self.dev_mode is True and _fsw is True:
             self.logger.info("Dev mode is enabled. Loading Jishaku and FSWatcher")
@@ -182,8 +200,10 @@ class Catherine(commands.Bot):
             self.loop.create_task(self.fs_watcher())
 
     async def on_ready(self):
-        if not hasattr(self, "uptime"):
+        if not hasattr(self, "uptime") and not hasattr(self, "guild_metrics_created"):
             self.uptime = discord.utils.utcnow()
+            self.guild_metrics_created = create_guild_gauges(self)
+
         curr_user = None if self.user is None else self.user.name
         self.logger.info(f"{curr_user} is fully ready!")
 
