@@ -78,7 +78,7 @@ class Catherine(commands.Bot):
             **kwargs,
         )
         self.dev_mode = dev_mode
-        self.logger: logging.Logger = logging.getLogger("discord")
+        self.logger: logging.Logger = logging.getLogger("catherine")
         self.ipc = ipcx.Server(self, host=ipc_host, secret_key=ipc_secret_key)
         self.metrics: Metrics = create_gauges()
         self._ipc_host = ipc_host
