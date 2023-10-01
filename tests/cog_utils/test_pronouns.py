@@ -11,6 +11,7 @@ import pytest
 from conftest import bot  # type: ignore
 from libs.cog_utils.pronouns import (
     build_approve_embed,
+    convert_to_proper_name,
     convert_to_proper_sentence,
     parse_pronouns,
     parse_pronouns_sentence,
@@ -59,3 +60,16 @@ def test_convert_to_proper_sentence():
     sentence = "you are a good person. this is fun. yay."
     converted = convert_to_proper_sentence(sentence)
     assert converted == "You are a good person. This is fun. Yay."
+
+
+def test_convert_to_proper_name():
+    # Ofc i'm using my own name
+    name = "noelle wang"
+    proper_name = "Noelle Wang"
+    improper_name = "69 what is up my dude"
+
+    converted_name = convert_to_proper_name(name)
+    assert converted_name == proper_name
+
+    attempted_converted_name = convert_to_proper_name(improper_name)
+    assert attempted_converted_name == improper_name

@@ -1,5 +1,9 @@
 import discord
-from libs.cog_utils.pronouns import convert_to_proper_sentence, parse_pronouns_sentence
+from libs.cog_utils.pronouns import (
+    convert_to_proper_name,
+    convert_to_proper_sentence,
+    parse_pronouns_sentence,
+)
 
 
 class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
@@ -39,7 +43,7 @@ class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
             "$possessive_pronoun": self.pp.value.lower(),
             "$possessive_determiner": self.pd.value.lower(),
             "$reflective_pronoun": self.rp.value.lower(),
-            "$name": self.name.lower(),
+            "$name": convert_to_proper_name(self.name),
         }
         parsed_sentence = parse_pronouns_sentence(replacements, self.sentence)
         complete_sentence = convert_to_proper_sentence(parsed_sentence)
