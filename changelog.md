@@ -1,22 +1,25 @@
-# 🛠️ Catherine-Chan 0.2.8 🛠️
+# ✨ Catherine-Chan 0.3.0 ✨
 
-Fix one small tiny bug that thanks to Sarth on the Python Discord server, has been resolved.
+Include Prometheus Metrics and finally properly format human names for pronouns tester command. This version is a ready-to-go production release and is tailored for tracking on production.
 
 ## ✨ TD;LR
 
-- Fixed bot args not having proper typehints
+- Prometheus metrics (requires members intent)
+- Proper conversion for human names (for pronouns tester command)
 
 ## 🛠️ Changes
 
-- Fixed bot args not having proper typehints
-- Renamed `support.py` to `pride_support.py` (to reflect the support command now the one used by Catherine-Chan)
-- Renamed `Support` cog to `PrideSupport` (to reflect the filename changes)
-- Updated some typehints
+- Update the motivation section
+- Update docs
+- Improve internal logging
+- Format human names properly
+- Allow for unique member counts within the about command
 
 ## ✨ Additions
 
-- None
+- Prometheus Metrics w/ Prometheus config + Grafana dashboard
+- Proper conversion for human names (for pronouns tester command)
 
 ## ➖ Removals
 
-- Any dead code
+- None
