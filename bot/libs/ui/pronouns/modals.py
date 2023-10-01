@@ -1,12 +1,18 @@
 import discord
-from libs.cog_utils.pronouns import convert_to_proper_sentence, parse_pronouns_sentence
+from libs.cog_utils.prometheus_metrics import Metrics
+from libs.cog_utils.pronouns import (
+    convert_to_proper_name,
+    convert_to_proper_sentence,
+    parse_pronouns_sentence,
+)
 
 
 class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
-    def __init__(self, sentence: str, name: str):
+    def __init__(self, sentence: str, name: str, metrics: Metrics):
         super().__init__()
         self.sentence = sentence
         self.name = name
+        self.metrics = metrics
         self.sp = discord.ui.TextInput(
             label="Subjective Pronoun", placeholder="Example: They | He | She"
         )
@@ -33,13 +39,14 @@ class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         # The new Regex-based solution to the pronouns tester command
         # Original: https://github.com/LilbabxJJ-1/PrideBot/blob/master/commands/pronouns.py#L15
+        self.metrics.pronouns_tester_counter.inc()
         replacements = {
             "$subjective_pronoun": self.sp.value.lower(),
             "$objective_pronoun": self.op.value.lower(),
             "$possessive_pronoun": self.pp.value.lower(),
             "$possessive_determiner": self.pd.value.lower(),
             "$reflective_pronoun": self.rp.value.lower(),
-            "$name": self.name.lower(),
+            "$name": convert_to_proper_name(self.name),
         }
         parsed_sentence = parse_pronouns_sentence(replacements, self.sentence)
         complete_sentence = convert_to_proper_sentence(parsed_sentence)

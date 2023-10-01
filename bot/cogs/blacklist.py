@@ -51,6 +51,7 @@ class Blacklist(commands.Cog):
         await self.pool.execute(query, obj.id, True)
         if obj.id not in self.bot.blacklist_cache:
             self.bot.add_to_blacklist_cache(obj.id)
+            self.bot.metrics.blacklisted_users.inc()
         await interaction.response.send_message(DONE_MSG, ephemeral=True)
 
     @is_owner()
@@ -66,6 +67,7 @@ class Blacklist(commands.Cog):
         await self.pool.execute(query, obj.id)
         if obj.id in self.bot.blacklist_cache:
             self.bot.remove_from_blacklist_cache(obj.id)
+            self.bot.metrics.blacklisted_users.dec()
 
         await interaction.response.send_message(DONE_MSG, ephemeral=True)
 

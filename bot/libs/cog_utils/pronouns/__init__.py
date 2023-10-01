@@ -57,3 +57,19 @@ def convert_to_proper_sentence(sentence: str) -> str:
         return match.group().capitalize()
 
     return regex.sub(cap, sentence)
+
+
+def convert_to_proper_name(name: str) -> str:
+    regex = re.compile("[^()0-9-]+")
+    possible_match = regex.fullmatch(name)
+
+    if possible_match is None:
+        # If we didn't match any possible names, throw back the original name
+        # Most of the times it will be improper, so we might as well just return the improper name so it does't just say None
+        return name
+
+    parsed_str = " ".join(
+        word.title() if not word[0].isdigit() else word
+        for word in possible_match.group().split()
+    )
+    return parsed_str

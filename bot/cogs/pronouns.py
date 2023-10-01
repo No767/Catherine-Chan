@@ -81,7 +81,9 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         if value is None:
             await interaction.response.send_message("Can't find any examples")
             return
-        await interaction.response.send_modal(PronounsTesterModal(value, name))
+        await interaction.response.send_modal(
+            PronounsTesterModal(value, name, self.bot.metrics)
+        )
 
     @app_commands.command(name="suggest-examples")
     async def suggest_examples(self, interaction: discord.Interaction) -> None:
@@ -92,6 +94,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         Hey there! **Make sure you read the instructions before you start!**
         
         **Once you are done, please click the finish button to finish the suggestion**
+        Reference can be found [here](https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html)
         
         In order to provide an example, you will need to follow the templating system used. You essentially use these as variables so when others use your sentence, it will be formatted correctly. Here is the list:
         
@@ -107,8 +110,6 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         - $name is really cute! $subjective_pronoun looks really good in that outfit!
         - $name is a cutiepie uwu! $subjective_pronoun looks likes $subjective_pronoun is ready to go!
         - $name is a very lovely person!
-        
-        If you need this for later reference, these variables can be found here: https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html
         """
         view = SuggestionView(self.bot, interaction, self.pool)
         await interaction.response.send_message(embed=embed, view=view)

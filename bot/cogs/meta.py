@@ -63,6 +63,7 @@ class Meta(commands.Cog):
     async def about(self, interaction: discord.Interaction) -> None:
         """Shows some basic info about Catherine-Chan"""
         total_members = 0
+        total_unique = len(self.bot.users)
 
         for guild in self.bot.guilds:
             total_members += guild.member_count or 0
@@ -83,11 +84,13 @@ class Meta(commands.Cog):
             icon_url="https://cdn.discordapp.com/emojis/596577034537402378.png?size=128",
         )
         embed.add_field(name="Servers Count", value=len(self.bot.guilds))
-        embed.add_field(name="User Count", value=f"{total_members} total")
+        embed.add_field(
+            name="User Count", value=f"{total_members} total\n{total_unique} unique"
+        )
         embed.add_field(
             name="Process", value=f"{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU"
         )
-        embed.add_field(name="Python verson", value=platform.python_version())
+        embed.add_field(name="Python Version", value=platform.python_version())
         embed.add_field(name="Catherine-Chan Version", value=str(self.bot.version))
         embed.add_field(name="Uptime", value=self.get_bot_uptime(brief=True))
         await interaction.response.send_message(embed=embed)

@@ -14,7 +14,7 @@ BE = TypeVar("BE", bound=BaseException)
 class CatherineLogger:
     def __init__(self) -> None:
         self.self = self
-        self.log = logging.getLogger()
+        self.log = logging.getLogger("catherine")
 
     def __enter__(self) -> None:
         max_bytes = 32 * 1024 * 1024  # 32 MiB

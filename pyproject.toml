@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "catherine-chan"
-version = "0.2.8"
+version = "0.3.0"
 description = "An informational LGBTQ based discord bot"
 authors = ["No767 <73260931+No767@users.noreply.github.com>"]
 readme = "README.md"
@@ -19,13 +19,15 @@ discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus.git", re
 msgspec = "^0.18.2"
 langcodes = {extras = ["data"], version = "^3.3.0"}
 discord-ext-ipcx = "^0.1.1"
-pygit2 = "^1.13.0"
+pygit2 = "^1.13.1"
 psutil = "^5.9.5"
+prometheus-client = "^0.17.1"
+prometheus-async = "^22.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
-pyright = "^1.1.327"
-ruff = "^0.0.290"
+pyright = "^1.1.329"
+ruff = "^0.0.291"
 watchfiles = "^0.20.0"
 pyinstrument = "^4.5.3"
 jishaku = "^2.5.1"
