@@ -81,7 +81,9 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         if value is None:
             await interaction.response.send_message("Can't find any examples")
             return
-        await interaction.response.send_modal(PronounsTesterModal(value, name))
+        await interaction.response.send_modal(
+            PronounsTesterModal(value, name, self.bot.metrics)
+        )
 
     @app_commands.command(name="suggest-examples")
     async def suggest_examples(self, interaction: discord.Interaction) -> None:

@@ -45,6 +45,7 @@ class CatherineCommandTree(CommandTree):
             bot, interaction.user.id, bot.pool
         )
         if blacklisted_status is True:
+            bot.metrics.attempted_commands.inc(1)
             await interaction.response.send_message(
                 f"My fellow user, {interaction.user.mention}, you just got the L. You are blacklisted from using this bot. Take an \U0001f1f1, \U0001f1f1oser. [Here is your appeal form](https://media.tenor.com/K9R9beOgPR4AAAAC/fortnite-thanos.gif)"
             )

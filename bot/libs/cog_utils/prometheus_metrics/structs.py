@@ -1,5 +1,5 @@
 import msgspec
-from prometheus_client import Counter, Gauge
+from prometheus_client import Counter, Gauge, Info
 
 
 class GuildMetrics(msgspec.Struct):
@@ -21,3 +21,7 @@ class Metrics(msgspec.Struct):
     user_gauge: Gauge
     user_unique_gauge: Gauge
     commands_gauge: Gauge
+    pronouns_tester_counter: Counter
+    version_info: Info
+    attempted_commands: Counter
+    blacklisted_users: Gauge

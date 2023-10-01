@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import platform
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
-from prometheus_client import Counter, Gauge
+from prometheus_client import Counter, Gauge, Info
 
 from .structs import GuildMetrics, Metrics
 
@@ -85,6 +86,20 @@ def create_gauges() -> Metrics:
         commands_gauge=Gauge(
             f"{METRIC_PREFIX}stat_app_total_commands", "Amount of commands"
         ),
+        pronouns_tester_counter=Counter(
+            f"{METRIC_PREFIX}pronouns_tester",
+            "Amount of successful pronouns tested",
+        ),
+        version_info=Info(
+            "version_info", "Catherine-Chan's current version and other version info"
+        ),
+        attempted_commands=Counter(
+            f"{METRIC_PREFIX}attempted_commands",
+            "Amount of attempted commands ran by blacklised users",
+        ),
+        blacklisted_users=Gauge(
+            f"{METRIC_PREFIX}blacklisted_users", "Number of blacklisted users"
+        ),
     )
 
 
@@ -103,8 +118,18 @@ def fill_gauges(bot: Catherine):
     stats = get_stats(bot)
     bot_metrics = bot.metrics
 
+    bot_metrics.blacklisted_users.set(len(bot.blacklist_cache))
+    bot_metrics.attempted_commands.inc(0)
+    bot_metrics.version_info.info(
+        {
+            "build_version": bot.version,
+            "dpy_version": discord.__version__,
+            "python_version": platform.python_version(),
+        }
+    )
     bot_metrics.commands_gauge.set(stats.total_commands)
     bot_metrics.on_app_command_counter.inc(0)
+    bot_metrics.pronouns_tester_counter.inc(0)
 
     if bot.is_closed():
         bot_metrics.connection_gauge.labels(None).set(0)
