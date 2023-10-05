@@ -8,7 +8,15 @@ sys.path.append(str(path))
 
 
 from libs.cog_utils.pronouns import build_approve_embed
-from libs.utils import ConfirmEmbed, Embed, ErrorEmbed, SuccessEmbed
+from libs.utils import (
+    ConfirmEmbed,
+    Embed,
+    ErrorEmbed,
+    EstrogenEmbed,
+    ProgEmbed,
+    SuccessEmbed,
+    TestosteroneEmbed,
+)
 
 
 class Embeds(commands.Cog):
@@ -30,6 +38,18 @@ class Embeds(commands.Cog):
     @commands.command(name="ee")
     async def ee(self, ctx):
         await ctx.send(embed=ErrorEmbed())
+
+    @commands.command(name="estrogenembed")
+    async def estrogenembed(self, ctx):
+        await ctx.send(embed=EstrogenEmbed())
+
+    @commands.command(name="progestroneembed")
+    async def progestroneembed(self, ctx):
+        await ctx.send(embed=ProgEmbed())
+
+    @commands.command(name="testosteroneembed")
+    async def testosteroneembed(self, ctx):
+        await ctx.send(embed=TestosteroneEmbed())
 
     @commands.command(name="approve")
     async def approve(self, ctx):
