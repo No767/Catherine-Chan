@@ -21,7 +21,7 @@ NG_DL = "ng/dL"
 
 def test_calc_e_poml():
     res = calc_e(AMOUNT, E_CONSTANT, POML_L)
-    assert res["pmol_l_output"] == 0 and res["pg_ml_output"] == 0.544775997234935
+    assert res["pmol_l_output"] == 0 and isclose(res["pg_ml_output"], 0.544775997234935)
 
     second_res = calc_e(AMOUNT, E_CONSTANT, PG_ML)
     assert (
