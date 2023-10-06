@@ -24,6 +24,7 @@ Catherine-Chan is the all in one tookit for LGBTQ+ folks and allies. Catherine-C
 - [x] Informative pronouns and LGBTQ+ terms dictionary
 - [x] Resources for support
 - [x] ToneTags support
+- [x] HRT Measurement Conversion Calculator (consult your doctor first to ensure that it is accurate for you if you need to use this)
 
 And so much more! If you want to suggest a feature, please open up a feature requests report on GitHub!
 
