@@ -12,3 +12,4 @@ class HRTUnit(Enum):
     PG_ML = "pg/mL"
     NMOL_L = "nmol/L"
     NG_DL = "ng/dL"
+    NG_ML = "ng/mL"

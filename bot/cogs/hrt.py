@@ -4,7 +4,7 @@ import discord
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from libs.cog_utils.hrt import HRTType, build_hrt_embed, calc_e, calc_prog_or_t
+from libs.cog_utils.hrt import HRTType, build_hrt_embed, calc_e, calc_prog, calc_t
 from libs.utils import EstrogenEmbed, ProgEmbed, TestosteroneEmbed
 
 
@@ -41,16 +41,20 @@ class HRTConversion(commands.Cog):
             )
             return
 
-        # Since the measurements for E are different, we need to handle them separately completely
+        # The way Triona handles it is 3 different commands
+        # I rather explicitly make them into one if/elif/else stack for clarity's sake
         if type == HRTType.Estradiol.value:
-            converted_values = calc_e(amount, master_lookup[type]["constant"], units)
-            embed = build_hrt_embed(master_lookup[type]["embed"], converted_values)
+            e_values = calc_e(amount, master_lookup[type]["constant"], units)
+            embed = build_hrt_embed(master_lookup[type]["embed"], e_values)
             await interaction.response.send_message(embed=embed)
-            return
-
-        values = calc_prog_or_t(amount, master_lookup[type]["constant"], units)
-        embed = build_hrt_embed(master_lookup[type]["embed"], values)
-        await interaction.response.send_message(embed=embed)
+        elif type == HRTType.Progesterone.value:
+            prog_values = calc_prog(amount, master_lookup[type]["constant"], units)
+            embed = build_hrt_embed(master_lookup[type]["embed"], prog_values)
+            await interaction.response.send_message(embed=embed)
+        else:
+            t_values = calc_t(amount, master_lookup[type]["constant"], units)
+            embed = build_hrt_embed(master_lookup[type]["embed"], t_values)
+            await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot: Catherine) -> None:
