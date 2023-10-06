@@ -15,7 +15,7 @@ The modern all-in-one toolkit for LGBTQ+ folks
 Catherine-Chan is the all in one tookit for LGBTQ+ folks and allies. Catherine-Chan provides a wide varity of features, such as creating pride profiles, definitions for the LGBTQ+ community, and many others. 
 
 > [!IMPORTANT]
-> I would prefer if you do not run instances of Catherine-Chan. Just use the `/invite` command or use the Top.gg invite to have the bot on your server instead. The code provided is for educational use and for others to provide suggestions, catch issues, and feedback only.
+> I would prefer if you do not run instances of Catherine-Chan. Just use the `/invite` command or use the Top.gg invite to have the bot on your server instead. The code provided is for educational use, providing suggestions and feedback, and to catch issues only.
 
 ## Features
 
