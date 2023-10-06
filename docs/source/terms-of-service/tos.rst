@@ -1,6 +1,8 @@
 Terms of Service
 =================
 
+*Effective October 6, 2023*
+
 By using the services provided by Catherine-Chan, you agree to follow these terms stated below.
 
 1. Don't make any content that discriminates against others based on age, ability, gender, sexuality, race, ethnicity, nationality, creed or any other trait. 

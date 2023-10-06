@@ -24,11 +24,12 @@ Project Structure
     |       `-- "utils"
     |           |-- "__init__.py"
     |           |-- "pages"
-    |-- "migrations"
     |-- "docker"
+    |-- "docs"
     |-- "envs"
-    |-- "tests"
-    `-- "requirements"
+    |-- "migrations"
+    |-- "requirements"
+    `-- "tests"
 
 
 Figure 1 - The most simplified version of the project structure.
@@ -43,7 +44,8 @@ Above shown in Figure 1, is the project structure. Some folders will need to hav
     * ``utils`` - All of the utility functions, coroutines, and others that are not related to a specific cog get placed here. 
         * ``pages`` - Catherine-Chan's custom ``discord-ext-menu`` paginator and all utilities for that are located here. The paginator is a modified version of `RoboDanny's paginator <https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/utils/paginator.py#L30C1-L233C20>`_ that is modified to work for interactions only.
 * ``docker`` - Contains the Dockerfiles that can be used to build Catherine-Chan.
+* ``docs`` - Contains the documentation that you are reading right now.
 * ``envs`` - ENV file templates
-* ``tests`` - All unit tests go in here. These are separated by feature. 
 * ``migrations`` - Contains all SQL migrations. They have to be written out like this: ``<date>_rev<num>_up_rev<num>.sql``. This project uses `asyncpg-trek <https://github.com/adriangb/asyncpg-trek>`_ as the migration handler. I'm not the one who made this library. If you want some examples, please see the `repo tests <https://github.com/adriangb/asyncpg-trek/tree/main/tests/asyncpg_revisions>`_.
 * ``requirements`` - Poetry-exported requirements.txt file. These are exported by Poetry for production use. If you want to install the packages for development use, please use Poetry instead.
+* ``tests`` - All unit tests go in here. These are separated by feature. 

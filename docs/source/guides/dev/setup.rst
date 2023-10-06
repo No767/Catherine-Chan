@@ -22,7 +22,7 @@ Local Setup
 
     .. code-block:: bash
 
-        poetry install --with=dev,docs
+        poetry install
 
 3. Copy the ENV files into the correct places
 
