@@ -5,10 +5,20 @@ from typing import TYPE_CHECKING
 import asyncpg
 import discord
 from libs.cog_utils.commons import register_user
-from libs.cog_utils.pronouns import build_approve_embed
+from libs.cog_utils.pronouns import build_approve_embed, validate_for_templating
 
 APPROVAL_CHANNEL_ID = 1150575176006782976
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
+
+INVALID_EXAMPLE_REASON = """
+It seems you tried to submit an invalid example. The example may be invalid for the following reasons:
+
+1. The example includes one or more variables that are invalid
+2. Your example contains no variables at all.
+
+Please fix your example based on these two reasons.
+"""
+
 
 if TYPE_CHECKING:
     from bot.catherinecore import Catherine
@@ -39,6 +49,12 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
         self.add_item(self.example_sentence)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        if validate_for_templating(self.sentence.value) is False:
+            await interaction.response.send_message(
+                INVALID_EXAMPLE_REASON, ephemeral=True
+            )
+            return
+
         query = """
         INSERT INTO pronouns_examples (sentence, user_id)
         VALUES ($2, $1)
@@ -46,7 +62,6 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
         """
         async with self.pool.acquire() as conn:
             await register_user(interaction.user.id, conn)
-            # TODO: Check for any templating at all. If none, invalidate the sentence
             status = await conn.fetchval(
                 query, interaction.user.id, self.sentence.value
             )

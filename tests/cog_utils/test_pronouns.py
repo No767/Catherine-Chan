@@ -15,6 +15,7 @@ from libs.cog_utils.pronouns import (
     convert_to_proper_sentence,
     parse_pronouns,
     parse_pronouns_sentence,
+    validate_for_templating,
 )
 
 new_bot = bot
@@ -73,3 +74,32 @@ def test_convert_to_proper_name():
 
     attempted_converted_name = convert_to_proper_name(improper_name)
     assert attempted_converted_name == improper_name
+
+
+def test_validate_template():
+    template = "$subjective_pronoun is cute!"
+    template_with_name = "$subjective_pronoun is hanging out with $name today."
+    invalid_template = "$sfsdf is cute"
+    valid_with_invalid_template = (
+        "$name is cute and $subjfct_pronoun is hanging out with $name"
+    )
+    no_spaces = "$sfsfiscute"
+    no_variables = "sfdsfsdf"
+
+    first_template = validate_for_templating(template)
+    assert first_template is True
+
+    second_template = validate_for_templating(template_with_name)
+    assert second_template is True
+
+    third_template = validate_for_templating(invalid_template)
+    assert third_template is False
+
+    fourth_template = validate_for_templating(no_spaces)
+    assert fourth_template is False
+
+    mix_template = validate_for_templating(valid_with_invalid_template)
+    assert mix_template is False
+
+    no_variables_template = validate_for_templating(no_variables)
+    assert no_variables_template is False

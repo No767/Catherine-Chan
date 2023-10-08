@@ -73,3 +73,20 @@ def convert_to_proper_name(name: str) -> str:
         for word in possible_match.group().split()
     )
     return parsed_str
+
+
+def validate_for_templating(sentence: str) -> bool:
+    valid_variables = [
+        "$subjective_pronoun",
+        "$objective_pronoun",
+        "$possessive_pronoun",
+        "$possessive_determiner",
+        "$reflective_pronoun",
+        "$name",
+    ]
+    result = [item for item in sentence.split(" ") if item.startswith("$")]
+    if len(result) == 0:
+        return False
+
+    is_valid = all(var in valid_variables for var in result)
+    return is_valid
