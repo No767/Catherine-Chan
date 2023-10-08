@@ -4,7 +4,7 @@ import discord
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from libs.cog_utils.tonetags import edit_tonetag, get_tonetags
+from libs.cog_utils.tonetags import edit_tonetag, get_tonetags, parse_tonetag
 from libs.ui.tonetags import (
     BareToneTagsPages,
     CreateToneTagModal,
@@ -15,6 +15,8 @@ from libs.ui.tonetags import (
     ToneTagPages,
 )
 from libs.utils import ConfirmEmbed
+
+NO_TONETAGS_FOUND = "No tonetags were found"
 
 
 class ToneTags(commands.GroupCog, name="tonetags"):
@@ -41,6 +43,9 @@ class ToneTags(commands.GroupCog, name="tonetags"):
             LIMIT 100;
             """
             records = await self.pool.fetch(query)
+
+            if len(records) == 0:
+                await interaction.response.send_message(NO_TONETAGS_FOUND)
             pages = ToneTagPages(entries=records, interaction=interaction)
             await pages.start()
             return
@@ -49,7 +54,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         if isinstance(tonetags, str):
             await interaction.response.send_message(tonetags)
         elif tonetags is None:
-            await interaction.response.send_message("No tonetags were found")
+            await interaction.response.send_message(NO_TONETAGS_FOUND)
         else:
             pages = ToneTagPages(entries=tonetags, interaction=interaction)  # type: ignore
             await pages.start()
@@ -62,9 +67,12 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         SELECT tonetags_lookup.indicator, tonetags.author_id, tonetags_lookup.tonetags_id
         FROM tonetags_lookup
         INNER JOIN tonetags ON tonetags.id = tonetags_lookup.tonetags_id
+        WHERE tonetags_lookup.indicator % $1
+        ORDER BY similarity(tonetags_lookup.indicator, $1) DESC
         LIMIT 100;
         """
-        records = await self.pool.fetch(sql)
+        parsed_query = parse_tonetag(query)
+        records = await self.pool.fetch(sql, parsed_query)
         if records:
             pages = SimpleToneTagsPages(entries=records, interaction=interaction)
             await pages.start()
