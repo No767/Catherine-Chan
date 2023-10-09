@@ -26,7 +26,7 @@ prometheus-async = "^22.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
-pyright = "^1.1.329"
+pyright = "^1.1.330"
 ruff = "^0.0.292"
 watchfiles = "^0.20.0"
 pyinstrument = "^4.5.3"
