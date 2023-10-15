@@ -82,13 +82,9 @@ class CatherineCommandTree(CommandTree):
     async def on_error(
         self, interaction: discord.Interaction, error: AppCommandError
     ) -> None:
-        if isinstance(error, MissingPermissions):
-            await interaction.response.send_message(
-                embed=_build_missing_perm_embed(
-                    error.missing_permissions, interaction.user
-                )
-            )
-        elif isinstance(error, BotMissingPermissions):
+        if isinstance(error, MissingPermissions) or isinstance(
+            error, BotMissingPermissions
+        ):
             await interaction.response.send_message(
                 embed=_build_missing_perm_embed(
                     error.missing_permissions, interaction.user
