@@ -1,38 +1,93 @@
-from typing import Any, Dict, List, Union
+from typing import List, Union
 
 import asyncpg
 from libs.cog_utils.commons import register_user
 
-from .utils import format_options, parse_tonetag
+from .structs import (
+    ExactAndSimilarTonetags,
+    SimilarTonetags,
+    StatsBareToneTag,
+    TonetagInfo,
+)
+from .utils import parse_tonetag
 
 
-async def get_tonetags(
+async def get_exact_and_similar_tonetags(
     indicator: str, pool: asyncpg.Pool
-) -> Union[str, List[Dict[str, Any]], None]:
+) -> Union[List[ExactAndSimilarTonetags], None]:
     query = """
-    SELECT tonetags_lookup.indicator, tonetags.definition, tonetags.created_at, tonetags.author_id, tonetags_lookup.tonetags_id
+    SELECT indicator, definition
+    FROM tonetags
+    WHERE tonetags.indicator % $1
+    ORDER BY similarity(indicator, $1) DESC
+    LIMIT 100;
+    """
+    records = await pool.fetch(query, indicator)
+    if len(records) == 0:
+        return None
+    return [ExactAndSimilarTonetags(record) for record in records]
+
+
+async def get_tonetag_info(
+    indicator: str, pool: asyncpg.Pool
+) -> Union[TonetagInfo, None]:
+    query = """
+    SELECT tonetags_lookup.indicator, tonetags.definition, tonetags.created_at, tonetags.author_id, tonetags.uses, tonetags_lookup.tonetags_id
     FROM tonetags_lookup
     INNER JOIN tonetags ON tonetags.id = tonetags_lookup.tonetags_id
-    WHERE LOWER(tonetags_lookup.indicator) = $1
-    LIMIT 100;
+    WHERE LOWER(tonetags_lookup.indicator) = $1;
+    """
+    parsed_tonetag = parse_tonetag(indicator)
+    result = await pool.fetchrow(query, parsed_tonetag)
+    if result is None:
+        return None
+    return TonetagInfo(result)
+
+
+async def get_tonetag(
+    indicator: str, pool: asyncpg.Pool
+) -> Union[TonetagInfo, List[SimilarTonetags], None]:
+    query = """
+    SELECT tonetags_lookup.indicator, tonetags.definition, tonetags.created_at, tonetags.author_id, tonetags.uses, tonetags_lookup.tonetags_id
+    FROM tonetags_lookup
+    INNER JOIN tonetags ON tonetags.id = tonetags_lookup.tonetags_id
+    WHERE LOWER(tonetags_lookup.indicator) = $1;
+    """
+    update_query = """
+    UPDATE tonetags
+    SET uses = uses + 1
+    WHERE id = $1;
     """
     parsed_tonetag = parse_tonetag(indicator)
     async with pool.acquire() as conn:
-        res = await conn.fetch(query, parsed_tonetag)
-        if len(res) == 0:
-            query = """
+        first_result = await conn.fetchrow(query, parsed_tonetag)
+        if first_result is None:
+            search_query = """
             SELECT tonetags_lookup.indicator
             FROM tonetags_lookup
             WHERE tonetags_lookup.indicator % $1
             ORDER BY similarity(tonetags_lookup.indicator, $1) DESC
             LIMIT 5;
             """
-            new_res = await conn.fetch(query, parsed_tonetag)
-            if len(new_res) == 0:
+            search_result = await conn.fetch(search_query, parsed_tonetag)
+            if len(search_result) == 0:
                 return None
+            return [SimilarTonetags(row) for row in search_result]
 
-            return format_options([dict(row) for row in new_res])
-        return [dict(row) for row in res]
+        await conn.execute(update_query, first_result["tonetags_id"])
+        return TonetagInfo(first_result)
+
+
+async def get_top_tonetags(pool: asyncpg.Pool) -> List[StatsBareToneTag]:
+    query = """
+    SELECT tonetags_lookup.indicator, tonetags.uses, tonetags_lookup.tonetags_id
+    FROM tonetags_lookup
+    INNER JOIN tonetags ON tonetags.id = tonetags_lookup.tonetags_id
+    ORDER BY tonetags.uses DESC
+    LIMIT 100;
+    """
+    records = await pool.fetch(query)
+    return [StatsBareToneTag(row) for row in records]
 
 
 async def edit_tonetag(

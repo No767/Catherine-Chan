@@ -1,8 +1,9 @@
 from typing import Any, Dict
 
 from discord.utils import format_dt
+from libs.cog_utils.tonetags import ExactAndSimilarTonetags
 
-from .structs import BareToneTag, SimpleToneTag, ToneTagInfo
+from .structs import BareToneTag, SimpleToneTag, StatsBareToneTag, ToneTagInfo
 
 
 class ToneTagInfoPageEntry:
@@ -54,4 +55,31 @@ class BareToneTagPageEntry:
         self.tonetags_id = entry["tonetags_id"]
 
     def __str__(self) -> str:
-        return f"/{self.indicator} (ID: {self.tonetags_id})"
+        return f"{self.indicator} (ID: {self.tonetags_id})"
+
+
+class ESTonetagsPageEntry:
+    __slots__ = ("indicator", "definition", "created_at")
+
+    def __init__(self, entry: ExactAndSimilarTonetags):
+        self.indicator = entry["indicator"]
+        self.definition = entry["definition"]
+
+    def to_dict(self) -> Dict[str, Any]:
+        data = {
+            "title": f"/{self.indicator}",
+            "description": self.definition,
+        }
+        return data
+
+
+class StatsBareToneTagPageEntry:
+    __slots__ = ("indicator", "uses", "tonetags_id")
+
+    def __init__(self, entry: StatsBareToneTag):
+        self.indicator = entry["indicator"]
+        self.uses = entry["uses"]
+        self.tonetags_id = entry["tonetags_id"]
+
+    def __str__(self) -> str:
+        return f"{self.indicator} (Uses: {self.uses} | ID: {self.tonetags_id})"

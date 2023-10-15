@@ -1,5 +1,11 @@
 from .modals import CreateToneTagModal, EditToneTagModal
-from .pages import BareToneTagsPages, SimpleToneTagsPages, ToneTagPages
+from .pages import (
+    BareToneTagsPages,
+    ESToneTagsPages,
+    SimpleToneTagsPages,
+    StatsBareToneTagsPages,
+    ToneTagPages,
+)
 from .views import DeleteToneTagViaIDView, DeleteToneTagView
 
 __all__ = [
@@ -10,4 +16,6 @@ __all__ = [
     "ToneTagPages",
     "SimpleToneTagsPages",
     "BareToneTagsPages",
+    "ESToneTagsPages",
+    "StatsBareToneTagsPages",
 ]
