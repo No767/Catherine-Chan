@@ -201,7 +201,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
     @app_commands.command(name="create")
     async def create(self, interaction: discord.Interaction) -> None:
         """Creates an new tonetag"""
-        modal = CreateToneTagModal(self.pool)
+        modal = CreateToneTagModal(interaction, self.pool)
         await interaction.response.send_modal(modal)
 
     @app_commands.command(name="edit")
@@ -229,7 +229,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
                     ephemeral=True,
                 )
                 return
-            modal = EditToneTagModal(indicator, old_def, self.pool)
+            modal = EditToneTagModal(interaction, indicator, old_def, self.pool)
             await interaction.response.send_modal(modal)
             return
 

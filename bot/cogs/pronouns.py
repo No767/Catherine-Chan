@@ -82,7 +82,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
             await interaction.response.send_message("Can't find any examples")
             return
         await interaction.response.send_modal(
-            PronounsTesterModal(value, name, self.bot.metrics)
+            PronounsTesterModal(interaction, value, name, self.bot.metrics)
         )
 
     @app_commands.command(name="suggest-examples")

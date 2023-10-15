@@ -1,11 +1,12 @@
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import create_tonetag, edit_tonetag
+from libs.utils import CatherineModal
 
 
-class CreateToneTagModal(discord.ui.Modal, title="Create a ToneTag"):
-    def __init__(self, pool: asyncpg.Pool):
-        super().__init__()
+class CreateToneTagModal(CatherineModal, title="Create a ToneTag"):
+    def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool):
+        super().__init__(interaction)
         self.pool = pool
         self.indicator = discord.ui.TextInput(
             label="Indicator",
@@ -30,17 +31,16 @@ class CreateToneTagModal(discord.ui.Modal, title="Create a ToneTag"):
         )
         await interaction.response.send_message(status, ephemeral=True)
 
-    async def on_error(
-        self, interaction: discord.Interaction, error: Exception
-    ) -> None:
-        await interaction.response.send_message(
-            f"An error occurred ({error.__class__.__name__})", ephemeral=True
-        )
 
-
-class EditToneTagModal(discord.ui.Modal, title="Edit a ToneTag"):
-    def __init__(self, indicator: str, old_definition: str, pool: asyncpg.Pool):
-        super().__init__()
+class EditToneTagModal(CatherineModal, title="Edit a ToneTag"):
+    def __init__(
+        self,
+        interaction: discord.Interaction,
+        indicator: str,
+        old_definition: str,
+        pool: asyncpg.Pool,
+    ):
+        super().__init__(interaction=interaction)
         self.pool = pool
         self.indicator = indicator
         self.old_definition = old_definition

@@ -5,11 +5,18 @@ from libs.cog_utils.pronouns import (
     convert_to_proper_sentence,
     parse_pronouns_sentence,
 )
+from libs.utils import CatherineModal
 
 
-class PronounsTesterModal(discord.ui.Modal, title="Input the fields"):
-    def __init__(self, sentence: str, name: str, metrics: Metrics):
-        super().__init__()
+class PronounsTesterModal(CatherineModal, title="Input the fields"):
+    def __init__(
+        self,
+        interaction: discord.Interaction,
+        sentence: str,
+        name: str,
+        metrics: Metrics,
+    ):
+        super().__init__(interaction=interaction)
         self.sentence = sentence
         self.name = name
         self.metrics = metrics

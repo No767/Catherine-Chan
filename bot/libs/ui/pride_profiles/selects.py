@@ -22,5 +22,5 @@ class SelectPrideCategory(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction) -> None:
         value = self.values[0]
-        edit_modal = EditProfileModal(value, self.pool)
+        edit_modal = EditProfileModal(interaction, value, self.pool)
         await interaction.response.send_modal(edit_modal)

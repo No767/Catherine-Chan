@@ -1,28 +1,17 @@
 import asyncpg
 import discord
 from libs.cog_utils.commons import register_user
-from libs.utils import ErrorEmbed, SuccessEmbed
+from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed
 
 from .selects import SelectPrideCategory
 
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
 
-class ConfirmRegisterView(discord.ui.View):
+class ConfirmRegisterView(CatherineView):
     def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool) -> None:
-        super().__init__()
-        self.interaction = interaction
+        super().__init__(interaction=interaction)
         self.pool = pool
-
-    # The RDanny styled interaction check
-    async def interaction_check(self, interaction: discord.Interaction, /):
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
 
     @discord.ui.button(
         label="Confirm",
@@ -70,20 +59,10 @@ class ConfirmRegisterView(discord.ui.View):
         self.stop()
 
 
-class ConfigureView(discord.ui.View):
+class ConfigureView(CatherineView):
     def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool) -> None:
-        super().__init__()
+        super().__init__(interaction=interaction)
         self.add_item(SelectPrideCategory(pool))
-        self.interaction = interaction
-
-    async def interaction_check(self, interaction: discord.Interaction, /):
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
 
     @discord.ui.button(label="Finish", style=discord.ButtonStyle.green, row=1)
     async def finish(
@@ -94,20 +73,10 @@ class ConfigureView(discord.ui.View):
         self.stop()
 
 
-class DeleteProfileView(discord.ui.View):
+class DeleteProfileView(CatherineView):
     def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool) -> None:
-        super().__init__()
-        self.interaction = interaction
+        super().__init__(interaction=interaction)
         self.pool = pool
-
-    async def interaction_check(self, interaction: discord.Interaction, /):
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
 
     @discord.ui.button(
         label="Confirm",
