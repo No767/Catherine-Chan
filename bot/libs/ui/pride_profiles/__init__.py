@@ -1,18 +1,18 @@
-from .pages import ProfileSearchPages, ProfileStatsPages
-from .selects import SelectPrideCategory
-from .structs import SimpleProfileEntry, SimpleViewsEntry
-from .utils import SimpleProfilesPageEntry, ViewsProfilePageEntry
-from .views import ConfigureView, ConfirmRegisterView, DeleteProfileView
-
-__all__ = [
-    "SelectPrideCategory",
-    "ConfirmRegisterView",
-    "ConfigureView",
-    "SimpleProfilesPageEntry",
-    "SimpleProfileEntry",
-    "ProfileSearchPages",
-    "ViewsProfilePageEntry",
-    "SimpleViewsEntry",
-    "ProfileStatsPages",
-    "DeleteProfileView",
-]
+from .pages import (
+    ProfileSearchPages as ProfileSearchPages,
+    ProfileStatsPages as ProfileStatsPages,
+)
+from .selects import SelectPrideCategory as SelectPrideCategory
+from .structs import (
+    SimpleProfileEntry as SimpleProfileEntry,
+    SimpleViewsEntry as SimpleViewsEntry,
+)
+from .utils import (
+    SimpleProfilesPageEntry as SimpleProfilesPageEntry,
+    ViewsProfilePageEntry as ViewsProfilePageEntry,
+)
+from .views import (
+    ConfigureView as ConfigureView,
+    ConfirmRegisterView as ConfirmRegisterView,
+    DeleteProfileView as DeleteProfileView,
+)

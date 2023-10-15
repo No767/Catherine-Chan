@@ -51,6 +51,9 @@ dpytest = "^0.7.0"
 
 [tool.isort]
 profile = 'black'
+combine_as_imports = true
+combine_star = true
+line_length = 80
 
 [tool.pyright]
 include = ["bot/**"]

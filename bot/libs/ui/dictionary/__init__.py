@@ -1,18 +1,12 @@
-from .pages import DictInclusivePages, DictNounsPages, DictPPPages, DictTermsPages
-from .structs import (
-    DictInclusiveEntry,
-    DictNounsEntry,
-    DictPronounsPageEntry,
-    DictTermsEntry,
+from .pages import (
+    DictInclusivePages as DictInclusivePages,
+    DictNounsPages as DictNounsPages,
+    DictPPPages as DictPPPages,
+    DictTermsPages as DictTermsPages,
 )
-
-__all__ = [
-    "DictPronounsPageEntry",
-    "DictInclusiveEntry",
-    "DictTermsEntry",
-    "DictNounsEntry",
-    "DictPPPages",
-    "DictInclusivePages",
-    "DictNounsPages",
-    "DictTermsPages",
-]
+from .structs import (
+    DictInclusiveEntry as DictInclusiveEntry,
+    DictNounsEntry as DictNounsEntry,
+    DictPronounsPageEntry as DictPronounsPageEntry,
+    DictTermsEntry as DictTermsEntry,
+)

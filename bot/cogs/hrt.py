@@ -4,7 +4,13 @@ import discord
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from libs.cog_utils.hrt import HRTType, build_hrt_embed, calc_e, calc_prog, calc_t
+from libs.cog_utils.hrt import (
+    HRTType,
+    build_hrt_embed,
+    calc_e,
+    calc_prog,
+    calc_t,
+)
 from libs.utils import EstrogenEmbed, ProgEmbed, TestosteroneEmbed
 
 

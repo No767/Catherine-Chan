@@ -1,20 +1,12 @@
-from .modals import PronounsTesterModal
-from .profile_pages import PronounsProfilePages
+from .modals import PronounsTesterModal as PronounsTesterModal
+from .profile_pages import PronounsProfilePages as PronounsProfilePages
 from .structs import (
-    PronounsProfileCircleEntry,
-    PronounsProfileEntry,
-    PronounsValuesEntry,
-    PronounsWordsEntry,
+    PronounsProfileCircleEntry as PronounsProfileCircleEntry,
+    PronounsProfileEntry as PronounsProfileEntry,
+    PronounsValuesEntry as PronounsValuesEntry,
+    PronounsWordsEntry as PronounsWordsEntry,
 )
-from .views import ApprovePronounsExampleView, SuggestionView
-
-__all__ = [
-    "PronounsProfileCircleEntry",
-    "PronounsValuesEntry",
-    "PronounsProfileEntry",
-    "PronounsWordsEntry",
-    "PronounsProfilePages",
-    "ApprovePronounsExampleView",
-    "SuggestionView",
-    "PronounsTesterModal",
-]
+from .views import (
+    ApprovePronounsExampleView as ApprovePronounsExampleView,
+    SuggestionView as SuggestionView,
+)
