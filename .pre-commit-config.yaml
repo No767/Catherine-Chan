@@ -28,6 +28,13 @@ repos:
         name: AutoFlake
         description: "Format with AutoFlake"
         stages: [commit]
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.292
+    hooks:
+      - id: ruff
+        name: Ruff
+        args: ["--fix", "--exit-non-zero-on-fix", "--ignore", "S101"]
         
 -   repo: https://github.com/PyCQA/isort
     rev: 5.12.0
