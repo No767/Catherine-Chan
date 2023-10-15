@@ -19,3 +19,10 @@ class SimpleToneTag(TypedDict):
 class BareToneTag(TypedDict):
     indicator: str
     tonetags_id: int
+
+
+# Here to avoid circular imports
+class StatsBareToneTag(TypedDict):
+    indicator: str
+    uses: int
+    tonetags_id: int

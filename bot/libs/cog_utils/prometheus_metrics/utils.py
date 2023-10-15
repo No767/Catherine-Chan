@@ -100,6 +100,16 @@ def create_gauges() -> Metrics:
         blacklisted_users=Gauge(
             f"{METRIC_PREFIX}blacklisted_users", "Number of blacklisted users"
         ),
+        successful_tonetags=Counter(
+            f"{METRIC_PREFIX}successful_tonetags",
+            "Number of successful tonetags gotten",
+        ),
+        created_tonetags=Counter(
+            f"{METRIC_PREFIX}created_tonetags", "Number of created tonetags"
+        ),
+        deleted_tonetags=Counter(
+            f"{METRIC_PREFIX}deleted_tonetags", "Number of deleted tonetags"
+        ),
     )
 
 
@@ -130,6 +140,9 @@ def fill_gauges(bot: Catherine):
     bot_metrics.commands_gauge.set(stats.total_commands)
     bot_metrics.on_app_command_counter.inc(0)
     bot_metrics.pronouns_tester_counter.inc(0)
+    bot_metrics.successful_tonetags.inc(0)
+    bot_metrics.created_tonetags.inc(0)
+    bot_metrics.deleted_tonetags.inc(0)
 
     if bot.is_closed():
         bot_metrics.connection_gauge.labels(None).set(0)

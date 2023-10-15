@@ -1,11 +1,14 @@
 import asyncpg
 import discord
 from libs.cog_utils.pride_profiles import snake_case_to_title
+from libs.utils import CatherineModal
 
 
-class EditProfileModal(discord.ui.Modal, title="Edit Profile"):
-    def __init__(self, profile_type: str, pool: asyncpg.Pool) -> None:
-        super().__init__()
+class EditProfileModal(CatherineModal, title="Edit Profile"):
+    def __init__(
+        self, interaction: discord.Interaction, profile_type: str, pool: asyncpg.Pool
+    ) -> None:
+        super().__init__(interaction=interaction)
         self.pool = pool
         self.profile_type = profile_type
         self.cleaned_type = snake_case_to_title(profile_type)
@@ -21,6 +24,7 @@ class EditProfileModal(discord.ui.Modal, title="Edit Profile"):
         # https://github.com/MagicStack/asyncpg/issues/208
         # Because of this, we are going to use it the good old fashioned way
         # not the best lol
+
         query = """
         UPDATE profiles
         SET name = $2
@@ -52,6 +56,6 @@ class EditProfileModal(discord.ui.Modal, title="Edit Profile"):
             """
         await self.pool.execute(query, interaction.user.id, self.profile_category.value)
         await interaction.response.send_message(
-            f'Changed your "{self.cleaned_type}" status to "{self.profile_category.value}"',
+            f"Changed your `{self.cleaned_type}` status to `{self.profile_category.value}`",
             ephemeral=True,
         )

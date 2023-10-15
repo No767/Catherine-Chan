@@ -5,19 +5,34 @@ from typing import TYPE_CHECKING
 import asyncpg
 import discord
 from libs.cog_utils.commons import register_user
-from libs.cog_utils.pronouns import build_approve_embed
+from libs.cog_utils.pronouns import build_approve_embed, validate_for_templating
+from libs.utils import CatherineModal, CatherineView
 
 APPROVAL_CHANNEL_ID = 1150575176006782976
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
+
+INVALID_EXAMPLE_REASON = """
+It seems you tried to submit an invalid example. The example may be invalid for the following reasons:
+
+1. The example includes one or more variables that are invalid
+2. Your example contains no variables at all.
+
+Please fix your example based on these two reasons.
+"""
+
 
 if TYPE_CHECKING:
     from bot.catherinecore import Catherine
 
 
 # This modal is in here to avoid circular imports
-class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example"):
-    def __init__(self, bot: Catherine, pool: asyncpg.Pool) -> None:
-        super().__init__(custom_id="suggest_pronouns_example:modal")
+class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
+    def __init__(
+        self, interaction: discord.Interaction, bot: Catherine, pool: asyncpg.Pool
+    ) -> None:
+        super().__init__(
+            interaction=interaction, custom_id="suggest_pronouns_example:modal"
+        )
         self.sentence = discord.ui.TextInput(
             label="Sentence",
             placeholder="Enter your sentence",
@@ -39,6 +54,12 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
         self.add_item(self.example_sentence)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        if validate_for_templating(self.sentence.value) is False:
+            await interaction.response.send_message(
+                INVALID_EXAMPLE_REASON, ephemeral=True
+            )
+            return
+
         query = """
         INSERT INTO pronouns_examples (sentence, user_id)
         VALUES ($2, $1)
@@ -46,7 +67,6 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
         """
         async with self.pool.acquire() as conn:
             await register_user(interaction.user.id, conn)
-            # TODO: Check for any templating at all. If none, invalidate the sentence
             status = await conn.fetchval(
                 query, interaction.user.id, self.sentence.value
             )
@@ -78,14 +98,6 @@ class SuggestPronounsExamplesModal(discord.ui.Modal, title="Suggest an example")
                     "The sentence you are trying to suggest already exists!",
                     ephemeral=True,
                 )
-
-    async def on_error(
-        self, interaction: discord.Interaction, error: Exception
-    ) -> None:
-        await interaction.response.send_message(
-            f"An error occured: ({error.__class__.__name__}): {str(error)}",
-            ephemeral=True,
-        )
 
 
 # This is a persistent view
@@ -142,23 +154,13 @@ class ApprovePronounsExampleView(discord.ui.View):
         )
 
 
-class SuggestionView(discord.ui.View):
+class SuggestionView(CatherineView):
     def __init__(
         self, bot: Catherine, interaction: discord.Interaction, pool: asyncpg.Pool
     ):
         self.bot = bot
-        self.interaction = interaction
         self.pool = pool
-        super().__init__()
-
-    async def interaction_check(self, interaction: discord.Interaction, /):
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
+        super().__init__(interaction=interaction)
 
     @discord.ui.button(
         label="Start",
@@ -167,7 +169,7 @@ class SuggestionView(discord.ui.View):
     async def start(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ) -> None:
-        modal = SuggestPronounsExamplesModal(self.bot, self.pool)
+        modal = SuggestPronounsExamplesModal(interaction, self.bot, self.pool)
         await interaction.response.send_modal(modal)
 
     @discord.ui.button(

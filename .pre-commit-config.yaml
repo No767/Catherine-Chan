@@ -24,10 +24,17 @@ repos:
     rev: v2.2.0
     hooks:
     -   id: autoflake
-        args: ["--in-place", "--remove-unused-variables", "--remove-all-unused-imports", "--recursive"]
+        args: ["--in-place", "--remove-unused-variables", "--recursive"]
         name: AutoFlake
         description: "Format with AutoFlake"
         stages: [commit]
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.292
+    hooks:
+      - id: ruff
+        name: Ruff
+        args: ["--fix", "--exit-non-zero-on-fix", "--config", "pyproject.toml"]
         
 -   repo: https://github.com/PyCQA/isort
     rev: 5.12.0

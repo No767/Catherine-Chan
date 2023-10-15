@@ -1,11 +1,17 @@
 import asyncpg
 import discord
-from libs.cog_utils.tonetags import create_tonetag, edit_tonetag
+from libs.cog_utils.tonetags import (
+    create_tonetag,
+    edit_tonetag,
+    parse_tonetag,
+    validate_tonetag,
+)
+from libs.utils import CatherineModal
 
 
-class CreateToneTagModal(discord.ui.Modal, title="Create a ToneTag"):
-    def __init__(self, pool: asyncpg.Pool):
-        super().__init__()
+class CreateToneTagModal(CatherineModal, title="Create a ToneTag"):
+    def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool):
+        super().__init__(interaction)
         self.pool = pool
         self.indicator = discord.ui.TextInput(
             label="Indicator",
@@ -25,22 +31,26 @@ class CreateToneTagModal(discord.ui.Modal, title="Create a ToneTag"):
         self.add_item(self.definition)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        parsed_tonetag = parse_tonetag(self.indicator.value)
+        if validate_tonetag(parsed_tonetag) is False:
+            await interaction.response.send_message("The tonetag is invalid.")
+            return
+
         status = await create_tonetag(
             self.indicator.value, self.definition.value, interaction.user.id, self.pool
         )
         await interaction.response.send_message(status, ephemeral=True)
 
-    async def on_error(
-        self, interaction: discord.Interaction, error: Exception
-    ) -> None:
-        await interaction.response.send_message(
-            f"An error occurred ({error.__class__.__name__})", ephemeral=True
-        )
 
-
-class EditToneTagModal(discord.ui.Modal, title="Edit a ToneTag"):
-    def __init__(self, indicator: str, old_definition: str, pool: asyncpg.Pool):
-        super().__init__()
+class EditToneTagModal(CatherineModal, title="Edit a ToneTag"):
+    def __init__(
+        self,
+        interaction: discord.Interaction,
+        indicator: str,
+        old_definition: str,
+        pool: asyncpg.Pool,
+    ):
+        super().__init__(interaction=interaction)
         self.pool = pool
         self.indicator = indicator
         self.old_definition = old_definition
@@ -55,14 +65,15 @@ class EditToneTagModal(discord.ui.Modal, title="Edit a ToneTag"):
         self.add_item(self.definition)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        parsed_tonetag = parse_tonetag(self.indicator)
         status = await edit_tonetag(
-            self.indicator, self.definition.value, interaction.user.id, self.pool
+            parsed_tonetag, self.definition.value, interaction.user.id, self.pool
         )
         if status[-1] != "0":
             await interaction.response.send_message(
-                f"Tonetag `{self.indicator}` successfully editted"
+                f"Tonetag `{self.indicator}` successfully edited"
             )
         else:
             await interaction.response.send_message(
-                f"The requested tonetag `{self.indicator}` was not editted"
+                f"The requested tonetag `{self.indicator}` was not edited"
             )

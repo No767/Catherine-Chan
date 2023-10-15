@@ -1,5 +1,6 @@
-from .base_pages import SimplePages
-from .paginator import CatherinePages
-from .sources import EmbedListSource, SimplePageSource
-
-__all__ = ["SimplePages", "CatherinePages", "SimplePageSource", "EmbedListSource"]
+from .base_pages import SimplePages as SimplePages
+from .paginator import CatherinePages as CatherinePages
+from .sources import (
+    EmbedListSource as EmbedListSource,
+    SimplePageSource as SimplePageSource,
+)

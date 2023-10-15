@@ -25,7 +25,12 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
     @app_commands.describe(user="The user to look for")
     async def view(self, interaction: discord.Interaction, user: discord.User) -> None:
         """Look at a pride profile"""
-        ...
+        if user.bot:
+            await interaction.response.send_message(
+                "You know that I am transgender, lesbian and go by she/her pronouns right?"
+            )
+            return
+
         query = """
         SELECT user_id, views, name, pronouns, gender_identity, sexual_orientation, romantic_orientation 
         FROM profiles

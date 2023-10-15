@@ -96,6 +96,10 @@ Git Commit Styleguides
 Source Control Branching Models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. image:: /_static/gitflow.svg
+   :align: center
+   :width: 800
+
 This project uses the standard and quite old Git Flow model. The development branch is ``main``, and the production branch is ``stable``. Each commit into stable represents a version release, whether it is a small fix or a major update. **DO NOT** make PRs off of the ``stable`` branch (you probably can't), as each version update is guaranteed to be completely stable and production ready. 
 
 Instead, you are encouraged to fork only the ``main`` branch, and make PRs off of that. Once merged, then the feature or change will be included within the latest release.

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "catherine-chan"
-version = "0.3.1"
+version = "0.4.0"
 description = "An informational LGBTQ based discord bot"
 authors = ["No767 <73260931+No767@users.noreply.github.com>"]
 readme = "README.md"
@@ -16,20 +16,21 @@ asyncpg-trek = "^0.3.1"
 cysystemd = "^1.5.4"
 python-dateutil = "^2.8.2"
 discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus.git", rev = "8686b5d1bbc1d3c862292eb436ab630d6e9c9b53"}
-msgspec = "^0.18.3"
+msgspec = "^0.18.4"
 langcodes = {extras = ["data"], version = "^3.3.0"}
 discord-ext-ipcx = "^0.1.1"
 pygit2 = "^1.13.1"
 psutil = "^5.9.5"
 prometheus-client = "^0.17.1"
 prometheus-async = "^22.2.0"
+better-profanity = "0.6.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
-pyright = "^1.1.329"
+pyright = "^1.1.331"
 ruff = "^0.0.292"
 watchfiles = "^0.20.0"
-pyinstrument = "^4.5.3"
+pyinstrument = "^4.6.0"
 jishaku = "^2.5.1"
 
 
@@ -51,6 +52,9 @@ dpytest = "^0.7.0"
 
 [tool.isort]
 profile = 'black'
+combine_as_imports = true
+combine_star = true
+line_length = 80
 
 [tool.pyright]
 include = ["bot/**"]
@@ -69,7 +73,7 @@ reportUnnecessaryTypeIgnoreComment = "warning"
 skips = ["B311", "B101"]
 
 [tool.ruff]
-ignore = ["E501", "N999", "E402"]
+ignore = ["E501", "N999", "E402", "S101"]
 select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 
 [build-system]

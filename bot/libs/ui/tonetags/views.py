@@ -1,28 +1,18 @@
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import parse_tonetag
-from libs.utils import ErrorEmbed, SuccessEmbed
+from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed
 
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
 
-class DeleteToneTagView(discord.ui.View):
+class DeleteToneTagView(CatherineView):
     def __init__(
         self, interaction: discord.Interaction, indicator: str, pool: asyncpg.Pool
     ) -> None:
-        super().__init__()
-        self.interaction = interaction
+        super().__init__(interaction=interaction)
         self.indicator = indicator
         self.pool = pool
-
-    async def interaction_check(self, interaction: discord.Interaction, /):
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
 
     @discord.ui.button(
         label="Confirm",
@@ -69,23 +59,13 @@ class DeleteToneTagView(discord.ui.View):
         self.stop()
 
 
-class DeleteToneTagViaIDView(discord.ui.View):
+class DeleteToneTagViaIDView(CatherineView):
     def __init__(
         self, interaction: discord.Interaction, tonetags_id: int, pool: asyncpg.Pool
     ) -> None:
-        super().__init__()
-        self.interaction = interaction
+        super().__init__(interaction=interaction)
         self.tonetags_id = tonetags_id
         self.pool = pool
-
-    async def interaction_check(self, interaction: discord.Interaction, /):
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
 
     @discord.ui.button(
         label="Confirm",

@@ -1,0 +1,1 @@
+ALTER TABLE tonetags ADD COLUMN uses INT DEFAULT 0;

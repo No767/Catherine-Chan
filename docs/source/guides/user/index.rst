@@ -8,3 +8,4 @@ Catherine offers a user guide so users can understand how to use Catherine-Chan.
    :maxdepth: 2
    
    pronoun-suggestions
+   hrt-conversion
