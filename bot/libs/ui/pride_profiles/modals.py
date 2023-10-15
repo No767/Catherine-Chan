@@ -56,6 +56,6 @@ class EditProfileModal(CatherineModal, title="Edit Profile"):
             """
         await self.pool.execute(query, interaction.user.id, self.profile_category.value)
         await interaction.response.send_message(
-            f'Changed your "{self.cleaned_type}" status to "{self.profile_category.value}"',
+            f"Changed your `{self.cleaned_type}` status to `{self.profile_category.value}`",
             ephemeral=True,
         )

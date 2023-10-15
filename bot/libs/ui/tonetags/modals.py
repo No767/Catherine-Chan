@@ -1,6 +1,11 @@
 import asyncpg
 import discord
-from libs.cog_utils.tonetags import create_tonetag, edit_tonetag
+from libs.cog_utils.tonetags import (
+    create_tonetag,
+    edit_tonetag,
+    parse_tonetag,
+    validate_tonetag,
+)
 from libs.utils import CatherineModal
 
 
@@ -26,6 +31,11 @@ class CreateToneTagModal(CatherineModal, title="Create a ToneTag"):
         self.add_item(self.definition)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        parsed_tonetag = parse_tonetag(self.indicator.value)
+        if validate_tonetag(parsed_tonetag) is False:
+            await interaction.response.send_message("The tonetag is invalid.")
+            return
+
         status = await create_tonetag(
             self.indicator.value, self.definition.value, interaction.user.id, self.pool
         )
@@ -55,14 +65,15 @@ class EditToneTagModal(CatherineModal, title="Edit a ToneTag"):
         self.add_item(self.definition)
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
+        parsed_tonetag = parse_tonetag(self.indicator)
         status = await edit_tonetag(
-            self.indicator, self.definition.value, interaction.user.id, self.pool
+            parsed_tonetag, self.definition.value, interaction.user.id, self.pool
         )
         if status[-1] != "0":
             await interaction.response.send_message(
-                f"Tonetag `{self.indicator}` successfully editted"
+                f"Tonetag `{self.indicator}` successfully edited"
             )
         else:
             await interaction.response.send_message(
-                f"The requested tonetag `{self.indicator}` was not editted"
+                f"The requested tonetag `{self.indicator}` was not edited"
             )

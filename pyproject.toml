@@ -23,6 +23,7 @@ pygit2 = "^1.13.1"
 psutil = "^5.9.5"
 prometheus-client = "^0.17.1"
 prometheus-async = "^22.2.0"
+better-profanity = "0.6.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.4.0"
@@ -72,7 +73,7 @@ reportUnnecessaryTypeIgnoreComment = "warning"
 skips = ["B311", "B101"]
 
 [tool.ruff]
-ignore = ["E501", "N999", "E402"]
+ignore = ["E501", "N999", "E402", "S101"]
 select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 
 [build-system]

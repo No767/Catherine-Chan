@@ -14,4 +14,5 @@ from .structs import (
 from .utils import (
     format_similar_tonetags as format_similar_tonetags,
     parse_tonetag as parse_tonetag,
+    validate_tonetag as validate_tonetag,
 )

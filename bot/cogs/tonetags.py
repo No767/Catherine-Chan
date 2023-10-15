@@ -31,6 +31,7 @@ from libs.ui.tonetags import (
 from libs.utils import ConfirmEmbed, Embed
 
 NO_TONETAGS_FOUND = "No tonetags were found"
+TONETAG_NOT_FOUND = "The tonetag requested was not found"
 INDICATOR_DESCRIPTION = "The indicator to look for. Can be in both forms (/j or j)"
 
 
@@ -79,15 +80,16 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         """Gets a tonetag"""
         tonetag = await get_tonetag(indicator, self.pool)
 
-        if isinstance(tonetag, TonetagInfo):
-            await interaction.response.send_message(
-                embed=self._build_tonetag_embed(tonetag)
-            )
-        elif isinstance(tonetag, list):
+        if isinstance(tonetag, list):
             output_str = format_similar_tonetags(tonetag)
             await interaction.response.send_message(output_str)
         elif tonetag is None:
-            await interaction.response.send_message(NO_TONETAGS_FOUND)
+            await interaction.response.send_message(TONETAG_NOT_FOUND)
+        else:
+            self.bot.metrics.successful_tonetags.inc()
+            await interaction.response.send_message(
+                embed=self._build_tonetag_embed(tonetag)
+            )
 
     @app_commands.command(name="info")
     @app_commands.describe(indicator=INDICATOR_DESCRIPTION)
@@ -96,7 +98,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
 
         tonetag = await get_tonetag_info(indicator, self.pool)
         if tonetag is None:
-            await interaction.response.send_message(NO_TONETAGS_FOUND)
+            await interaction.response.send_message(TONETAG_NOT_FOUND)
             return
 
         embed = await self._build_tonetag_info(tonetag)
@@ -197,6 +199,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         author_id = user.id if user is not None else interaction.user.id
         records = await self.pool.fetch(query, author_id)
         if records:
+            # I'm aware that this doesn't show the user's name and icon
             pages = BareToneTagsPages(entries=records, interaction=interaction)
             await pages.start()
         else:
@@ -220,6 +223,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         definition: Optional[str] = None,
     ) -> None:
         """Edits a tonetag"""
+        indicator = parse_tonetag(indicator)
         if definition is None:
             query = """
             SELECT definition
@@ -259,7 +263,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         embed.description = (
             f"Are you sure you want to delete the tonetag `{indicator}`?"
         )
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
     @app_commands.command(name="delete-id")
     @app_commands.describe(id="The ID of the tonetag")
@@ -270,7 +274,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         embed.description = (
             f"Are you sure you want to delete the tonetag with ID `{id}`?"
         )
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 
 async def setup(bot: Catherine) -> None:

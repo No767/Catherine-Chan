@@ -25,3 +25,6 @@ class Metrics(msgspec.Struct):
     version_info: Info
     attempted_commands: Counter
     blacklisted_users: Gauge
+    successful_tonetags: Counter
+    created_tonetags: Counter
+    deleted_tonetags: Counter

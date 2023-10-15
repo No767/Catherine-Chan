@@ -17,6 +17,7 @@ from libs.cog_utils.tonetags import (
     get_tonetag_info,
     get_top_tonetags,
     parse_tonetag,
+    validate_tonetag,
 )
 
 load_dotenv(dotenv_path=another_path.joinpath(".env"))
@@ -30,6 +31,28 @@ import asyncpg
 async def setup():
     async with asyncpg.create_pool(dsn=POSTGRES_URI) as pool:
         yield pool
+
+
+def test_validate_tonetag():
+    tag = "/j"
+    parsed_tonetag = parse_tonetag(tag)
+    assert validate_tonetag(parsed_tonetag) is True
+
+    second_tag = parse_tonetag("/srs")
+    assert validate_tonetag(second_tag) is True
+
+    another_tag = "fsdoubfosydfbsiydfsf"
+    parsed_another_tag = parse_tonetag(another_tag)
+    assert validate_tonetag(parsed_another_tag) is False
+
+    third_tag = "jf3"
+    assert validate_tonetag(parse_tonetag(third_tag)) is False
+
+    fourth_tag = "j3."
+    assert validate_tonetag(parse_tonetag(fourth_tag)) is False
+
+    sus_word_tag = "sex"
+    assert validate_tonetag(parse_tonetag(sus_word_tag)) is False
 
 
 def test_parse_tonetag():

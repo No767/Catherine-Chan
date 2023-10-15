@@ -1,6 +1,8 @@
 import re
 from typing import List, Union
 
+from better_profanity import profanity
+
 from .structs import SimilarTonetags
 
 
@@ -14,6 +16,15 @@ def parse_tonetag(tonetag: str) -> str:
         str: Parsed and cleaned up result
     """
     return re.sub(r"^/", "", tonetag, re.IGNORECASE)
+
+
+def validate_tonetag(tonetag: str) -> bool:
+    """Validates a tonetag"""
+    return (
+        len(tonetag) < 4
+        and re.fullmatch(r"^[a-zA-Z]*$", tonetag) is not None
+        and profanity.contains_profanity(tonetag) is False
+    )
 
 
 def format_similar_tonetags(rows: Union[List[SimilarTonetags], None]) -> str:

@@ -37,6 +37,10 @@ class Pronouns(commands.GroupCog, name="pronouns"):
 
         This is not directly from Discord but a third party extension
         """
+        if member.bot:
+            await interaction.response.send_message("My pronouns are she/her")
+            return
+
         params = {"platform": "discord", "ids": member.id}
         async with self.session.get(
             "https://pronoundb.org/api/v2/lookup", params=params
@@ -126,7 +130,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         async with self.session.get(url, params=params) as r:
             data = await r.json(loads=orjson.loads)
             if len(data["profiles"]) == 0:
-                await interaction.response.send_message("The profile was not found")
+                await interaction.followup.send("The profile was not found")
                 return
             curr_username = data["username"]
             avatar = data["avatar"]
