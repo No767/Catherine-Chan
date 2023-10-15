@@ -1,23 +1,31 @@
-# 🛠️ Catherine-Chan 0.3.1
+# ✨ Catherine-Chan 0.4.0
 
-Include Prometheus Metrics and finally properly format human names for pronouns tester command. This version is a ready-to-go production release and is tailored for tracking on production.
-
-Security update to patch [CVE-2023-43804](https://github.com/advisories/GHSA-v845-jxx5-vc9f) for urllib
+This should be one of the last versions (before the topgg stuff gets included) going into prod before the topgg release. This release aims to fix a ton of issues, and brings in several new features.
 
 ## ✨ TD;LR
 
-- Bump urllib from v2.0.5 to v2.0.6 (patches [CVE-2023-43804](https://github.com/advisories/GHSA-v845-jxx5-vc9f), #40)
+- Completely reworked tonetags module
+- HRT converter
+- Use Pyright style of public exports for all packages
 
 ## 🛠️ Changes
 
-- Bump msgspec from v0.18.2 to v0.18.3 (#39)
-- Bump ruff from 0.0.291 to 0.0.292 (#38)
-- Update the file name for the dashboard to align with project naming conventions
+- Restate usage of code
+- Fixed errors related to no tonetags
+- Moved error handling to on the `CommandTree` directly
+- Move all views (except one) and all modals to `CatherineView` and `CatherineModal`, which are subclasses of `discord.ui.View` and `discord.ui.Modal` respectively. (this reduces on code duplication)
+- Use Pyright style of public exports for all packages
+- Fix `/tonetags all` json encoding and pretty print for json
 
 ## ✨ Additions
 
-- None
+- HRT Converter
+- Checks for invalid pronouns examples
+- Checks for invalid tonetag names
+- Subclassed views and modals
+- Expose some more metrics
+
 
 ## ➖ Removals
 
-- None
+- Error Handler cog. Moved to `CatherineCommandTree`
