@@ -1,31 +1,20 @@
-# ✨ Catherine-Chan 0.4.0
+# 🛠️ Catherine-Chan 0.4.1
 
-This should be one of the last versions (before the topgg stuff gets included) going into prod before the topgg release. This release aims to fix a ton of issues, and brings in several new features.
+An patch release to add something that was missed in v0.4.0. For more information about the v0.4.0, please see the changelog for (https://github.com/No767/Catherine-Chan/releases/tag/v0.4.0).
+
 
 ## ✨ TD;LR
 
-- Completely reworked tonetags module
-- HRT converter
-- Use Pyright style of public exports for all packages
+- Fix tonetag metrics not being counted
 
 ## 🛠️ Changes
 
-- Restate usage of code
-- Fixed errors related to no tonetags
-- Moved error handling to on the `CommandTree` directly
-- Move all views (except one) and all modals to `CatherineView` and `CatherineModal`, which are subclasses of `discord.ui.View` and `discord.ui.Modal` respectively. (this reduces on code duplication)
-- Use Pyright style of public exports for all packages
-- Fix `/tonetags all` json encoding and pretty print for json
+- Fix tonetag metrics not being counted
 
 ## ✨ Additions
 
-- HRT Converter
-- Checks for invalid pronouns examples
-- Checks for invalid tonetag names
-- Subclassed views and modals
-- Expose some more metrics
-
+- None
 
 ## ➖ Removals
 
-- Error Handler cog. Moved to `CatherineCommandTree`
+- None

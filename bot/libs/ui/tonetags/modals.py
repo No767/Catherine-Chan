@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import (
@@ -7,6 +11,9 @@ from libs.cog_utils.tonetags import (
     validate_tonetag,
 )
 from libs.utils import CatherineModal
+
+if TYPE_CHECKING:
+    from bot.catherinecore import Catherine
 
 
 class CreateToneTagModal(CatherineModal, title="Create a ToneTag"):
@@ -35,6 +42,9 @@ class CreateToneTagModal(CatherineModal, title="Create a ToneTag"):
         if validate_tonetag(parsed_tonetag) is False:
             await interaction.response.send_message("The tonetag is invalid.")
             return
+
+        bot: Catherine = interaction.client  # type: ignore
+        bot.metrics.created_tonetags.inc()
 
         status = await create_tonetag(
             self.indicator.value, self.definition.value, interaction.user.id, self.pool
