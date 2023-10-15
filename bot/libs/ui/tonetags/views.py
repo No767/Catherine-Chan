@@ -1,7 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import parse_tonetag
 from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed
+
+if TYPE_CHECKING:
+    from bot.catherinecore import Catherine
+
 
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
@@ -30,6 +38,8 @@ class DeleteToneTagView(CatherineView):
         status = await self.pool.execute(query, parsed_tonetag, interaction.user.id)
 
         if status[-1] != "0":
+            bot: Catherine = interaction.client  # type: ignore
+            bot.metrics.deleted_tonetags.inc()
             success_embed = SuccessEmbed()
             success_embed.description = (
                 f"Successfully deleted the tonetag `{self.indicator}`"
@@ -82,6 +92,8 @@ class DeleteToneTagViaIDView(CatherineView):
         status = await self.pool.execute(query, self.tonetags_id, interaction.user.id)
 
         if status[-1] != "0":
+            bot: Catherine = interaction.client  # type: ignore
+            bot.metrics.deleted_tonetags.inc()
             success_embed = SuccessEmbed()
             success_embed.description = (
                 f"Successfully deleted the tonetag. (ID: `{self.tonetags_id}`)"
