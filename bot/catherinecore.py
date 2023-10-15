@@ -7,7 +7,6 @@ import asyncpg
 import discord
 from aiohttp import ClientSession
 from cogs import EXTENSIONS, VERSION
-from discord.app_commands import CommandTree
 from discord.ext import commands, ipcx
 from libs.cog_utils.prometheus_metrics import (
     Metrics,
@@ -16,7 +15,7 @@ from libs.cog_utils.prometheus_metrics import (
     fill_gauges,
 )
 from libs.ui.pronouns import ApprovePronounsExampleView
-from libs.utils import get_or_fetch_blacklist, load_blacklist
+from libs.utils import CatherineCommandTree, load_blacklist
 from prometheus_async.aio.web import start_http_server
 
 # Some weird import logic to ensure that watchfiles is there
@@ -25,32 +24,6 @@ try:
     from watchfiles import awatch
 except ImportError:
     _fsw = False
-
-
-# This is needed for the blacklisting system
-# Yes a custom CommandTree lol.
-# At the very least better than Jade's on_interaction checks
-# https://github.com/LilbabxJJ-1/PrideBot/blob/master/main.py#L19-L36
-class CatherineCommandTree(CommandTree):
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        bot: Catherine = interaction.client  # type: ignore # Pretty much returns the subclass anyways. I checked - Noelle
-        bot.metrics.on_app_command_counter.inc()
-        if (
-            bot.owner_id == interaction.user.id
-            or bot.application_id == interaction.user.id
-        ):
-            return True
-
-        blacklisted_status = await get_or_fetch_blacklist(
-            bot, interaction.user.id, bot.pool
-        )
-        if blacklisted_status is True:
-            bot.metrics.attempted_commands.inc(1)
-            await interaction.response.send_message(
-                f"My fellow user, {interaction.user.mention}, you just got the L. You are blacklisted from using this bot. Take an \U0001f1f1, \U0001f1f1oser. [Here is your appeal form](https://media.tenor.com/K9R9beOgPR4AAAAC/fortnite-thanos.gif)"
-            )
-            return False
-        return True
 
 
 class Catherine(commands.Bot):
@@ -139,6 +112,12 @@ class Catherine(commands.Bot):
             str: The version of Catherine
         """
         return str(VERSION)
+
+    # Basically silence all prefixed errors
+    async def on_command_error(
+        self, ctx: commands.Context, error: commands.CommandError
+    ) -> None:
+        return
 
     def add_to_blacklist_cache(self, id: int) -> None:
         self._blacklist_cache[id] = True
