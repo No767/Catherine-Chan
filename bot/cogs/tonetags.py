@@ -1,4 +1,5 @@
 from datetime import timezone
+from io import BytesIO
 from typing import Optional
 
 import discord
@@ -111,6 +112,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         SELECT tonetags_lookup.indicator, tonetags.definition, tonetags.created_at, tonetags.author_id, tonetags.uses, tonetags_lookup.tonetags_id
         FROM tonetags_lookup
         INNER JOIN tonetags ON tonetags.id = tonetags_lookup.tonetags_id
+        ORDER BY uses DESC
         LIMIT 100;
         """
         records = await self.pool.fetch(query)
@@ -120,7 +122,9 @@ class ToneTags(commands.GroupCog, name="tonetags"):
             return
 
         if json:
-            buffer = orjson.dumps(records)
+            buffer = BytesIO(
+                orjson.dumps([dict(row) for row in records], option=orjson.OPT_INDENT_2)
+            )
             file = discord.File(fp=buffer, filename="tonetags.json")
             await interaction.response.send_message(file=file)
             return
