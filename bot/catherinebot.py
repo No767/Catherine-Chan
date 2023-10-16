@@ -1,24 +1,13 @@
-import asyncio
 import os
 from pathlib import Path
 
 import asyncpg
 import discord
+import uvloop
 from aiohttp import ClientSession
 from catherinecore import Catherine
 from dotenv import load_dotenv
 from libs.utils import CatherineLogger, read_env
-
-# Only used for Windows development
-if os.name == "nt":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-else:
-    try:
-        import uvloop
-
-        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    except ImportError:
-        pass
 
 load_dotenv()
 
@@ -56,7 +45,7 @@ async def main() -> None:
 
 def launch() -> None:
     with CatherineLogger():
-        asyncio.run(main())
+        uvloop.run(main())
 
 
 if __name__ == "__main__":
