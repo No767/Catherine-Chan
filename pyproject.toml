@@ -20,7 +20,7 @@ msgspec = "^0.18.4"
 langcodes = {extras = ["data"], version = "^3.3.0"}
 discord-ext-ipcx = "^0.1.1"
 pygit2 = "^1.13.1"
-psutil = "^5.9.5"
+psutil = "^5.9.6"
 prometheus-client = "^0.17.1"
 prometheus-async = "^22.2.0"
 better-profanity = "0.6.1"
