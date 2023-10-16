@@ -10,7 +10,7 @@ license = "GPL-3.0"
 python = ">=3.8,<4.0"
 discord-py = {extras = ["speed"], version = "^2.3.2"}
 python-dotenv = "^1.0.0"
-uvloop = "^0.17.0"
+uvloop = "^0.18.0"
 asyncpg = "^0.28.0"
 asyncpg-trek = "^0.3.1"
 cysystemd = "^1.5.4"
