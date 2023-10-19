@@ -27,7 +27,7 @@ better-profanity = "0.6.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
-pyright = "^1.1.331"
+pyright = "^1.1.332"
 ruff = "^0.1.0"
 watchfiles = "^0.21.0"
 pyinstrument = "^4.6.0"
