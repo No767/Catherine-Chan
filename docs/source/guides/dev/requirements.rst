@@ -12,8 +12,11 @@ Before you get started, please ensure you have the following installed:
 - `Docker <https://docker.com>`_
 - Discord Account + App
 
-.. CAUTION::
-   Catherine-Chan is natively developed for Linux. Development should work on Windows but it is highly untested.
+.. WARNING::
+   Catherine-Chan is natively developed for Linux, and only supports Linux and MacOS.
+   Due to `uvloop being not supporting Windows <https://github.com/MagicStack/uvloop/issues/14>`_,
+   since `the codebase leans heavily into the Unix core w/ epolling and forking <https://github.com/MagicStack/uvloop/issues/536#issuecomment-1553968437>`_,
+   the usage of Catherine-Chan on Windows is not supported.
 
 Package Prerequisites
 ----------------------
