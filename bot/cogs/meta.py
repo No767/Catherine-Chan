@@ -111,7 +111,7 @@ class Meta(commands.Cog):
         """Ways you can support Catherine-Chan!"""
         invite_url = oauth_url(client_id=self.bot.application.id)  # type: ignore # By the time the bot is ready, the app id is already there
         desc = f"""
-        **Upvoting on Top.gg**: [Insert coming top.gg link]
+        **Upvoting on Top.gg**: https://top.gg/bot/1142620675517984808
         **Joining the support server**: https://discord.gg/ns3e74frqn
         **Inviting Catherine-Chan to you server**: {invite_url}
         
