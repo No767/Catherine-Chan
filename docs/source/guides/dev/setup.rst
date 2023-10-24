@@ -11,7 +11,7 @@ Local Setup
         git clone https://github.com/[username]/Catherine-Chan.git && cd Catherine-Chan
     
 
-    Or if you have the `gh` cli tool installed:
+    Or if you have the ``gh`` cli tool installed:
 
     .. code-block:: bash
 
@@ -46,11 +46,12 @@ Local Setup
 
         sudo docker compose -f docker-compose-dev.yml up -d
     
-
-6. Enable the PostgreSQL extension ``pg_trgm``
+6. Create a new database account and activate the ``pg_trgm`` extension
 
     .. code-block:: sql
 
+        CREATE ROLE catherine WITH LOGIN PASSWORD 'somepass';
+        CREATE DATABASE catherine OWNER catherine;
         CREATE EXTENSION pg_trgm;
 
 7. Run the database migrations
@@ -62,4 +63,8 @@ Local Setup
 Environment Variables
 ---------------------
 
-Catherine includes an development mode feature, which will set up jishaku and a custom FS watcher. The FS (File System) watcher is just like HMR (Hot Module Replacements). Once you press Ctrl+s in your cog, it will automatically reload it so the code executed is changed. Later on, there may be more development features that will be included. Make sure you first install the dev dependencies first! And in order to enable it, set an environment variable called ``DEV_MODE`` to ``True``.
+Catherine includes an development mode feature, which will set up jishaku and a custom FS watcher. 
+The FS (File System) watcher is just like HMR (Hot Module Replacements). 
+Once you press Ctrl+s in your cog, it will automatically reload it so the code executed is changed. 
+Later on, there may be more development features that will be included. 
+Make sure you first install the dev dependencies first! And in order to enable it, set an environment variable called ``DEV_MODE`` to ``True``.

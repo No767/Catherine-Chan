@@ -13,4 +13,5 @@ By using the services provided by Catherine-Chan, you agree to follow these term
 
 .. warning:: 
 
-    **If you violate any of the conditions stated above, you or your server will be placed within the global blacklist system, meaning that you or your server will not be able to use any commands that Catherine-Chan has at all**
+    **If you violate any of the conditions stated above, you or your server will be placed within the global blacklist system, 
+    meaning that you or your server will not be able to use any commands that Catherine-Chan has at all**
