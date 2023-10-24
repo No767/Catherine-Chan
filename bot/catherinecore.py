@@ -66,7 +66,8 @@ class Catherine(commands.Bot):
     def blacklist_cache(self) -> Dict[int, bool]:
         """Global blacklist cache
 
-        The main blacklist is stored on PostgreSQL, and is always a 1:1 mapping of the cache. R. Danny loads it from a JSON file, but I call that json as a db.
+        The main blacklist is stored on PostgreSQL, and is always a 1:1 mapping of the cache.
+        R. Danny loads it from a JSON file, but I call that json as a db.
 
         Returns:
             Dict[int, bool]: Cached version of all globally blacklisted users.
@@ -130,17 +131,6 @@ class Catherine(commands.Bot):
 
     def replace_blacklist_cache(self, new_cache: Dict[int, bool]) -> None:
         self._blacklist_cache = new_cache
-
-    async def get_or_fetch_member(
-        self, guild: discord.Guild, member_id: int
-    ) -> Optional[discord.Member]:
-        member = guild.get_member(member_id)
-        if member is not None:
-            return member
-        members = await guild.query_members(limit=1, user_ids=[member_id], cache=True)
-        if not members:
-            return None
-        return members[0]
 
     async def fs_watcher(self) -> None:
         cogs_path = Path(__file__).parent.joinpath("cogs")
