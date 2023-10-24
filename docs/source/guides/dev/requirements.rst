@@ -12,11 +12,13 @@ Before you get started, please ensure you have the following installed:
 - `Docker <https://docker.com>`_
 - Discord Account + App
 
-.. WARNING::
-   Catherine-Chan is natively developed for Linux, and only supports Linux and MacOS.
-   Due to `uvloop being not supporting Windows <https://github.com/MagicStack/uvloop/issues/14>`_,
-   since `the codebase leans heavily into the Unix core w/ epolling and forking <https://github.com/MagicStack/uvloop/issues/536#issuecomment-1553968437>`_,
-   the usage of Catherine-Chan on Windows is not supported.
+.. NOTE::
+    Catherine-Chan replaces the default event loop with `uvloop <https://github.com/MagicStack/uvloop>`_ on Linux and MacOS
+    and `winloop <https://github.com/Vizonex/Winloop>`_ on Windows. Replacing the default event loop with these libraries
+    is how Catherine-Chan is able to be extremely performant and fast (along with event-based cache invalidation strategies
+    and heavy database indexing).
+    Although Catherine-Chan is natively developed for Linux and MacOS,
+    Windows support has not been tested.
 
 Package Prerequisites
 ----------------------

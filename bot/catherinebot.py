@@ -1,13 +1,18 @@
+import asyncio
 import os
 from pathlib import Path
 
 import asyncpg
 import discord
-import uvloop
 from aiohttp import ClientSession
 from catherinecore import Catherine
 from dotenv import load_dotenv
 from libs.utils import CatherineLogger, read_env
+
+if os.name == "nt":
+    from winloop import install
+else:
+    from uvloop import install
 
 load_dotenv()
 
@@ -41,7 +46,8 @@ async def main() -> None:
 
 def launch() -> None:
     with CatherineLogger():
-        uvloop.run(main())
+        install()
+        asyncio.run(main())
 
 
 if __name__ == "__main__":
