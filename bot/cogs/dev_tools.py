@@ -64,7 +64,7 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command(name="reload-all", hidden=True)
     async def reload_all(self, ctx: commands.Context) -> None:
         """Reloads all cogs. Used in production to not produce any downtime"""
-        if not hasattr(self, "uptime"):
+        if not hasattr(self.bot, "uptime"):
             await ctx.send(
                 "Catherine-Chan needs to be fully loaded before anything can happen"
             )
