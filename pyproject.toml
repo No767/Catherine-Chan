@@ -28,7 +28,7 @@ winloop = {markers = "sys_platform == \"win32\"", version = "^0.0.9"}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
-pyright = "^1.1.332"
+pyright = "^1.1.333"
 ruff = "^0.1.2"
 watchfiles = "^0.21.0"
 pyinstrument = "^4.6.0"
