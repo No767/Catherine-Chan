@@ -181,7 +181,9 @@ class CatherineContextPages(discord.ui.View):
     async def go_to_current_page(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
-        pass
+        """Represents the current page"""
+        # As this button is to represent the current page,
+        # There is no need for it to have an impl
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
     async def go_to_next_page(
