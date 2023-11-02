@@ -63,7 +63,7 @@ CMD ["/catherine/start.sh"]
 
 STOPSIGNAL SIGTERM
 
-LABEL org.opencontainers.image.title="Cahtiner-Chan"
+LABEL org.opencontainers.image.title="Catherine-Chan"
 LABEL org.opencontainers.image.description="The all-in-one toolkit for LGBTQ+ folks"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.source="https://github.com/No767/Catherine-Chan"
