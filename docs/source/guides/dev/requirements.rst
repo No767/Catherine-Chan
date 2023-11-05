@@ -15,8 +15,7 @@ Before you get started, please ensure you have the following installed:
 .. NOTE::
     Catherine-Chan replaces the default event loop with `uvloop <https://github.com/MagicStack/uvloop>`_ on Linux and MacOS
     and `winloop <https://github.com/Vizonex/Winloop>`_ on Windows. Replacing the default event loop with these libraries
-    is how Catherine-Chan is able to be extremely performant and fast (along with event-based cache invalidation strategies
-    and heavy database indexing).
+    is how Catherine-Chan is able to be extremely performant.
     Although Catherine-Chan is natively developed for Linux and MacOS,
     Windows support has not been tested.
 
