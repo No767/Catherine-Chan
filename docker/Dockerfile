@@ -8,7 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
   curl \
-  git
+  git \
+  && apt-get clean
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -20,7 +21,7 @@ WORKDIR /catherine
 COPY /pyproject.toml /catherine/
 COPY /poetry.lock /catherine/
 
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --only main
+RUN poetry export --output requirements.txt --without-hashes --only main
 
 ####################################################################################################
 ## Final image
@@ -32,13 +33,11 @@ RUN apt update \
   tini \
   bash \
   netcat-traditional \
-  git
+  git \
+  && apt-get clean
 
 WORKDIR /catherine
-COPY /bot/catherinecore.py /catherine/bot/
-COPY /bot/catherinebot.py /catherine/bot/
-COPY /bot/cogs /catherine/bot/cogs
-COPY /bot/libs /catherine/bot/libs/
+COPY /bot/ /catherine/bot
 COPY /migrations /catherine/migrations
 COPY migrations-runner.py /catherine/migrations-runner.py
 COPY /docker/start.sh /catherine/start.sh
@@ -53,7 +52,7 @@ RUN adduser --disabled-password --gecos "" catherine \
 
 USER catherine
 
-ENV PATH="${PATH}:/home/catherine/.local/bin"
+ENV PATH="${PATH}:${HOME}/.local/bin"
 
 RUN pip install --user -r requirements.txt
 

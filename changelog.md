@@ -15,7 +15,7 @@ Note that there is still one more bug in regards to the `/hrt-convert` command.
 - Fix interaction paginator and view timeout issues
 - Force seperate creation of PostgreSQL role within PostgreSQL Dockerfile
 - Enforce LRU cache on blacklist cache
-- Rewrote docs
+- Improved Dockerfile and included `.dockerignore`
 
 ## ✨ Additions
 

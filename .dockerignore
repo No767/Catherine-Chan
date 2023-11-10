@@ -1,0 +1,7 @@
+# ENV files
+**/.env
+
+# Cache files
+**/__pycache__
+**/*.py[cod]
+**/*$py.class
