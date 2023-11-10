@@ -40,8 +40,8 @@ class CatherineView(discord.ui.View):
         return False
 
     async def on_timeout(self) -> None:
-        self.clear_items()
-        self.stop()
+        if self.interaction.response.is_done():
+            await self.interaction.edit_original_response(view=None)
 
     async def on_error(
         self,

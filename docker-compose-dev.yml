@@ -3,7 +3,10 @@ name: "catherine-dev"
 services:
   postgres:
     container_name: Catherine-Postgres-Dev
-    image: postgres:15 
+    image: catherine-pg:dev-latest
+    build:
+      context: ./docker/pg
+      dockerfile: Dockerfile
     env_file:
       - bot/.env
     volumes:

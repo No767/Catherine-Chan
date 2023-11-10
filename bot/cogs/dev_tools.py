@@ -13,10 +13,6 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot: Catherine):
         self.bot = bot
 
-    @property
-    def display_emoji(self) -> discord.PartialEmoji:
-        return discord.PartialEmoji(name="\U0001f6e0")
-
     @commands.guild_only()
     @commands.is_owner()
     @commands.command(name="sync", hidden=True)
@@ -68,6 +64,12 @@ class DevTools(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command(name="reload-all", hidden=True)
     async def reload_all(self, ctx: commands.Context) -> None:
         """Reloads all cogs. Used in production to not produce any downtime"""
+        if not hasattr(self.bot, "uptime"):
+            await ctx.send(
+                "Catherine-Chan needs to be fully loaded before anything can happen"
+            )
+            return
+
         for extension in EXTENSIONS:
             await self.bot.reload_extension(extension)
         await ctx.send("Successfully reloaded all extensions live")

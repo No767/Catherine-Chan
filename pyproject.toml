@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "catherine-chan"
-version = "0.4.1"
+version = "0.5.0"
 description = "An informational LGBTQ based discord bot"
 authors = ["No767 <73260931+No767@users.noreply.github.com>"]
 readme = "README.md"
@@ -10,8 +10,8 @@ license = "GPL-3.0"
 python = ">=3.8,<4.0"
 discord-py = {extras = ["speed"], version = "^2.3.2"}
 python-dotenv = "^1.0.0"
-uvloop = "^0.17.0"
-asyncpg = "^0.28.0"
+uvloop = {markers = "sys_platform != \"win32\"", version = "^0.19.0"}
+asyncpg = "^0.29.0"
 asyncpg-trek = "^0.3.1"
 cysystemd = "^1.5.4"
 python-dateutil = "^2.8.2"
@@ -19,19 +19,20 @@ discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus.git", re
 msgspec = "^0.18.4"
 langcodes = {extras = ["data"], version = "^3.3.0"}
 discord-ext-ipcx = "^0.1.1"
-pygit2 = "^1.13.1"
-psutil = "^5.9.5"
-prometheus-client = "^0.17.1"
+pygit2 = "^1.13.2"
+psutil = "^5.9.6"
+prometheus-client = "^0.18.0"
 prometheus-async = "^22.2.0"
 better-profanity = "0.6.1"
+winloop = {markers = "sys_platform == \"win32\"", version = "^0.0.9"}
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.4.0"
-pyright = "^1.1.331"
-ruff = "^0.0.292"
-watchfiles = "^0.20.0"
-pyinstrument = "^4.6.0"
-jishaku = "^2.5.1"
+pre-commit = "^3.5.0"
+pyright = "^1.1.335"
+ruff = "^0.1.5"
+watchfiles = "^0.21.0"
+pyinstrument = "^4.6.1"
+jishaku = "^2.5.2"
 
 
 [tool.poetry.group.docs.dependencies]
@@ -39,11 +40,11 @@ sphinx = "7.1.2"
 sphinx-autobuild = "^2021.3.14"
 furo = "^2023.9.10"
 sphinx-copybutton = "^0.5.2"
-sphinxext-opengraph = "^0.8.2"
+sphinxext-opengraph = "^0.9.0"
 
 
 [tool.poetry.group.tests.dependencies]
-pytest = "^7.4.2"
+pytest = "^7.4.3"
 pytest-asyncio = "^0.21.1"
 nox = "^2023.4.22"
 nox-poetry = "^1.0.3"

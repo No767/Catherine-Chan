@@ -131,7 +131,7 @@ class CatherinePages(discord.ui.View):
 
     async def on_timeout(self) -> None:
         if self.followup:
-            await self.followup.edit(view=None)
+            await self.interaction.edit_original_response(view=None)
 
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item

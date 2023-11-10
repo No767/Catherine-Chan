@@ -13,25 +13,6 @@ class PrideSupport(commands.Cog):
     def __init__(self, bot: Catherine):
         self.bot = bot
 
-    @app_commands.command(name="pride-server")
-    async def pride_servers(self, interaction: discord.Interaction) -> None:
-        """Get a list of LGBTQ oriented discord servers"""
-        embed = Embed()
-        embed.title = "Servers for LGBTQ+"
-        embed.description = """
-        ***This bot is not affiliated or associated with these servers at all!***
-        
-        LGTBTQ+ Hangout - https://www.discord.gg/Pride
-        Transcord - https://discord.gg/trans
-        The LGBTQ+ Community - https://discord.gg/pridemonth
-        Enby_eautiful - https://discord.gg/j8MCnEC64S
-        """
-        embed.set_footer(
-            text="If you are enjoying Catherine-Chan, please consider to tell your friends about this bot! If you can't, then you can still show your support by upvoting on Top.gg!",
-            icon_url="https://cdn.discordapp.com/emojis/1096897624432443392.webp?size=128&quality=lossless",
-        )
-        await interaction.response.send_message(embed=embed)
-
     @app_commands.command(name="pride-support")
     @app_commands.describe(type="The type of support your are looking for")
     async def pride_support(
@@ -42,6 +23,7 @@ class PrideSupport(commands.Cog):
         """Get support as a person of the LGBTQ+ community"""
         title = f"Support for {type}"
         description = ""
+        footer = "Keep in mind to conduct your own research from reputable sources!"
         if type == "HRT":
             description = """
             Keep in mind that if you're a minor (-17) you will need a parental consent for Hormone Replacement Therapy (HRT)
@@ -52,6 +34,7 @@ class PrideSupport(commands.Cog):
             Cleveland Clinic - [Link](https://my.clevelandclinic.org/health/treatments/21653-feminizing-hormone-therapy)
             Mayo Clinic - [Link](https://www.mayoclinic.org/tests-procedures/masculinizing-hormone-therapy/about/pac-20385099)
             NCBI - [Link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5182227/)
+            UCSF Transgender Care - [Link](https://transcare.ucsf.edu/hormone-therapy)
             """
         elif type == "Therapy":
             description = """
@@ -87,6 +70,7 @@ class PrideSupport(commands.Cog):
         embed = Embed()
         embed.title = title
         embed.description = description
+        embed.set_footer(text=footer)
         await interaction.response.send_message(embed=embed)
 
 

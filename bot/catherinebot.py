@@ -9,16 +9,10 @@ from catherinecore import Catherine
 from dotenv import load_dotenv
 from libs.utils import CatherineLogger, read_env
 
-# Only used for Windows development
 if os.name == "nt":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    from winloop import install
 else:
-    try:
-        import uvloop
-
-        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    except ImportError:
-        pass
+    from uvloop import install
 
 load_dotenv()
 
@@ -26,16 +20,12 @@ ENV_PATH = Path(__file__).parent / ".env"
 
 TOKEN = os.environ["TOKEN"]
 DEV_MODE = os.getenv("DEV_MODE") in ("True", "TRUE")
-ENABLE_MESSAGE_CONTENT = os.getenv("ENABLE_MESSAGE_CONTENT") in ("True", "TRUE")
 IPC_SECRET_KEY = os.environ["IPC_SECRET_KEY"]
 IPC_HOST = os.environ["IPC_HOST"]
 POSTGRES_URI = os.environ["POSTGRES_URI"]
 
-
 intents = discord.Intents.default()
 intents.members = True
-if DEV_MODE is True or ENABLE_MESSAGE_CONTENT is True:
-    intents.message_content = True
 
 
 async def main() -> None:
@@ -56,6 +46,7 @@ async def main() -> None:
 
 def launch() -> None:
     with CatherineLogger():
+        install()
         asyncio.run(main())
 
 

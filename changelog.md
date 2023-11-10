@@ -1,19 +1,27 @@
-# 🛠️ Catherine-Chan 0.4.1
+# Catherine-Chan 0.5.0
 
-An patch release to add something that was missed in v0.4.0. For more information about the v0.4.0, please see the changelog for (https://github.com/No767/Catherine-Chan/releases/tag/v0.4.0).
-
+QOL-focused update improving and updating many aspects of Catherine-Chan.
+Note that there is still one more bug in regards to the `/hrt-convert` command.
 
 ## ✨ TD;LR
 
-- Fix tonetag metrics not being counted
+- Windows support through Winloop
+- Several bug fixes
 
 ## 🛠️ Changes
 
-- Fix tonetag metrics not being counted
+- Use mention as prefix (this gets around the issue of message contents intents)
+- Migrate blacklist module to be prefixed (including custom paginator)
+- Fix interaction paginator and view timeout issues
+- Force separate creation of PostgreSQL role within PostgreSQL Dockerfile
+- Enforce LRU cache on blacklist cache
+- Improved Dockerfile and included `.dockerignore`
 
 ## ✨ Additions
 
-- None
+- Semi-Windows support through Winloop
+- Mention prefix instead of text-based
+- Top.gg links
 
 ## ➖ Removals
 
