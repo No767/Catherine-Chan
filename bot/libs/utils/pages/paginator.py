@@ -130,7 +130,7 @@ class CatherinePages(discord.ui.View):
         return False
 
     async def on_timeout(self) -> None:
-        if self.followup and self.interaction.response.is_done():
+        if self.followup:
             await self.interaction.edit_original_response(view=None)
 
     async def on_error(
