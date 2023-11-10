@@ -136,9 +136,14 @@ class CatherinePages(discord.ui.View):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item
     ) -> None:
-        await interaction.followup.send(
-            "An unknown error occurred, sorry", ephemeral=True
+        error_msg = (
+            "An unknown error occurred, sorry.\n"
+            "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
         )
+        if interaction.response.is_done():
+            await interaction.followup.send(error_msg, ephemeral=True)
+        else:
+            await interaction.response.send_message(error_msg, ephemeral=True)
 
     async def start(
         self, *, content: Optional[str] = None, ephemeral: bool = False
