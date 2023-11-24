@@ -4,79 +4,53 @@ import discord
 from libs.utils.pages import CatherinePages, EmbedListSource
 
 from .embed_entries import (
-    DictInclusiveEmbedEntry,
-    DictNounsEmbedEntry,
-    DictPPEntry,
-    DictTermsEmbedEntry,
+    InclusiveEntityEntry,
+    NounEntityEntry,
+    TermEntityEntry,
 )
-from .structs import (
-    DictInclusiveEntry,
-    DictNounsEntry,
-    DictPronounsPageEntry,
-    DictTermsEntry,
-)
+from .structs import InclusiveEntity, NounEntity, TermEntity
 
 
-class SimpleItemPages(CatherinePages):
-    def __init__(self, entries, *, interaction: discord.Interaction, per_page: int = 1):
-        super().__init__(
-            EmbedListSource(entries, per_page=per_page), interaction=interaction
-        )
-        self.embed = discord.Embed(colour=discord.Colour.og_blurple())
-
-
-class DictTermsPages(CatherinePages):
+class TermsPages(CatherinePages):
     def __init__(
         self,
-        entries: List[DictTermsEntry],
+        entries: List[TermEntity],
         *,
         interaction: discord.Interaction,
         per_page: int = 1
     ):
-        converted = [DictTermsEmbedEntry(entry).to_dict() for entry in entries]
+        converted = [TermEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
             EmbedListSource(converted, per_page=per_page), interaction=interaction
         )
         self.embed = discord.Embed(colour=discord.Colour.from_rgb(255, 125, 212))
 
 
-class DictInclusivePages(CatherinePages):
+class InclusivePages(CatherinePages):
     def __init__(
         self,
-        entries: List[DictInclusiveEntry],
+        entries: List[InclusiveEntity],
         *,
         interaction: discord.Interaction,
         per_page: int = 1
     ):
-        converted = [DictInclusiveEmbedEntry(entry).to_dict() for entry in entries]
+        converted = [InclusiveEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
             EmbedListSource(converted, per_page=per_page), interaction=interaction
         )
         self.embed = discord.Embed(colour=discord.Colour.from_rgb(255, 125, 212))
 
 
-class DictNounsPages(CatherinePages):
+class NounPages(CatherinePages):
     def __init__(
         self,
-        entries: List[DictNounsEntry],
+        entries: List[NounEntity],
         *,
         interaction: discord.Interaction,
         per_page: int = 1
     ):
-        converted = [DictNounsEmbedEntry(entry).to_dict() for entry in entries]
+        converted = [NounEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
             EmbedListSource(converted, per_page=per_page), interaction=interaction
         )
         self.embed = discord.Embed(colour=discord.Colour.from_rgb(255, 125, 212))
-
-
-class DictPPPages(SimpleItemPages):
-    def __init__(
-        self,
-        entries: List[DictPronounsPageEntry],
-        *,
-        interaction: discord.Interaction,
-        per_page: int = 1
-    ):
-        converted = [DictPPEntry(entry).to_dict() for entry in entries]
-        super().__init__(converted, per_page=per_page, interaction=interaction)

@@ -6,12 +6,18 @@ from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
 from libs.ui.dictionary import (
-    DictInclusiveEntry,
-    DictInclusivePages,
-    DictNounsEntry,
-    DictNounsPages,
-    DictTermsEntry,
-    DictTermsPages,
+    InclusivePages,
+    NounPages,
+    TermsPages,
+    split_flags,
+)
+from libs.ui.dictionary.structs import (
+    InclusiveContent,
+    InclusiveEntity,
+    NounContent,
+    NounEntity,
+    TermAssets,
+    TermEntity,
 )
 from libs.utils import Embed
 from yarl import URL
@@ -39,17 +45,21 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 await interaction.response.send_message("No terms were found")
                 return
             converted = [
-                DictTermsEntry(
+                TermEntity(
                     term=term["term"],
                     original=term["original"] if len(term["original"]) > 0 else None,
                     definition=term["definition"],
-                    locale=term["locale"],
-                    flags=term["flags"],
-                    category=term["category"],
+                    key=term["key"],
+                    assets=TermAssets(
+                        flags=split_flags(term["flags"]),
+                        images=term["images"] if len(term["images"]) > 0 else None,
+                    ),
+                    category=term["category"].split(","),
+                    author=term["author"],
                 )
                 for term in data
             ]
-            pages = DictTermsPages(entries=converted, interaction=interaction)
+            pages = TermsPages(entries=converted, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="nouns")
@@ -57,7 +67,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     async def nouns(
         self, interaction: discord.Interaction, query: Optional[str] = None
     ) -> None:
-        """Looks up inclusive nouns"""
+        """Looks up gender neutral nouns and language"""
         url = URL("https://en.pronouns.page/api/nouns")
         if query:
             url = url / "search" / query
@@ -72,17 +82,17 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 await interaction.response.send_message("No nouns were found")
                 return
             converted = [
-                DictNounsEntry(
-                    masc=entry["masc"],
-                    fem=entry["fem"],
-                    neutr=entry["neutr"],
-                    masc_plural=entry["mascPl"],
-                    fem_plural=entry["femPl"],
-                    neutr_plural=entry["neutrPl"],
+                NounEntity(
+                    masc=NounContent(regular=entry["masc"], plural=entry["mascPl"]),
+                    fem=NounContent(regular=entry["fem"], plural=entry["femPl"]),
+                    neutral=NounContent(
+                        regular=entry["neutr"], plural=entry["neutrPl"]
+                    ),
+                    author=entry["author"],
                 )
                 for entry in data
             ]
-            pages = DictNounsPages(entries=converted, interaction=interaction)
+            pages = NounPages(entries=converted, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="inclusive")
@@ -100,18 +110,21 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 await interaction.response.send_message("No inclusive terms were found")
                 return
             converted = [
-                DictInclusiveEntry(
-                    instead_of=entry["insteadOf"],
-                    say=entry["say"],
-                    because=entry["because"],
-                    categories=entry["categories"],
-                    clarification=entry["clarification"],
+                InclusiveEntity(
+                    content=InclusiveContent(
+                        instead_of=entry["insteadOf"],
+                        say=entry["say"],
+                        because=entry["because"],
+                        clarification=entry["clarification"],
+                    ),
+                    author=entry["author"],
                 )
                 for entry in data
             ]
-            pages = DictInclusivePages(entries=converted, interaction=interaction)
+            pages = InclusivePages(entries=converted, interaction=interaction)
             await pages.start()
 
+    # TODO: Complete the rewrite for this
     @app_commands.command(name="lookup")
     @app_commands.describe(
         pronouns="The pronouns to look up. These are actual pronouns, such as she/her, and they/them. "
