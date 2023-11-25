@@ -1,9 +1,21 @@
 import re
-from typing import List, Optional
+from typing import List, Optional, TypedDict
 
 from yarl import URL
 
-from .structs import InclusiveContent, NounContent, NounEntity, TermAssets
+from .structs import (
+    InclusiveContent,
+    NounContent,
+    NounEntity,
+    PronounsEntity,
+    PronounsMorphemes,
+    TermAssets,
+)
+
+
+class PronounsInfo(TypedDict):
+    title: str
+    desc: str
 
 
 def format_term_titles(title: str):
@@ -19,6 +31,39 @@ def format_title_options(title: str):
 def format_instead_of_options(options: str):
     options_list = options.split("|")
     return "\n".join([f"- ~~{options}~~" for options in options_list])
+
+
+def format_pronouns_examples(examples: List[str], morphemes: PronounsMorphemes) -> str:
+    values = morphemes.values()
+    regex = re.compile(r"(%s)" % "|".join(map(re.escape, values)))
+    subbed = [
+        f"- {regex.sub(lambda match: f'**{match.group()}**', item)}"
+        for item in examples
+    ]
+    return "\n".join(subbed)
+
+
+def format_pronouns_info(entry: PronounsEntity) -> PronounsInfo:
+    def format_table():
+        data = entry.morphemes.to_dict()
+        final_form = "\n".join(
+            [f"- **{k.replace('_', ' ').title()}**: {v}" for k, v in data.items()]
+        )
+        return f"### Morphemes \n{final_form}"
+
+    title = f"{entry.name}"
+    desc = (
+        f"(*{entry.description}*)",
+        f"{format_table()}",
+        f"### Examples \n{format_pronouns_examples(entry.examples, entry.morphemes)}",
+        f"### History \n{format_inline_references(entry.history)}"
+        if len(entry.history) != 0
+        else "" f"### Source Info\n{format_inline_references(entry.sources_info)}"
+        if entry.sources_info is not None
+        else "",
+    )
+    final_desc = "\n".join(desc)
+    return PronounsInfo(title=title, desc=final_desc)
 
 
 def format_inclusive_content(content: InclusiveContent):
@@ -59,6 +104,11 @@ def format_greek_references(content: str) -> str:
     return f"[{parts.group(2)}]({parts.group(1)})"
 
 
+def format_pronouns_references(content: str) -> str:
+    parts = content.split("=")
+    return f"[{parts[1]}](https://en.pronouns.page{parts[0]})"
+
+
 def format_inline_references(content: str) -> str:
     regex = re.compile(r"(?<={).*?(?=})")
     extraction_regex = re.compile(r"(?<=#).*?(?=\=)")
@@ -72,10 +122,11 @@ def format_inline_references(content: str) -> str:
 
     def format_link(match: re.Match[str]):
         url_match = detect_link_regex.search(match.group())
-
         if url_match is not None:
             # More than likely it's those stupid greek definitions
             return format_greek_references(match.group())
+        elif match.group().startswith("/"):
+            return format_pronouns_references(match.group())
 
         link = f"https://en.pronouns.page/terminology#{disambiguate(match)}".replace(
             " ", "%20"

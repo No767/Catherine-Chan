@@ -1,12 +1,13 @@
 import re
 
-from .structs import InclusiveEntity, NounEntity, TermEntity
+from .structs import InclusiveEntity, NounEntity, PronounsEntity, TermEntity
 from .utils import (
     determine_author,
     determine_image_url,
     format_gender_neutral_content,
     format_inclusive_content,
     format_inline_references,
+    format_pronouns_info,
     format_term_titles,
 )
 
@@ -95,5 +96,30 @@ class NounEntityEntry:
         data = {
             "description": desc,
             "fields": [{"name": "Author", "value": possible_author, "inline": True}],
+        }
+        return data
+
+
+class PronounsEntityEntry:
+    __slots__ = ("entry", "history", "sources_info")
+
+    def __init__(self, entry: PronounsEntity):
+        self.entry = entry
+        self.history = self.entry.history
+        self.sources_info = self.entry.sources_info
+
+    def to_dict(self):
+        info = format_pronouns_info(self.entry)
+        data = {
+            "title": info["title"],
+            "description": info["desc"],
+            "fields": [
+                {
+                    "name": "Aliases",
+                    "value": ", ".join(self.entry.aliases).rstrip(","),
+                    "inline": True,
+                },
+                {"name": "Normative", "value": self.entry.normative, "inline": True},
+            ],
         }
         return data

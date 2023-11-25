@@ -40,3 +40,29 @@ class NounEntity(msgspec.Struct):
     fem: NounContent
     neutral: NounContent
     author: Optional[str]
+
+
+class PronounsMorphemes(msgspec.Struct):
+    pronoun_subject: str
+    pronoun_object: str
+    possessive_determiner: str
+    possessive_pronoun: str
+    reflexive: str
+
+    def to_dict(self):
+        return {f: getattr(self, f) for f in self.__struct_fields__}
+
+    def values(self) -> List[str]:
+        return [getattr(self, f) for f in self.__struct_fields__]
+
+
+class PronounsEntity(msgspec.Struct):
+    name: str
+    canonical_name: str
+    description: str
+    aliases: List[str]
+    normative: bool
+    morphemes: PronounsMorphemes
+    examples: List[str]
+    history: str
+    sources_info: Optional[str]
