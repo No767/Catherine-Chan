@@ -96,12 +96,15 @@ def format_gender_neutral_content(content: NounEntity) -> str:
 
 
 def format_greek_references(content: str) -> str:
-    extraction_regex = re.compile(r"((?<=).+(?=\=)).+((?<=\=).+)$")
-    parts = extraction_regex.search(content)
+    # Old Regex: ((?<=).+(?=\=)).+((?<=\=).+)$ (group 2 is the keyword, group 1 is the url)
+    # This regex is removed due to polynomial backtracking exploits
+    # This new way doesn't even use regex at all
+    keyword = content.split("=")[-1]
+    keyword_length = len(keyword) + 1
 
-    if parts is None:
-        return "None"
-    return f"[{parts.group(2)}]({parts.group(1)})"
+    # Replace the broken parentheses with a quoted one
+    url = content[:-keyword_length].replace(")", "%29").replace("(", "%28")
+    return f"[{keyword}]({url})"
 
 
 def format_pronouns_references(content: str) -> str:
