@@ -23,7 +23,7 @@ class CatherinePages(discord.ui.View):
         self.source: menus.PageSource = source
         self.check_embeds: bool = check_embeds
         self.interaction: discord.Interaction = interaction
-        self.followup: Optional[discord.InteractionMessage] = None
+        self.followup: Optional[discord.InteractionMessage]
         self.current_page: int = 0
         self.compact: bool = compact
         self.clear_items()
@@ -131,7 +131,7 @@ class CatherinePages(discord.ui.View):
 
     async def on_timeout(self) -> None:
         if self.followup:
-            await self.interaction.edit_original_response(view=None)
+            await self.followup.edit(view=None)
 
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item

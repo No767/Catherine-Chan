@@ -1,5 +1,5 @@
 import traceback
-from typing import Any
+from typing import Any, Optional
 
 import discord
 from discord.utils import utcnow
@@ -27,8 +27,9 @@ def make_error_embed(error: Exception, item: discord.ui.Item[Any]) -> ErrorEmbed
 
 class CatherineView(discord.ui.View):
     def __init__(self, interaction: discord.Interaction):
-        super().__init__()
+        super().__init__(timeout=3.0)
         self.interaction = interaction
+        self.original_response: Optional[discord.InteractionMessage]
 
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
         if interaction.user and interaction.user.id in (
@@ -40,8 +41,8 @@ class CatherineView(discord.ui.View):
         return False
 
     async def on_timeout(self) -> None:
-        if self.interaction.response.is_done():
-            await self.interaction.edit_original_response(view=None)
+        if self.original_response:
+            await self.original_response.edit(view=None)
 
     async def on_error(
         self,
