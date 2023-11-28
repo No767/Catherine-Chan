@@ -156,6 +156,8 @@ class Catherine(commands.Bot):
             self.logger.debug(f"Loaded extension: {cog}")
             await self.load_extension(cog)
 
+        await self.load_extension("jishaku")
+
         await self.ipc.start()
         await start_http_server(addr=self._ipc_host, port=6789)
         self.logger.info(
@@ -165,8 +167,7 @@ class Catherine(commands.Bot):
         fill_gauges(self)
 
         if self.dev_mode is True and _fsw is True:
-            self.logger.info("Dev mode is enabled. Loading Jishaku and FSWatcher")
-            await self.load_extension("jishaku")
+            self.logger.info("Dev mode is enabled. Loading FSWatcher")
             self.loop.create_task(self.fs_watcher())
 
     async def on_ready(self):
