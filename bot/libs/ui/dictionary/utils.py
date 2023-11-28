@@ -52,16 +52,16 @@ def format_pronouns_info(entry: PronounsEntity) -> PronounsInfo:
         return f"### Morphemes \n{final_form}"
 
     title = f"{entry.name}"
-    desc = (
+    desc = [
         f"(*{entry.description}*)",
         f"{format_table()}",
         f"### Examples \n{format_pronouns_examples(entry.examples, entry.morphemes)}",
-        f"### History \n{format_inline_references(entry.history)}"
-        if len(entry.history) != 0
-        else "" f"### Source Info\n{format_inline_references(entry.sources_info)}"
-        if entry.sources_info is not None
-        else "",
-    )
+    ]
+    if len(entry.history) != 0:
+        desc.append(f"### History\n{format_inline_references(entry.history)}")
+
+    if entry.sources_info is not None:
+        desc.append(f"### Source Info\n{format_inline_references(entry.sources_info)}")
     final_desc = "\n".join(desc)
     return PronounsInfo(title=title, desc=final_desc)
 
@@ -113,8 +113,8 @@ def format_pronouns_references(content: str) -> str:
 
 
 def format_inline_references(content: str) -> str:
-    regex = re.compile(r"(?<={).*?(?=})")
-    extraction_regex = re.compile(r"(?<=#).*?(?=\=)")
+    regex = re.compile(r"(?<={).*(?=})")
+    extraction_regex = re.compile(r"(?<=#).*(?=\=)")
     detect_link_regex = re.compile(r"^(http|https)://")
 
     def disambiguate(match: re.Match[str]):
@@ -140,7 +140,7 @@ def format_inline_references(content: str) -> str:
 
 
 def split_flags(content: str) -> List[str]:
-    regex = re.compile(r"(?<=\[).*?(?=\])")
+    regex = re.compile(r"(?<=\[).*(?=\])")
     return regex.findall(content)
 
 

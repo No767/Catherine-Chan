@@ -54,7 +54,7 @@ class TermEntityEntry:
             if self.original is not None
             else ""
         )
-        cleaning_regex = re.compile(r"\{|\}")
+        cleaning_regex = re.compile(r"[\{\}]")
         possible_image_url = determine_image_url(self.assets)
         possible_author = determine_author(self.author)
         title = format_term_titles(self.term)
