@@ -26,9 +26,10 @@ def make_error_embed(error: Exception, item: discord.ui.Item[Any]) -> ErrorEmbed
 
 
 class CatherineView(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction):
-        super().__init__(timeout=3.0)
+    def __init__(self, interaction: discord.Interaction, message_after: bool = True):
+        super().__init__()
         self.interaction = interaction
+        self.message_after = message_after
         self.original_response: Optional[discord.InteractionMessage]
 
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
@@ -42,6 +43,17 @@ class CatherineView(discord.ui.View):
 
     async def on_timeout(self) -> None:
         if self.original_response:
+            if self.message_after:
+                embed = ErrorEmbed()
+                embed.title = "\U00002757 Timed Out"
+                embed.description = (
+                    "Timed out waiting for a response. Cancelling action."
+                )
+                await self.original_response.edit(
+                    embed=embed, view=None, delete_after=15.0
+                )
+                return
+
             await self.original_response.edit(view=None)
 
     async def on_error(
