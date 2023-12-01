@@ -2,9 +2,7 @@ import discord
 from catherinecore import Catherine
 from discord.ext import commands
 from libs.ui.blacklist import BlacklistPages
-from libs.utils import get_or_fetch_full_blacklist
-
-DONE_MSG = "Done."
+from libs.utils import get_blacklist
 
 
 class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
@@ -19,12 +17,19 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.guild_only()
     async def blacklist(self, ctx: commands.Context) -> None:
         """Global blacklisting system - Without subcommand you are viewing the blacklist"""
-        blacklist = await get_or_fetch_full_blacklist(self.bot, self.pool)
-        if blacklist is None:
+        query = """
+        SELECT id, blacklist_status
+        FROM blacklist;
+        """
+
+        records = await self.pool.fetch(query)
+        if len(records) == 0:
             await ctx.send("No blacklist entries found")
             return
 
-        cache_to_list = [{k: v} for k, v in blacklist.items()]
+        cache_to_list = [
+            {record["id"]: record["blacklist_status"]} for record in records
+        ]
 
         pages = BlacklistPages(entries=cache_to_list, ctx=ctx)
         await pages.start()
@@ -38,10 +43,9 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
         VALUES ($1, $2) ON CONFLICT (id) DO NOTHING;
         """
         await self.pool.execute(query, given_id, True)
-        if id not in self.bot.blacklist_cache:
-            self.bot.add_to_blacklist_cache(given_id)
-            self.bot.metrics.blacklisted_users.inc()
-        await ctx.send(DONE_MSG)
+        get_blacklist.cache_invalidate(given_id, self.pool)
+        self.bot.metrics.blacklisted_users.inc()
+        await ctx.send(f"Done. Added ID {given_id} to the blacklist")
 
     @blacklist.command(name="remove")
     async def remove(self, ctx: commands.Context, id: discord.Object):
@@ -52,10 +56,9 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
         WHERE id = $1;
         """
         await self.pool.execute(query, given_id)
-        if given_id in self.bot.blacklist_cache:
-            self.bot.remove_from_blacklist_cache(given_id)
-            self.bot.metrics.blacklisted_users.dec()
-        await ctx.send(DONE_MSG)
+        get_blacklist.cache_invalidate(given_id, self.pool)
+        self.bot.metrics.blacklisted_users.dec()
+        await ctx.send(f"Done. Removed ID {given_id} from the blacklist")
 
 
 async def setup(bot: Catherine) -> None:

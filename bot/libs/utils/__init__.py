@@ -1,8 +1,4 @@
-from .blacklist import (
-    get_or_fetch_blacklist as get_or_fetch_blacklist,
-    get_or_fetch_full_blacklist as get_or_fetch_full_blacklist,
-    load_blacklist as load_blacklist,
-)
+from .blacklist import get_blacklist as get_blacklist
 from .embeds import (
     ConfirmEmbed as ConfirmEmbed,
     Embed as Embed,

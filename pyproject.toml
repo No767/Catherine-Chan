@@ -26,6 +26,7 @@ prometheus-async = "^22.2.0"
 better-profanity = "0.6.1"
 winloop = {markers = "sys_platform == \"win32\"", version = "^0.0.9"}
 jishaku = "^2.5.2"
+async-lru = "^2.0.4"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"

@@ -1,20 +1,21 @@
+import os
 import sys
 from pathlib import Path
 
-another_path = Path(__file__).parents[2].joinpath("bot")
-sys.path.append(str(another_path))
-import os
-
+import asyncpg
 import pytest
 import pytest_asyncio
 from dotenv import load_dotenv
-from libs.utils import load_blacklist
+
+another_path = Path(__file__).parents[2].joinpath("bot")
+sys.path.append(str(another_path))
+
+
+from libs.utils.blacklist import BlacklistEntity, get_blacklist
 
 load_dotenv(dotenv_path=another_path.joinpath(".env"))
 
 POSTGRES_URI = os.environ["POSTGRES_URI"]
-
-import asyncpg
 
 
 @pytest_asyncio.fixture
@@ -23,7 +24,35 @@ async def setup():
         yield pool
 
 
+def test_blacklist_entity():
+    record = {"id": 3, "blacklist_status": False}
+    first_entity = BlacklistEntity(record=record)
+    assert (
+        first_entity.id == 3
+        and first_entity.blacklist_status is False
+        and first_entity.unknown_entity is False
+    )
+
+    second_entity = BlacklistEntity()
+    assert second_entity.unknown_entity is True
+
+
 @pytest.mark.asyncio
-async def test_load_blacklist(setup):
-    res = await load_blacklist(setup)
-    assert isinstance(res, dict) or (len(res) == 0)
+async def test_get_blacklist(setup):
+    unknown_call = await get_blacklist(3, setup)
+    assert unknown_call.unknown_entity is True
+
+    query = """
+    INSERT INTO blacklist (id, blacklist_status)
+    VALUES ($1, $2) ON CONFLICT (id) DO NOTHING;
+    """
+
+    known_id = 1234567890
+    await setup.execute(query, known_id, True)
+
+    known_call = await get_blacklist(known_id, setup)
+    assert (
+        known_call.id == known_id
+        and known_call.blacklist_status is True
+        and known_call.unknown_entity is False
+    )

@@ -128,7 +128,7 @@ def fill_gauges(bot: Catherine):
     stats = get_stats(bot)
     bot_metrics = bot.metrics
 
-    bot_metrics.blacklisted_users.set(len(bot.blacklist_cache))
+    bot_metrics.blacklisted_users.set(0)
     bot_metrics.attempted_commands.inc(0)
     bot_metrics.version_info.info(
         {
