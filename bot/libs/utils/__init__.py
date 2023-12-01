@@ -7,10 +7,7 @@ from .embeds import (
     ConfirmEmbed as ConfirmEmbed,
     Embed as Embed,
     ErrorEmbed as ErrorEmbed,
-    EstrogenEmbed as EstrogenEmbed,
-    ProgEmbed as ProgEmbed,
     SuccessEmbed as SuccessEmbed,
-    TestosteroneEmbed as TestosteroneEmbed,
 )
 from .logger import CatherineLogger as CatherineLogger
 from .modal import CatherineModal as CatherineModal
