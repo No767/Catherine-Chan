@@ -16,6 +16,7 @@ QOL changes with the dictionary commands, new HRT conversion commands and bug fi
 - Completely redo and retest HRT conversion commands
 - Implement cog checks for dev tools cog
 - Split HRT conversion commands into subcommands instead of one big command
+- Fix a bug where the default unit to convert to had an 0.0 instead of the user given value
 
 ## ✨ Additions
 
