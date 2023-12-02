@@ -26,8 +26,14 @@ def make_error_embed(error: Exception, item: discord.ui.Item[Any]) -> ErrorEmbed
 
 
 class CatherineView(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction, message_after: bool = True):
-        super().__init__()
+    def __init__(
+        self,
+        interaction: discord.Interaction,
+        message_after: bool = True,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
         self.interaction = interaction
         self.message_after = message_after
         self.original_response: Optional[discord.InteractionMessage]
