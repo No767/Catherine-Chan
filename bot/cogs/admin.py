@@ -11,7 +11,7 @@ from catherinecore import Catherine
 from discord.ext import commands
 from discord.ext.commands import Context, Greedy
 
-GIT_PULL_REGEX = re.compile(r"\s*(?P<filename>.*)\s*\|\s*[0-9]+")
+GIT_PULL_REGEX = re.compile(r"(?P<filename>.*)\|\s.+[0-9]")
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 
 
