@@ -17,6 +17,7 @@ QOL changes with the dictionary commands, new HRT conversion commands and bug fi
 - Implement cog checks for dev tools cog
 - Split HRT conversion commands into subcommands instead of one big command
 - Fix a bug where the default unit to convert to had an 0.0 instead of the user given value
+- Clean up `/about` command and include an "about me" description
 
 ## ✨ Additions
 
