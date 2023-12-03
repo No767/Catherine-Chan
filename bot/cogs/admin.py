@@ -16,7 +16,7 @@ from discord.ext.commands import Context, Greedy
 # Simply the only other choice is to leave it as is,
 # since i have continue to attempt to fix it, i'm simply wasting my own time
 # (the marginal cost is off the roof for this one)
-GIT_PULL_REGEX = re.compile(r"\s+(?P<filename>.*)\b\s+\|\s+[0-9]")
+GIT_PULL_REGEX = re.compile(r"\s+(?P<filename>.*)\b\s+\|\s+[\d]")
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 
 
@@ -136,6 +136,28 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         desc += status
         return desc
 
+    async def reload_exts(self, module: str) -> List[Tuple[str, str]]:
+        statuses = []
+        try:
+            await self.reload_or_load_extension(module)
+            statuses.append((self.tick(True), module))
+        except commands.ExtensionError:
+            statuses.append((self.tick(False), module))
+
+        return statuses
+
+    def reload_lib_modules(self, module: str) -> List[Tuple[str, str]]:
+        statuses = []
+        try:
+            actual_module = sys.modules[module]
+            importlib.reload(actual_module)
+            statuses.append((self.tick(True), module))
+        except KeyError:
+            statuses.append((self.tick(None), module))
+        except Exception:
+            statuses.append((self.tick(False), module))
+        return statuses
+
     async def prompt(
         self,
         ctx: commands.Context,
@@ -219,24 +241,9 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         statuses = []
         for is_submodule, module in modules:
             if is_submodule:
-                try:
-                    actual_module = sys.modules[module]
-                except KeyError:
-                    statuses.append((self.tick(None), module))
-                else:
-                    try:
-                        importlib.reload(actual_module)
-                    except Exception:
-                        statuses.append((self.tick(False), module))
-                    else:
-                        statuses.append((self.tick(True), module))
+                statuses = self.reload_lib_modules(module)
             else:
-                try:
-                    await self.reload_or_load_extension(module)
-                except commands.ExtensionError:
-                    statuses.append((self.tick(False), module))
-                else:
-                    statuses.append((self.tick(True), module))
+                statuses = await self.reload_exts(module)
 
         await ctx.send(self.format_results(statuses))
 
