@@ -18,11 +18,14 @@ QOL changes with the dictionary commands, new HRT conversion commands and bug fi
 - Split HRT conversion commands into subcommands instead of one big command
 - Fix a bug where the default unit to convert to had an 0.0 instead of the user given value
 - Clean up `/about` command and include an "about me" description
+- Migrate `DevTools` commands over to the new `Admin` cog
+- Fixed `reload-all` command not loading lib modules
 
 ## ✨ Additions
 
 - Prolactin conversion
 - Formatted dictionary entries
+- Proper `reload-all` command that reloads all library files in one go
 
 ## ➖ Removals
 
