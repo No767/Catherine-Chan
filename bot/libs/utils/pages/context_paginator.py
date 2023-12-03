@@ -80,14 +80,14 @@ class CatherineContextPages(discord.ui.View):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item
     ) -> None:
+        error_msg = (
+            "An unknown error occurred, sorry.\n"
+            "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
+        )
         if interaction.response.is_done():
-            await interaction.followup.send(
-                "An unknown error occurred, sorry", ephemeral=True
-            )
+            await interaction.followup.send(error_msg, ephemeral=True)
         else:
-            await interaction.response.send_message(
-                "An unknown error occurred, sorry", ephemeral=True
-            )
+            await interaction.response.send_message(error_msg, ephemeral=True)
 
     def _update_labels(self, page_number: int) -> None:
         self.go_to_first_page.disabled = page_number == 0

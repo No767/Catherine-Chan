@@ -1,117 +1,125 @@
-from .structs import (
-    DictInclusiveEntry,
-    DictNounsEntry,
-    DictPronounsPageEntry,
-    DictTermsEntry,
+import re
+
+from .structs import InclusiveEntity, NounEntity, PronounsEntity, TermEntity
+from .utils import (
+    determine_author,
+    determine_image_url,
+    format_gender_neutral_content,
+    format_inclusive_content,
+    format_inline_references,
+    format_pronouns_info,
+    format_term_titles,
 )
 
 
-class DictTermsEmbedEntry:
-    __slots__ = ("term", "original", "definition", "locale", "flags", "category")
+class InclusiveEntityEntry:
+    __slots__ = ("content", "author", "author_base_url")
 
-    def __init__(self, entry: DictTermsEntry):
+    def __init__(self, entry: InclusiveEntity):
+        self.content = entry.content
+        self.author = entry.author
+
+    def to_dict(self):
+        desc = format_inclusive_content(self.content)
+        data = {
+            "description": desc,
+            "fields": [{"name": "Author", "value": determine_author(self.author)}],
+        }
+        return data
+
+
+class TermEntityEntry:
+    __slots__ = (
+        "term",
+        "original",
+        "definition",
+        "key",
+        "assets",
+        "category",
+        "author",
+    )
+
+    def __init__(self, entry: TermEntity):
         self.term = entry.term
         self.original = entry.original
         self.definition = entry.definition
-        self.locale = entry.locale
-        self.flags = entry.flags
+        self.key = entry.key
+        self.assets = entry.assets
         self.category = entry.category
+        self.author = entry.author
 
     def to_dict(self):
-        parsed_flags = str(self.flags) if len(self.flags) > 0 else "None"
-        data = {
-            "title": self.term,
-            "description": self.definition,
-            "fields": [
-                {"name": "Original", "value": self.original or "None", "inline": True},
-                {"name": "Flags", "value": parsed_flags, "inline": True},
-                {"name": "Category", "value": self.category, "inline": True},
-            ],
-        }
-        return data
-
-
-class DictInclusiveEmbedEntry:
-    __slots__ = ("instead_of", "say", "because", "categories", "clarification")
-
-    def __init__(self, entry: DictInclusiveEntry):
-        self.instead_of = entry.instead_of
-        self.say = entry.say
-        self.because = entry.because
-        self.categories = entry.categories
-        self.clarification = entry.clarification
-
-    def to_dict(self):
-        desc = f"Instead of [{self.instead_of}], you should say [{self.say}] because [{self.because}]."
-        data = {
-            "title": f"Instead of ..., say {self.say}",
-            "description": desc,
-            "fields": [
-                {
-                    "name": "Clarification",
-                    "value": self.clarification or "None",
-                    "inline": True,
-                },
-                {
-                    "name": "Categories",
-                    "value": self.categories or "None",
-                    "inline": True,
-                },
-            ],
-        }
-        return data
-
-
-class DictNounsEmbedEntry:
-    __slots__ = ("masc", "fem", "neutr", "masc_plural", "fem_plural", "neutr_plural")
-
-    def __init__(self, entry: DictNounsEntry):
-        self.masc = entry.masc
-        self.fem = entry.fem
-        self.neutr = entry.neutr
-        self.masc_plural = entry.masc_plural
-        self.fem_plural = entry.fem_plural
-        self.neutr_plural = entry.neutr_plural
-
-    def to_dict(self):
+        dirty_original = (
+            f"({format_term_titles(format_inline_references(self.original))})"
+            if self.original is not None
+            else ""
+        )
+        cleaning_regex = re.compile(r"[\{\}]")
+        possible_image_url = determine_image_url(self.assets)
+        possible_author = determine_author(self.author)
+        title = format_term_titles(self.term)
+        formatted_original = format_inline_references(
+            cleaning_regex.sub("", dirty_original)
+        )
+        formatted_def = cleaning_regex.sub(
+            "", format_inline_references(self.definition)
+        ).capitalize()
+        formatted_category = ", ".join(self.category).rstrip(",")
         desc = f"""
-        **Masculine**: {self.masc or None}
-        **Feminine**: {self.fem or None}
-        **Neutral**: {self.neutr or None}
+        {formatted_original}
         
-        **--**
-        
-        **Masculine Plural**: {self.masc_plural or None}
-        **Feminine Plural**: {self.fem_plural or None}
-        **Neutral Plural**: {self.neutr_plural or None}
+        {formatted_def}
         """
         data = {
-            "title": f"{self.masc} / {self.fem}",
+            "title": title,
             "description": desc,
+            "thumbnail": possible_image_url,
+            "fields": [
+                {"name": "Author", "value": possible_author, "inline": True},
+                {"name": "Category", "value": formatted_category, "inline": True},
+            ],
         }
         return data
 
 
-class DictPPEntry:
-    def __init__(self, entry: DictPronounsPageEntry):
-        self.dict_entry = entry
+class NounEntityEntry:
+    __slots__ = ("entry", "author")
+
+    def __init__(self, entry: NounEntity):
+        self.entry = entry
+        self.author = entry.author
 
     def to_dict(self):
+        desc = format_gender_neutral_content(self.entry)
+        possible_author = determine_author(self.author)
+
         data = {
-            "title": self.dict_entry["term"],
-            "description": self.dict_entry["definition"],
+            "description": desc,
+            "fields": [{"name": "Author", "value": possible_author, "inline": True}],
+        }
+        return data
+
+
+class PronounsEntityEntry:
+    __slots__ = ("entry", "history", "sources_info")
+
+    def __init__(self, entry: PronounsEntity):
+        self.entry = entry
+        self.history = self.entry.history
+        self.sources_info = self.entry.sources_info
+
+    def to_dict(self):
+        info = format_pronouns_info(self.entry)
+        data = {
+            "title": info["title"],
+            "description": info["desc"],
             "fields": [
                 {
-                    "name": "Original",
-                    "value": self.dict_entry["original"],
+                    "name": "Aliases",
+                    "value": ", ".join(self.entry.aliases).rstrip(","),
                     "inline": True,
                 },
-                {"name": "Locale", "value": self.dict_entry["locale"], "inline": True},
-                {
-                    "name": "Category",
-                    "value": self.dict_entry["category"],
-                    "inline": True,
-                },
+                {"name": "Normative", "value": self.entry.normative, "inline": True},
             ],
         }
         return data

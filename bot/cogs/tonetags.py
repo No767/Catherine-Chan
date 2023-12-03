@@ -264,6 +264,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
             f"Are you sure you want to delete the tonetag `{indicator}`?"
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        view.original_response = await interaction.original_response()
 
     @app_commands.command(name="delete-id")
     @app_commands.describe(id="The ID of the tonetag")
@@ -275,6 +276,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
             f"Are you sure you want to delete the tonetag with ID `{id}`?"
         )
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        view.original_response = await interaction.original_response()
 
 
 async def setup(bot: Catherine) -> None:

@@ -1,60 +1,68 @@
-from typing import List, Optional, TypedDict, Union
+from typing import List, Optional
 
 import msgspec
 
 
-class DictTermsEntry(msgspec.Struct):
-    term: str
-    original: Union[str, None]
-    definition: str
-    locale: str
-    flags: str
-    category: str
-
-
-class DictInclusiveEntry(msgspec.Struct):
+class InclusiveContent(msgspec.Struct):
     instead_of: str
     say: str
     because: str
-    categories: str
-    clarification: Union[str, None]
+    clarification: Optional[str]
 
 
-class DictNounsEntry(msgspec.Struct):
-    masc: str
-    fem: str
-    neutr: str
-    masc_plural: str
-    fem_plural: str
-    neutr_plural: str
+class InclusiveEntity(msgspec.Struct):
+    content: InclusiveContent
+    author: Optional[str]
 
 
-class DictPronounsPageLaDiffEntry(TypedDict):
-    term: str
-    original: Union[str, None]
-    definition: str
-    locale: str
-    approved: int
-    base_id: Optional[str]
-    author_id: str
-    deleted: int
+class TermAssets(msgspec.Struct):
     flags: List[str]
-    category: str
-    key: str
-    author: str
+    images: Optional[str]
 
 
-class DictPronounsPageEntry(TypedDict):
+class TermEntity(msgspec.Struct):
     term: str
-    original: Union[str, None]
+    original: Optional[str]
     definition: str
-    locale: str
-    approved: int
-    base_id: Optional[str]
-    author_id: str
-    deleted: int
-    flags: List[str]
-    category: str
     key: str
-    author: str
-    versions: List[DictPronounsPageLaDiffEntry]
+    assets: TermAssets
+    category: List[str]
+    author: Optional[str]
+
+
+class NounContent(msgspec.Struct):
+    regular: str
+    plural: str
+
+
+class NounEntity(msgspec.Struct):
+    masc: NounContent
+    fem: NounContent
+    neutral: NounContent
+    author: Optional[str]
+
+
+class PronounsMorphemes(msgspec.Struct):
+    pronoun_subject: str
+    pronoun_object: str
+    possessive_determiner: str
+    possessive_pronoun: str
+    reflexive: str
+
+    def to_dict(self):
+        return {f: getattr(self, f) for f in self.__struct_fields__}
+
+    def values(self) -> List[str]:
+        return [getattr(self, f) for f in self.__struct_fields__]
+
+
+class PronounsEntity(msgspec.Struct):
+    name: str
+    canonical_name: str
+    description: str
+    aliases: List[str]
+    normative: bool
+    morphemes: PronounsMorphemes
+    examples: List[str]
+    history: str
+    sources_info: Optional[str]

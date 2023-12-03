@@ -2,15 +2,20 @@ from typing import TypedDict
 
 
 class ProgResults(TypedDict):
-    nmol_l_output: float
-    ng_ml_output: float
+    nmol_l: float
+    ng_ml: float
 
 
 class TResults(TypedDict):
-    nmol_l_output: float
-    ng_dl_output: float
+    nmol_l: float
+    ng_dl: float
 
 
 class EResults(TypedDict):
-    pmol_l_output: float
-    pg_ml_output: float
+    pmol_l: float
+    pg_ml: float
+
+
+class ProlacResults(TypedDict):
+    miu_l: float
+    ng_ml: float

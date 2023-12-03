@@ -6,13 +6,22 @@ from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
 from libs.ui.dictionary import (
-    DictInclusiveEntry,
-    DictInclusivePages,
-    DictNounsEntry,
-    DictNounsPages,
-    DictTermsEntry,
-    DictTermsPages,
+    InclusivePages,
+    NounPages,
+    PronounsPages,
+    TermsPages,
 )
+from libs.ui.dictionary.structs import (
+    InclusiveContent,
+    InclusiveEntity,
+    NounContent,
+    NounEntity,
+    PronounsEntity,
+    PronounsMorphemes,
+    TermAssets,
+    TermEntity,
+)
+from libs.ui.dictionary.utils import format_pronouns_info, split_flags
 from libs.utils import Embed
 from yarl import URL
 
@@ -39,17 +48,21 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 await interaction.response.send_message("No terms were found")
                 return
             converted = [
-                DictTermsEntry(
+                TermEntity(
                     term=term["term"],
                     original=term["original"] if len(term["original"]) > 0 else None,
                     definition=term["definition"],
-                    locale=term["locale"],
-                    flags=term["flags"],
-                    category=term["category"],
+                    key=term["key"],
+                    assets=TermAssets(
+                        flags=split_flags(term["flags"]),
+                        images=term["images"] if len(term["images"]) > 0 else None,
+                    ),
+                    category=term["category"].split(","),
+                    author=term["author"],
                 )
                 for term in data
             ]
-            pages = DictTermsPages(entries=converted, interaction=interaction)
+            pages = TermsPages(entries=converted, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="nouns")
@@ -57,7 +70,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     async def nouns(
         self, interaction: discord.Interaction, query: Optional[str] = None
     ) -> None:
-        """Looks up inclusive nouns"""
+        """Looks up gender neutral nouns and language"""
         url = URL("https://en.pronouns.page/api/nouns")
         if query:
             url = url / "search" / query
@@ -72,17 +85,17 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 await interaction.response.send_message("No nouns were found")
                 return
             converted = [
-                DictNounsEntry(
-                    masc=entry["masc"],
-                    fem=entry["fem"],
-                    neutr=entry["neutr"],
-                    masc_plural=entry["mascPl"],
-                    fem_plural=entry["femPl"],
-                    neutr_plural=entry["neutrPl"],
+                NounEntity(
+                    masc=NounContent(regular=entry["masc"], plural=entry["mascPl"]),
+                    fem=NounContent(regular=entry["fem"], plural=entry["femPl"]),
+                    neutral=NounContent(
+                        regular=entry["neutr"], plural=entry["neutrPl"]
+                    ),
+                    author=entry["author"],
                 )
                 for entry in data
             ]
-            pages = DictNounsPages(entries=converted, interaction=interaction)
+            pages = NounPages(entries=converted, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="inclusive")
@@ -100,32 +113,35 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 await interaction.response.send_message("No inclusive terms were found")
                 return
             converted = [
-                DictInclusiveEntry(
-                    instead_of=entry["insteadOf"],
-                    say=entry["say"],
-                    because=entry["because"],
-                    categories=entry["categories"],
-                    clarification=entry["clarification"],
+                InclusiveEntity(
+                    content=InclusiveContent(
+                        instead_of=entry["insteadOf"],
+                        say=entry["say"],
+                        because=entry["because"],
+                        clarification=entry["clarification"],
+                    ),
+                    author=entry["author"],
                 )
                 for entry in data
             ]
-            pages = DictInclusivePages(entries=converted, interaction=interaction)
+            pages = InclusivePages(entries=converted, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="lookup")
     @app_commands.describe(
-        pronouns="The pronouns to look up. These are actual pronouns, such as she/her, and they/them. "
+        pronouns="The pronouns to look up. Examples include she/her, etc. Defaults to all pronouns."
     )
-    async def lookup(self, interaction: discord.Interaction, pronouns: str) -> None:
+    async def lookup(
+        self, interaction: discord.Interaction, pronouns: Optional[str] = None
+    ) -> None:
         """Lookup info about the given pronouns
 
         Pronouns include she/her, they/them and many others. Singular pronouns (eg 'she') also work.
         """
         url = URL("https://en.pronouns.page/api/pronouns/")
-        banner_url = URL("https://en.pronouns.page/api/banner/")
-        full_url = url / pronouns
-        full_banner_url = banner_url / f"{pronouns}.png"
-        async with self.session.get(full_url) as r:
+        if pronouns:
+            url = url / pronouns
+        async with self.session.get(url) as r:
             data = await r.json(loads=orjson.loads)
             if data is None:
                 await interaction.response.send_message(
@@ -133,37 +149,61 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 )
                 return
 
-            desc = f"""
-            {data['description']}
-            
-            **Info**
-            Aliases: {data['aliases']}
-            Pronounceable: {data['pronounceable']}
-            Normative: {data['normative']}\n
-            """
-            if len(data["morphemes"]) != 0:
-                desc += "\n**Morphemes**\n"
-                for k, v in data["morphemes"].items():
-                    desc += f"{k.replace('_', ' ').title()}: {v}\n"
+            if pronouns is not None:
+                pronouns_entry = PronounsEntity(
+                    name=data["name"],
+                    canonical_name=data["canonicalName"],
+                    description=data["description"],
+                    aliases=data["aliases"],
+                    normative=data["normative"],
+                    morphemes=PronounsMorphemes(
+                        pronoun_subject=data["morphemes"]["pronoun_subject"],
+                        pronoun_object=data["morphemes"]["pronoun_object"],
+                        possessive_determiner=data["morphemes"][
+                            "possessive_determiner"
+                        ],
+                        possessive_pronoun=data["morphemes"]["possessive_pronoun"],
+                        reflexive=data["morphemes"]["reflexive"],
+                    ),
+                    examples=data["examples"],
+                    history=data["history"],
+                    sources_info=data["sourcesInfo"],
+                )
 
-            if len(data["pronunciations"]) != 0:
-                desc += "\n**Pronunciations**\n"
-                for k, v in data["pronunciations"].items():
-                    desc += f"{k.replace('_', ' ').title()}: {v}\n"
-            embed = Embed()
-            embed.title = data["name"]
-            embed.description = desc
-            embed.add_field(name="Examples", value="\n".join(data["examples"]))
-            embed.add_field(
-                name="Forms",
-                value=f"Third Form: {data['thirdForm']}\nSmall Form: {data['smallForm']}",
-            )
-            embed.add_field(
-                name="Plural?",
-                value=f"Plural: {data['plural']}\nHonorific: {data['pluralHonorific']}",
-            )
-            embed.set_image(url=str(full_banner_url))
-            await interaction.response.send_message(embed=embed)
+                pronouns_info = format_pronouns_info(pronouns_entry)
+                embed = Embed()
+                embed.title = pronouns_info["title"]
+                embed.description = pronouns_info["desc"]
+                embed.add_field(
+                    name="Aliases", value=", ".join(pronouns_entry.aliases).rstrip(",")
+                )
+                embed.add_field(name="Normative", value=pronouns_entry.normative)
+                await interaction.response.send_message(embed=embed)
+            else:
+                converted = [
+                    PronounsEntity(
+                        name=entry["canonicalName"],
+                        canonical_name=entry["canonicalName"],
+                        description=entry["description"],
+                        aliases=entry["aliases"],
+                        normative=entry["normative"],
+                        morphemes=PronounsMorphemes(
+                            pronoun_subject=entry["morphemes"]["pronoun_subject"],
+                            pronoun_object=entry["morphemes"]["pronoun_object"],
+                            possessive_determiner=entry["morphemes"][
+                                "possessive_determiner"
+                            ],
+                            possessive_pronoun=entry["morphemes"]["possessive_pronoun"],
+                            reflexive=entry["morphemes"]["reflexive"],
+                        ),
+                        examples=entry["examples"],
+                        history=entry["history"],
+                        sources_info=entry["sourcesInfo"],
+                    )
+                    for entry in data.values()
+                ]
+                pages = PronounsPages(entries=converted, interaction=interaction)
+                await pages.start()
 
 
 async def setup(bot: Catherine) -> None:

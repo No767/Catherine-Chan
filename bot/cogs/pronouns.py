@@ -117,6 +117,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         """
         view = SuggestionView(self.bot, interaction, self.pool)
         await interaction.response.send_message(embed=embed, view=view)
+        view.original_response = await interaction.original_response()
 
     @app_commands.command(name="profile")
     @app_commands.describe(

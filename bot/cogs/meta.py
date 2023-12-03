@@ -65,7 +65,12 @@ class Meta(commands.Cog):
         total_members = 0
         total_unique = len(self.bot.users)
 
+        guilds = 0
         for guild in self.bot.guilds:
+            guilds += 1
+            if guild.unavailable:
+                continue
+
             total_members += guild.member_count or 0
 
         # For Kumiko, it's done differently
@@ -78,14 +83,20 @@ class Meta(commands.Cog):
         embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)  # type: ignore
         embed.title = "Support Server Invite"
         embed.url = "https://discord.gg/ns3e74frqn"
-        embed.description = f"Latest Changes (Stable):\n {revisions}"
+        desc = [
+            "Catherine-Chan is designed for members of the LGBTQ+ community ",
+            "and serves as an informational toolkit for those who want to express themselves or learn more. "
+            "Features include an pronouns tester, find LGBTQ+ terms and definitions, and many more!\n",
+            f"Latest Changes (Stable):\n {revisions}",
+        ]
+        embed.description = "\n".join(desc)
         embed.set_footer(
             text=f"Made with discord.py v{discord.__version__}",
             icon_url="https://cdn.discordapp.com/emojis/596577034537402378.png?size=128",
         )
-        embed.add_field(name="Servers Count", value=len(self.bot.guilds))
+        embed.add_field(name="Guilds", value=guilds)
         embed.add_field(
-            name="User Count", value=f"{total_members} total\n{total_unique} unique"
+            name="Users", value=f"{total_members} total\n{total_unique} unique"
         )
         embed.add_field(
             name="Process", value=f"{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU"

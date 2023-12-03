@@ -15,7 +15,7 @@ from libs.cog_utils.prometheus_metrics import (
     fill_gauges,
 )
 from libs.ui.pronouns import ApprovePronounsExampleView
-from libs.utils import CatherineCommandTree, load_blacklist
+from libs.utils import CatherineCommandTree
 from prometheus_async.aio.web import start_http_server
 
 # Some weird import logic to ensure that watchfiles is there
@@ -57,22 +57,9 @@ class Catherine(commands.Bot):
         self.metrics: Metrics = create_gauges()
         self._ipc_host = ipc_host
         self._metrics_port = 6789
-        self._blacklist_cache: Dict[int, bool] = {}
         self._config = config
         self._session = session
         self._pool = pool
-
-    @property
-    def blacklist_cache(self) -> Dict[int, bool]:
-        """Global blacklist cache
-
-        The main blacklist is stored on PostgreSQL, and is always a 1:1 mapping of the cache.
-        R. Danny loads it from a JSON file, but I call that json as a db.
-
-        Returns:
-            Dict[int, bool]: Cached version of all globally blacklisted users.
-        """
-        return self._blacklist_cache
 
     @property
     def config(self) -> Dict[str, Optional[str]]:
@@ -120,18 +107,6 @@ class Catherine(commands.Bot):
     ) -> None:
         return
 
-    def add_to_blacklist_cache(self, id: int) -> None:
-        self._blacklist_cache[id] = True
-
-    def update_blacklist_cache(self, id: int, status: bool) -> None:
-        self._blacklist_cache.update({id: status})
-
-    def remove_from_blacklist_cache(self, id: int) -> None:
-        self._blacklist_cache.pop(id)
-
-    def replace_blacklist_cache(self, new_cache: Dict[int, bool]) -> None:
-        self._blacklist_cache = new_cache
-
     async def fs_watcher(self) -> None:
         cogs_path = Path(__file__).parent.joinpath("cogs")
         async for changes in awatch(cogs_path):
@@ -148,13 +123,13 @@ class Catherine(commands.Bot):
         self.loop.add_signal_handler(signal.SIGTERM, stop)
         self.loop.add_signal_handler(signal.SIGINT, stop)
 
-        self._blacklist_cache = await load_blacklist(self.pool)
         self.add_view(ApprovePronounsExampleView("", 0, 10, self.pool))
-        self.logger.info("Loaded blacklist cache")
 
         for cog in EXTENSIONS:
             self.logger.debug(f"Loaded extension: {cog}")
             await self.load_extension(cog)
+
+        await self.load_extension("jishaku")
 
         await self.ipc.start()
         await start_http_server(addr=self._ipc_host, port=6789)
@@ -165,8 +140,7 @@ class Catherine(commands.Bot):
         fill_gauges(self)
 
         if self.dev_mode is True and _fsw is True:
-            self.logger.info("Dev mode is enabled. Loading Jishaku and FSWatcher")
-            await self.load_extension("jishaku")
+            self.logger.info("Dev mode is enabled. Loading FSWatcher")
             self.loop.create_task(self.fs_watcher())
 
     async def on_ready(self):

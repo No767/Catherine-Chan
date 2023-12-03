@@ -9,15 +9,13 @@ sys.path.append(str(another_path))
 import discord.ext.test as dpytest
 import pytest
 from conftest import bot  # type: ignore
-from libs.utils import (
-    ConfirmEmbed,
-    Embed,
-    ErrorEmbed,
+from libs.cog_utils.hrt.embeds import (
     EstrogenEmbed,
     ProgEmbed,
-    SuccessEmbed,
+    ProlactinEmbed,
     TestosteroneEmbed,
 )
+from libs.utils import ConfirmEmbed, Embed, ErrorEmbed, SuccessEmbed
 
 new_bot = bot
 
@@ -68,4 +66,11 @@ async def test_progestrone_embed(bot):
 async def test_testosterone_embed(bot):
     embed = TestosteroneEmbed()
     await dpytest.message("!testosteroneembed")
+    assert dpytest.verify().message().embed(embed)
+
+
+@pytest.mark.asyncio
+async def test_prolactin_embed(bot):
+    embed = ProlactinEmbed()
+    await dpytest.message("!prolactinembed")
     assert dpytest.verify().message().embed(embed)

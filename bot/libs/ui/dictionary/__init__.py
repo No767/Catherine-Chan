@@ -1,12 +1,18 @@
 from .pages import (
-    DictInclusivePages as DictInclusivePages,
-    DictNounsPages as DictNounsPages,
-    DictPPPages as DictPPPages,
-    DictTermsPages as DictTermsPages,
+    InclusivePages as InclusivePages,
+    NounPages as NounPages,
+    PronounsPages as PronounsPages,
+    TermsPages as TermsPages,
 )
 from .structs import (
-    DictInclusiveEntry as DictInclusiveEntry,
-    DictNounsEntry as DictNounsEntry,
-    DictPronounsPageEntry as DictPronounsPageEntry,
-    DictTermsEntry as DictTermsEntry,
+    InclusiveContent as InclusiveContent,
+    InclusiveEntity as InclusiveEntity,
+    NounContent as NounContent,
+    NounEntity as NounEntity,
+    TermAssets as TermAssets,
+    TermEntity as TermEntity,
+)
+from .utils import (
+    format_pronouns_info as format_pronouns_info,
+    split_flags as split_flags,
 )

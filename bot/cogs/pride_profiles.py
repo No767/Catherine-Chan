@@ -65,6 +65,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         embed = ConfirmEmbed()
         embed.description = "Are you sure you want to register for a pride profile? It's very exciting and fun"
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        view.original_response = await interaction.original_response()
 
     @app_commands.command(name="configure")
     async def configure(self, interaction: discord.Interaction) -> None:
@@ -73,6 +74,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         embed = Embed(title="Configuring your pride profile")
         embed.description = "In order to configure your pride profile, select at one of the categories listed in the drop down."
         await interaction.response.send_message(embed=embed, view=view)
+        view.original_response = await interaction.original_response()
 
     @app_commands.command(name="top")
     async def top(self, interaction: discord.Interaction) -> None:
@@ -120,6 +122,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         embed = ConfirmEmbed()
         embed.description = "Are you sure you really want to delete your profile?"
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        view.original_response = await interaction.original_response()
 
 
 async def setup(bot: Catherine) -> None:
