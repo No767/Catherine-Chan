@@ -11,6 +11,11 @@ from catherinecore import Catherine
 from discord.ext import commands
 from discord.ext.commands import Context, Greedy
 
+# Although this regex does introduce polynomial backtracing, there is simply
+# no other alternatives as this is used for a partial search
+# Simply the only other choice is to leave it as is,
+# since i have continue to attempt to fix it, i'm simply wasting my own time
+# (the marginal cost is off the roof for this one)
 GIT_PULL_REGEX = re.compile(r"\s+(?P<filename>.*)\b\s+\|\s+[0-9]")
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 
