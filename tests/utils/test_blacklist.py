@@ -27,20 +27,16 @@ async def setup():
 def test_blacklist_entity():
     record = {"id": 3, "blacklist_status": False}
     first_entity = BlacklistEntity(record=record)
-    assert (
-        first_entity.id == 3
-        and first_entity.blacklist_status is False
-        and first_entity.unknown_entity is False
-    )
+    assert first_entity.id == 3 and first_entity.blacklist_status is False
 
     second_entity = BlacklistEntity()
-    assert second_entity.unknown_entity is True
+    assert second_entity.blacklist_status is None
 
 
 @pytest.mark.asyncio
 async def test_get_blacklist(setup):
     unknown_call = await get_blacklist(3, setup)
-    assert unknown_call.unknown_entity is True
+    assert unknown_call.blacklist_status is None
 
     query = """
     INSERT INTO blacklist (id, blacklist_status)
@@ -51,8 +47,4 @@ async def test_get_blacklist(setup):
     await setup.execute(query, known_id, True)
 
     known_call = await get_blacklist(known_id, setup)
-    assert (
-        known_call.id == known_id
-        and known_call.blacklist_status is True
-        and known_call.unknown_entity is False
-    )
+    assert known_call.id == known_id and known_call.blacklist_status is True
