@@ -10,12 +10,11 @@ class BlacklistEntity:
     __slots__ = ("id", "blacklist_status", "unknown_entity")
 
     def __init__(self, record: Optional[asyncpg.Record] = None):
-        self.unknown_entity = True
+        self.blacklist_status = None
 
         if record:
             self.id = record["id"]
             self.blacklist_status = record["blacklist_status"]
-            self.unknown_entity = False
 
 
 @alru_cache(maxsize=256)

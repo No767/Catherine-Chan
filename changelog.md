@@ -1,32 +1,19 @@
-QOL changes with the dictionary commands, new HRT conversion commands and bug fixes
+Patch release to address a critical bug that went unnoticed. 
+For the release of v0.6.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.6.0)
 
 ## ✨ TD;LR
 
-- Properly applied markdown formatting for dictionary commands
-- Re-wrote HRT conversion commands
-- Proper bug fixes
+- Fixed internal bug where the blacklist would prevent interactions from going through for non-blacklisted users
 
 ## 🛠️ Changes
 
-- Rewrite blacklist system to use an LRU cache (this provides a major speedup)
-- Properly fix timeout errors with `CatherinePages` and `CatherineView`
-- Rewrite dictionary commands with custom regex link formatter
-- Load Jishaku in production (this allows for debug commands in production)
-- Optionally provide a message response when a `CatherineView` times out (instead of just removing the view)
-- Completely redo and retest HRT conversion commands
-- Implement cog checks for dev tools cog
-- Split HRT conversion commands into subcommands instead of one big command
-- Fix a bug where the default unit to convert to had an 0.0 instead of the user given value
-- Clean up `/about` command and include an "about me" description
-- Migrate `DevTools` commands over to the new `Admin` cog
-- Fixed `reload-all` command not loading lib modules
+- Fixed internal bug where the blacklist would prevent interactions from going through for non-blacklisted users
+- Downgrade and pin `cysystemd` to 1.5.3 due to no built wheels for 1.6.0
 
 ## ✨ Additions
 
-- Prolactin conversion
-- Formatted dictionary entries
-- Proper `reload-all` command that reloads all library files in one go
+- N/A
 
 ## ➖ Removals
 
-- Old blacklist caches
+- N/A

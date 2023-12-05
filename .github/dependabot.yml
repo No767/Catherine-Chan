@@ -13,6 +13,10 @@ updates:
       prefix: "[pip]"
       include: "scope"
     target-branch: "main"
+    ignore:
+    # Ignore cystemd bc the newest release breaks all workflows
+      - dependency-name: "cysystemd"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

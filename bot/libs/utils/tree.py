@@ -74,7 +74,10 @@ class CatherineCommandTree(CommandTree):
         # 1. The blacklist entity must actually be blacklisted
         # 2. It's not an "unknown" entity (i.e the user doesn't exist in the DB)
         # This way, only *actual* blacklisted users get the message
-        if blacklist.blacklist_status is True and blacklist.unknown_entity is False:
+        if (
+            blacklist.blacklist_status is not None
+            and blacklist.blacklist_status is True
+        ):
             bot.metrics.attempted_commands.inc(1)
             await interaction.response.send_message(
                 f"My fellow user, {interaction.user.mention}, you just got the L. You are blacklisted from using this bot. Take an \U0001f1f1, \U0001f1f1oser. [Here is your appeal form](https://media.tenor.com/K9R9beOgPR4AAAAC/fortnite-thanos.gif)"
