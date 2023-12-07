@@ -1,6 +1,7 @@
 import re
 from typing import List, Optional, TypedDict
 
+from libs.cog_utils.dictionary import format_inline_references
 from yarl import URL
 
 from .structs import (
@@ -8,7 +9,6 @@ from .structs import (
     NounContent,
     NounEntity,
     PronounsEntity,
-    PronounsMorphemes,
     TermAssets,
 )
 
@@ -33,13 +33,8 @@ def format_instead_of_options(options: str):
     return "\n".join([f"- ~~{options}~~" for options in options_list])
 
 
-def format_pronouns_examples(examples: List[str], morphemes: PronounsMorphemes) -> str:
-    values = morphemes.values()
-    regex = re.compile(r"(%s)" % "|".join(map(re.escape, values)))
-    subbed = [
-        f"- {regex.sub(lambda match: f'**{match.group()}**', item)}"
-        for item in examples
-    ]
+def format_pronouns_examples(examples: List[str]) -> str:
+    subbed = [f"- {item}" for item in examples]
     return "\n".join(subbed)
 
 
@@ -55,7 +50,7 @@ def format_pronouns_info(entry: PronounsEntity) -> PronounsInfo:
     desc = [
         f"(*{entry.description}*)",
         f"{format_table()}",
-        f"### Examples \n{format_pronouns_examples(entry.examples, entry.morphemes)}",
+        f"### Examples \n{format_pronouns_examples(entry.examples)}",
     ]
     if len(entry.history) != 0:
         desc.append(f"### History\n{format_inline_references(entry.history)}")
@@ -93,50 +88,6 @@ def format_gender_neutral_content(content: NounEntity) -> str:
         f"### Neutral \n{_format_internals(content.neutral)}",
     )
     return "\n".join(final_content)
-
-
-def format_greek_references(content: str) -> str:
-    # Old Regex: ((?<=).+(?=\=)).+((?<=\=).+)$ (group 2 is the keyword, group 1 is the url)
-    # This regex is removed due to polynomial backtracking exploits
-    # This new way doesn't even use regex at all
-    keyword = content.split("=")[-1]
-    keyword_length = len(keyword) + 1
-
-    # Replace the broken parentheses with a quoted one
-    url = content[:-keyword_length].replace(")", "%29").replace("(", "%28")
-    return f"[{keyword}]({url})"
-
-
-def format_pronouns_references(content: str) -> str:
-    parts = content.split("=")
-    return f"[{parts[1]}](https://en.pronouns.page{parts[0]})"
-
-
-def format_inline_references(content: str) -> str:
-    regex = re.compile(r"(?<={).*(?=})")
-    extraction_regex = re.compile(r"(?<=#).*(?=\=)")
-    detect_link_regex = re.compile(r"^(http|https)://")
-
-    def disambiguate(match: re.Match[str]):
-        sub_match = extraction_regex.search(match.group())
-        if sub_match is None:
-            return match.group()
-        return sub_match.group()
-
-    def format_link(match: re.Match[str]):
-        url_match = detect_link_regex.search(match.group())
-        if url_match is not None:
-            # More than likely it's those stupid greek definitions
-            return format_greek_references(match.group())
-        elif match.group().startswith("/"):
-            return format_pronouns_references(match.group())
-
-        link = f"https://en.pronouns.page/terminology#{disambiguate(match)}".replace(
-            " ", "%20"
-        )
-        return f"[{disambiguate(match)}]({link})"
-
-    return regex.sub(lambda match: format_link(match), content)
 
 
 def split_flags(content: str) -> List[str]:

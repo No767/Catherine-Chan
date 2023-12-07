@@ -39,6 +39,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         self, interaction: discord.Interaction, query: Optional[str] = None
     ) -> None:
         """Looks up LGBTQ+ terms up"""
+        await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/terms")
         if query:
             url = url / "search" / query
