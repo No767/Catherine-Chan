@@ -2,7 +2,6 @@ from typing import Any, Dict, Optional
 
 import discord
 from discord.ext import menus
-from langcodes import Language
 from libs.utils.pages import CatherinePages
 
 from .structs import PronounsProfileEntry
@@ -71,13 +70,42 @@ class PronounsProfileLangMenu(discord.ui.Select["PronounsProfilePages"]):
     def __init__(self, entries: Dict[str, PronounsProfileEntry]):
         super().__init__(placeholder="Select a language")
         self.entries = entries
+        # The list of officially supported langs
+        # https://gitlab.com/PronounsPage/PronounsPage/-/blob/main/locale/locales.js
+        self.langcodes = {
+            "de": "Deutsch",
+            "es": "Español",
+            "eo": "Esperanto",
+            "en": "English",
+            "et": "Eesti keel",
+            "fr": "Français",
+            "gl": "Galego",
+            "he": "עברית",
+            "it": "Italiano",
+            "lad": "Ladino (Djudezmo)",
+            "nl": "Nederlands",
+            "no": "Norsk (Bokmål)",
+            "pl": "Polski",
+            "pt": "Português",
+            "ro": "Română",
+            "sv": "Svenska",
+            "tr": "Türkçe",
+            "vi": "Tiếng Việt",
+            "ar": "العربية",
+            "ru": "Русский",
+            "ua": "Українська",
+            "ja": "日本語",
+            "ko": "한국어",
+            "yi": "ייִדיש",
+            "zh": "中文",
+            "tok": "toki pona",
+        }
         self.__fill_options()
 
     def __fill_options(self):
         for entry in self.entries.keys():
-            lang = Language.get(entry)
-            lang_name = lang.display_name(entry)
-            self.add_option(label=f"{lang_name}", value=entry)
+            lang = self.langcodes[entry]
+            self.add_option(label=f"{lang}", value=entry)
 
     async def callback(self, interaction: discord.Interaction):
         if self.view is not None:

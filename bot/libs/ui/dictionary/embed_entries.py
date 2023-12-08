@@ -1,12 +1,16 @@
 import re
 
+from libs.cog_utils.dictionary import (
+    format_inline_references,
+    format_multi_reference,
+)
+
 from .structs import InclusiveEntity, NounEntity, PronounsEntity, TermEntity
 from .utils import (
     determine_author,
     determine_image_url,
     format_gender_neutral_content,
     format_inclusive_content,
-    format_inline_references,
     format_pronouns_info,
     format_term_titles,
 )
@@ -58,7 +62,7 @@ class TermEntityEntry:
         possible_image_url = determine_image_url(self.assets)
         possible_author = determine_author(self.author)
         title = format_term_titles(self.term)
-        formatted_original = format_inline_references(
+        formatted_original = format_multi_reference(
             cleaning_regex.sub("", dirty_original)
         )
         formatted_def = cleaning_regex.sub(

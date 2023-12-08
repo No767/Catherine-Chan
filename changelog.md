@@ -1,14 +1,16 @@
-Patch release to address a critical bug that went unnoticed. 
+Patch release addressing several bugs.
 For the release of v0.6.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.6.0)
 
 ## ✨ TD;LR
 
-- Fixed internal bug where the blacklist would prevent interactions from going through for non-blacklisted users
+- Fixed dictionary entries having broken markdown due to poor regex implementations introduced in `v0.6.0`
 
 ## 🛠️ Changes
 
-- Fixed internal bug where the blacklist would prevent interactions from going through for non-blacklisted users
-- Downgrade and pin `cysystemd` to 1.5.3 due to no built wheels for 1.6.0
+- Fixed dictionary entries having broken markdown due to poor regex implementations introduced in `v0.6.0`
+- Remove `langcodes` (as this was an extra dependency) and replaced with internal lookup based on pronouns.page official locales
+- Replace mention in profile pages searches for the raw id instead
+- Cleanup Dockerfile
 
 ## ✨ Additions
 

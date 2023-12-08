@@ -10,7 +10,7 @@ class SimpleProfilesPageEntry:
         self.pronouns = entry["pronouns"]
 
     def __str__(self) -> str:
-        return f"{self.name} (<@{self.user_id}> | {self.pronouns or 'None'})"
+        return f"{self.name} (ID: {self.user_id} | {self.pronouns or 'None'})"
 
 
 class ViewsProfilePageEntry:
@@ -22,4 +22,4 @@ class ViewsProfilePageEntry:
         self.views = entry["views"]
 
     def __str__(self) -> str:
-        return f"{self.name} (<@{self.user_id}> | {self.views} view(s))"
+        return f"{self.name} (ID: {self.user_id} | {self.views} view(s)))"
