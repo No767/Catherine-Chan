@@ -28,8 +28,8 @@ RUN poetry export --output requirements.txt --without-hashes --only main
 ####################################################################################################
 FROM python:3.11-slim-bookworm
 
-RUN apt update \
-  && apt install -y --no-install-recommends \
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
   tini \
   bash \
   netcat-traditional \
