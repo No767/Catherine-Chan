@@ -9,6 +9,7 @@ For the release of v0.6.0, please see the [release notes](https://github.com/No7
 
 - Fixed dictionary entries having broken markdown due to poor regex implementations introduced in `v0.6.0`
 - Remove `langcodes` (as this was an extra dependency) and replaced with internal lookup based on pronouns.page official locales
+- Replace mention in profile pages searches for the raw id instead
 - Cleanup Dockerfile
 
 ## ✨ Additions
