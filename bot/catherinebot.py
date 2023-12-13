@@ -1,4 +1,3 @@
-import asyncio
 import os
 from pathlib import Path
 
@@ -10,9 +9,9 @@ from dotenv import load_dotenv
 from libs.utils import CatherineLogger, read_env
 
 if os.name == "nt":
-    from winloop import install
+    from winloop import run
 else:
-    from uvloop import install
+    from uvloop import run
 
 load_dotenv()
 
@@ -46,8 +45,7 @@ async def main() -> None:
 
 def launch() -> None:
     with CatherineLogger():
-        install()
-        asyncio.run(main())
+        run(main())
 
 
 if __name__ == "__main__":
