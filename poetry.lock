@@ -2584,16 +2584,16 @@ test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
 
 [[package]]
 name = "winloop"
-version = "0.0.9"
-description = "An Alternative library for uvloop compatability with windows"
+version = "0.1.0"
+description = "An alternative library for uvloop compatibility with Windows"
 optional = false
 python-versions = "*"
 files = [
-    {file = "winloop-0.0.9-cp310-cp310-win_amd64.whl", hash = "sha256:531de5ee0065fc522ba35fadc7bc36e5bb2c598f7bc514906c262ef21efd77a7"},
-    {file = "winloop-0.0.9-cp311-cp311-win_amd64.whl", hash = "sha256:ed08496bca70440e5b164a0e8d1657995d23cf32be9830cab0a4957cd1340c4e"},
-    {file = "winloop-0.0.9-cp312-cp312-win_amd64.whl", hash = "sha256:78fe1c5a4cdc7875935b182466577c6e774372559620f9437babdef13a0f31ce"},
-    {file = "winloop-0.0.9-cp39-cp39-win_amd64.whl", hash = "sha256:0cbe473cc87a54a27d3ff641d1816e517d5ca43c42fb5fa7d58e6078c1de2cfc"},
-    {file = "winloop-0.0.9.tar.gz", hash = "sha256:db74203317b2b71f795571c9608f50980bce189650c446abe02f9ae95430858d"},
+    {file = "winloop-0.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:d991c05f68b5ffc08ae94a7ccd219170ce645154c8eb6d2cd3180f99a21c8007"},
+    {file = "winloop-0.1.0-cp311-cp311-win_amd64.whl", hash = "sha256:46952ae8b4bedf96dc6156c690aecd0311b8a97fd702eae91e498e56a8b7ad83"},
+    {file = "winloop-0.1.0-cp312-cp312-win_amd64.whl", hash = "sha256:9550728e09589c7c6a1748f95c2b74b4058ce4d61ed0dda99e9d7e6fc73bd768"},
+    {file = "winloop-0.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:3c7f83b412c9fad015ed8b9ed06bf457912a0e6996894b3a91cb25e46f98cdd9"},
+    {file = "winloop-0.1.0.tar.gz", hash = "sha256:062d309db70b2d8c7ab9a5ff0a9ba0fb942b96a64941267f85cc631130c96910"},
 ]
 
 [package.dependencies]
@@ -2799,4 +2799,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "435ca96f7e52e0f1a5d5a021b5f8c6d0a423096cb0bfc956ad76f736c4cc8f56"
+content-hash = "3c748f03b9c9ca0c1dfeb61f8d568f7cf8b744f805039b4eb1f3c1b6e3cd5d5a"
