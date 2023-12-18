@@ -18,7 +18,7 @@ discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus.git", re
 msgspec = "^0.18.5"
 discord-ext-ipcx = "^0.2.2"
 pygit2 = "^1.13.3"
-psutil = "^5.9.6"
+psutil = "^5.9.7"
 prometheus-client = "^0.19.0"
 prometheus-async = "^22.2.0"
 better-profanity = "0.6.1"
