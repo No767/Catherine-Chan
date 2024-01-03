@@ -14,7 +14,13 @@ from libs.cog_utils.hrt.embeds import (
     TestosteroneEmbed,
 )
 from libs.cog_utils.pronouns import build_approve_embed
-from libs.utils import ConfirmEmbed, Embed, ErrorEmbed, SuccessEmbed
+from libs.utils import (
+    ConfirmEmbed,
+    Embed,
+    ErrorEmbed,
+    SuccessEmbed,
+    TimeoutEmbed,
+)
 
 
 class Embeds(commands.Cog):
@@ -52,6 +58,10 @@ class Embeds(commands.Cog):
     @commands.command(name="prolactinembed")
     async def prolactinembed(self, ctx):
         await ctx.send(embed=ProlactinEmbed())
+
+    @commands.command(name="timeoutembed")
+    async def timeoutembed(self, ctx):
+        await ctx.send(embed=TimeoutEmbed())
 
     @commands.command(name="approve")
     async def approve(self, ctx):

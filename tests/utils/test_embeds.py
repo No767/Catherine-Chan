@@ -15,7 +15,13 @@ from libs.cog_utils.hrt.embeds import (
     ProlactinEmbed,
     TestosteroneEmbed,
 )
-from libs.utils import ConfirmEmbed, Embed, ErrorEmbed, SuccessEmbed
+from libs.utils import (
+    ConfirmEmbed,
+    Embed,
+    ErrorEmbed,
+    SuccessEmbed,
+    TimeoutEmbed,
+)
 
 new_bot = bot
 
@@ -73,4 +79,11 @@ async def test_testosterone_embed(bot):
 async def test_prolactin_embed(bot):
     embed = ProlactinEmbed()
     await dpytest.message("!prolactinembed")
+    assert dpytest.verify().message().embed(embed)
+
+
+@pytest.mark.asyncio
+async def test_timeout_embed(bot):
+    embed = TimeoutEmbed()
+    await dpytest.message("!timeoutembed")
     assert dpytest.verify().message().embed(embed)
