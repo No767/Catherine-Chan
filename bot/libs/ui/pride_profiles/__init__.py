@@ -11,4 +11,7 @@ from .utils import (
     SimpleProfilesPageEntry as SimpleProfilesPageEntry,
     ViewsProfilePageEntry as ViewsProfilePageEntry,
 )
-from .views import ConfigureView as ConfigureView
+from .views import (
+    ConfigureView as ConfigureView,
+    DeleteProfileView as DeleteProfileView,
+)

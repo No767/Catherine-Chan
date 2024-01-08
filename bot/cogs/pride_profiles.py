@@ -3,20 +3,10 @@ from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
 from libs.cog_utils.commons import register_user
-from libs.cog_utils.pride_profiles import present_info
-from libs.ui.pride_profiles import (
-    ConfigureView,
-    ProfileSearchPages,
-    ProfileStatsPages,
-)
-from libs.utils.embeds import (
-    ConfirmEmbed,
-    Embed,
-    ErrorEmbed,
-    SuccessEmbed,
-    TimeoutEmbed,
-)
-from libs.utils.prompt import interaction_prompt
+from libs.cog_utils.pride_profiles.utils import present_info
+from libs.ui.pride_profiles.pages import ProfileSearchPages, ProfileStatsPages
+from libs.ui.pride_profiles.views import ConfigureView, DeleteProfileView
+from libs.utils.embeds import ConfirmEmbed, Embed
 
 
 class PrideProfiles(commands.GroupCog, name="pride-profiles"):
@@ -72,33 +62,19 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         VALUES ($1, $2)
         ON CONFLICT (user_id) DO NOTHING;
         """
+        async with self.pool.acquire() as conn:
+            await register_user(interaction.user.id, conn)
+            status = await conn.execute(
+                query, interaction.user.id, interaction.user.global_name
+            )
 
-        embed = ConfirmEmbed()
-        embed.description = "Are you sure you want to register for a pride profile? It's very exciting and fun"
+            if status[-1] == "0":
+                msg = "Sorry, but you already have an active profile!"
+                await interaction.response.send_message(msg)
+                return
 
-        confirm = await interaction_prompt(embed, interaction, ephemeral=True)
-        if confirm.value:
-            async with self.pool.acquire() as conn:
-                await register_user(interaction.user.id, conn)
-                status = await conn.execute(
-                    query, interaction.user.id, interaction.user.global_name
-                )
-
-                embed = SuccessEmbed(description="Registered your pride profile!")
-
-                if status[-1] == "0":
-                    embed = ErrorEmbed(
-                        title="Already registered",
-                        description="You already have a pride profile registered!",
-                    )
-
-                await confirm.original_response.edit(embed=embed, view=None)
-        elif confirm.value is None:
-            embed = TimeoutEmbed()
-            await confirm.original_response.edit(embed=embed, view=None)
-        else:
-            embed = ErrorEmbed(title="Cancelling", description="Cancelling action")
-            await confirm.original_response.edit(embed=embed, view=None)
+            register_msg = "Registered your pride profile! In order to customize your profile, please use `/pride-profile configure`."
+            await interaction.response.send_message(content=register_msg)
 
     @app_commands.command(name="configure")
     async def configure(self, interaction: discord.Interaction) -> None:
@@ -153,28 +129,9 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         """Permanently deletes your pride profile"""
         embed = ConfirmEmbed()
         embed.description = "Are you sure you really want to delete your profile?"
-        confirm = await interaction_prompt(embed, interaction, ephemeral=True)
-        if confirm.value:
-            query = """
-            DELETE FROM profiles
-            WHERE user_id = $1;
-            """
-            status = await self.pool.execute(query, interaction.user.id)
-
-            embed = SuccessEmbed(description="Successfully deleted your pride profile")
-
-            if status[-1] == "0":
-                embed = ErrorEmbed(
-                    title="Doesn't exist",
-                    description="The pride profile that you are trying to delete doesn't exist",
-                )
-            await confirm.original_response.edit(embed=embed, view=None)
-        elif confirm.value is None:
-            embed = TimeoutEmbed()
-            await confirm.original_response.edit(embed=embed)
-        else:
-            embed = ErrorEmbed(title="Cancelling", description="Cancelling action")
-            await confirm.original_response.edit(embed=embed)
+        view = DeleteProfileView(interaction, self.pool)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        view.original_response = await interaction.original_response()
 
 
 async def setup(bot: Catherine) -> None:
