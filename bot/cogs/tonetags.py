@@ -20,14 +20,13 @@ from libs.cog_utils.tonetags import (
 from libs.ui.tonetags import (
     BareToneTagsPages,
     CreateToneTagModal,
-    DeleteToneTagViaIDView,
-    DeleteToneTagView,
     EditToneTagModal,
     ESToneTagsPages,
     SimpleToneTagsPages,
     StatsBareToneTagsPages,
     ToneTagPages,
 )
+from libs.ui.tonetags.views import DeleteTagView
 from libs.utils import ConfirmEmbed, Embed
 
 NO_TONETAGS_FOUND = "No tonetags were found"
@@ -251,14 +250,14 @@ class ToneTags(commands.GroupCog, name="tonetags"):
             return
 
         await interaction.response.send_message(
-            "The tonetag `{self.indicator}` did not get edited"
+            f"The tonetag `{indicator}` did not get edited"
         )
 
     @app_commands.command(name="delete")
     @app_commands.describe(indicator="The tonetag indicator to delete")
     async def delete(self, interaction: discord.Interaction, indicator: str) -> None:
         """Deletes a tonetag"""
-        view = DeleteToneTagView(interaction, indicator, self.pool)
+        view = DeleteTagView(interaction, self.pool, indicator=indicator)
         embed = ConfirmEmbed()
         embed.description = (
             f"Are you sure you want to delete the tonetag `{indicator}`?"
@@ -270,7 +269,7 @@ class ToneTags(commands.GroupCog, name="tonetags"):
     @app_commands.describe(id="The ID of the tonetag")
     async def delete_id(self, interaction: discord.Interaction, id: int) -> None:
         """Deletes a tonetag via the ID instead"""
-        view = DeleteToneTagViaIDView(interaction, id, self.pool)
+        view = DeleteTagView(interaction, self.pool, indicator_id=id)
         embed = ConfirmEmbed()
         embed.description = (
             f"Are you sure you want to delete the tonetag with ID `{id}`?"

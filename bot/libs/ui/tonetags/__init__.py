@@ -9,7 +9,4 @@ from .pages import (
     StatsBareToneTagsPages as StatsBareToneTagsPages,
     ToneTagPages as ToneTagPages,
 )
-from .views import (
-    DeleteToneTagViaIDView as DeleteToneTagViaIDView,
-    DeleteToneTagView as DeleteToneTagView,
-)
+from .views import DeleteTagView as DeleteTagView

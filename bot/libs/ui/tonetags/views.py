@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import asyncpg
 import discord
@@ -14,13 +14,26 @@ if TYPE_CHECKING:
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
 
-class DeleteToneTagView(CatherineView):
+class DeleteTagView(CatherineView):
     def __init__(
-        self, interaction: discord.Interaction, indicator: str, pool: asyncpg.Pool
-    ) -> None:
+        self,
+        interaction: discord.Interaction,
+        pool: asyncpg.Pool,
+        *,
+        indicator: Optional[str] = None,
+        indicator_id: Optional[int] = None,
+    ):
         super().__init__(interaction=interaction)
         self.indicator = indicator
+        self.indicator_id = indicator_id
         self.pool = pool
+
+    async def on_timeout(self) -> None:
+        if self.original_response and not self.triggered.is_set():
+            await self.original_response.edit(
+                embed=self.build_timeout_embed(), view=None, delete_after=15.0
+            )
+            return
 
     @discord.ui.button(
         label="Confirm",
@@ -30,83 +43,33 @@ class DeleteToneTagView(CatherineView):
     async def confirm(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ) -> None:
-        parsed_tonetag = parse_tonetag(self.indicator.lower())
         query = """
         DELETE FROM tonetags
-        WHERE indicator = $1 AND author_id = $2;
+        WHERE indicator = $1 AND author_id = $2 OR id = $3;
         """
-        status = await self.pool.execute(query, parsed_tonetag, interaction.user.id)
+
+        if self.indicator:
+            self.indicator = parse_tonetag(self.indicator.lower())
+
+        status = await self.pool.execute(
+            query, self.indicator, interaction.user.id, self.indicator_id
+        )
+
+        bot: Catherine = interaction.client  # type: ignore
+        bot.metrics.deleted_tonetags.inc()
 
         if status[-1] != "0":
-            bot: Catherine = interaction.client  # type: ignore
-            bot.metrics.deleted_tonetags.inc()
-            success_embed = SuccessEmbed()
-            success_embed.description = (
-                f"Successfully deleted the tonetag `{self.indicator}`"
-            )
-            await interaction.response.edit_message(
-                embed=success_embed, delete_after=10.0, view=None
-            )
+            embed = SuccessEmbed()
+            embed.description = f"Successfully deleted the tonetag `{self.indicator or self.indicator_id}`"
         else:
-            error_embed = ErrorEmbed(title="Doesn't exist")
-            error_embed.description = (
+            embed = ErrorEmbed(title="Doesn't exist")
+            embed.description = (
                 "The tonetag that you are trying to delete doesn't exist"
             )
-            await interaction.response.edit_message(
-                embed=error_embed, delete_after=10.0, view=None
-            )
 
-    @discord.ui.button(
-        label="Cancel",
-        style=discord.ButtonStyle.red,
-        emoji="<:redTick:596576672149667840>",
-    )
-    async def cancel(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
-        await interaction.response.defer()
-        await interaction.delete_original_response()
-        self.stop()
-
-
-class DeleteToneTagViaIDView(CatherineView):
-    def __init__(
-        self, interaction: discord.Interaction, tonetags_id: int, pool: asyncpg.Pool
-    ) -> None:
-        super().__init__(interaction=interaction)
-        self.tonetags_id = tonetags_id
-        self.pool = pool
-
-    @discord.ui.button(
-        label="Confirm",
-        style=discord.ButtonStyle.green,
-        emoji="<:greenTick:596576670815879169>",
-    )
-    async def confirm(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
-        query = """
-        DELETE FROM tonetags
-        WHERE id = $1 AND author_id = $2;
-        """
-        status = await self.pool.execute(query, self.tonetags_id, interaction.user.id)
-
-        if status[-1] != "0":
-            bot: Catherine = interaction.client  # type: ignore
-            bot.metrics.deleted_tonetags.inc()
-            success_embed = SuccessEmbed()
-            success_embed.description = (
-                f"Successfully deleted the tonetag. (ID: `{self.tonetags_id}`)"
-            )
-            await interaction.response.edit_message(
-                embed=success_embed, delete_after=10.0, view=None
-            )
-        else:
-            error_embed = ErrorEmbed(title="Doesn't exist")
-            error_embed.description = f"You either have the wrong ID (ID: `{self.tonetags_id}`) or the tonetag does not exist. Also maybe it's that you can't delete that tonetag."
-            await interaction.response.edit_message(
-                embed=error_embed, delete_after=10.0, view=None
-            )
+        if self.original_response:
+            self.triggered.set()
+            await self.original_response.edit(embed=embed, view=None, delete_after=15.0)
 
     @discord.ui.button(
         label="Cancel",
