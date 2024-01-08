@@ -17,42 +17,53 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         self.pool = self.bot.pool
         super().__init__()
 
-    @app_commands.command(name="view")
-    @app_commands.describe(user="The user to look for")
-    async def view(self, interaction: discord.Interaction, user: discord.User) -> None:
-        """Look at a pride profile"""
-        if user.bot:
-            await interaction.response.send_message(
-                "You know that I am transgender, lesbian and go by she/her pronouns right?"
-            )
-            return
+    def _disambiguate(self, rows) -> str:
+        if rows is None or len(rows) == 0:
+            return "Profile not found."
 
+        names = "\n".join(r["name"] for r in rows)
+        return f"Profile not found. Did you mean...\n{names}"
+
+    @app_commands.command(name="view")
+    @app_commands.describe(name="The user's username (not global name)")
+    async def view(self, interaction: discord.Interaction, name: str) -> None:
+        """Look at a pride profile"""
         query = """
         SELECT user_id, views, name, pronouns, gender_identity, sexual_orientation, romantic_orientation 
         FROM profiles
-        WHERE user_id = $1;
+        WHERE name = LOWER($1);
         """
         update_views_count = """
         UPDATE profiles
         SET views = views + 1
-        WHERE user_id = $1;
+        WHERE name = LOWER($1);
         """
-        async with self.pool.acquire() as conn:
-            rows = await conn.fetchrow(query, user.id)
-            if rows is None:
-                await interaction.response.send_message(
-                    "You or the user has no profile. Run `/pride-profiles register` in order to do so"
-                )
-                return
+        rows = await self.pool.fetchrow(query, name)
+        if rows is None:
+            query = """
+            SELECT name FROM profiles
+            WHERE name % $1
+            ORDER BY similarity(name, $1) DESC
+            LIMIT 3;
+            """
+            rows = await self.pool.fetch(query, name)
+            await interaction.response.send_message(self._disambiguate(rows))
+            return
 
-            await conn.execute(update_views_count, user.id)
-            records = dict(rows)
-            embed = Embed(title=f"{user.global_name}'s Profile")
-            embed.description = present_info(records)
-            embed.set_thumbnail(url=user.display_avatar.url)
-            embed.add_field(name="User", value=f"<@{records['user_id']}>")
-            embed.add_field(name="Views", value=records["views"])
-            await interaction.response.send_message(embed=embed)
+        await self.pool.execute(update_views_count, name)
+        records = dict(rows)
+
+        user = self.bot.get_user(records["user_id"]) or (
+            await self.bot.fetch_user(records["user_id"])
+        )
+
+        embed = Embed(title=f"{name}'s Profile")
+        embed.description = present_info(records)
+        embed.set_thumbnail(url=user.display_avatar.url)
+        embed.add_field(name="User", value=user.mention)
+        embed.add_field(name="Views", value=records["views"])
+        embed.set_footer(text=f"User ID: {records['user_id']}")
+        await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="register")
     async def register(self, interaction: discord.Interaction) -> None:
@@ -65,7 +76,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         async with self.pool.acquire() as conn:
             await register_user(interaction.user.id, conn)
             status = await conn.execute(
-                query, interaction.user.id, interaction.user.global_name
+                query, interaction.user.id, interaction.user.name
             )
 
             if status[-1] == "0":
