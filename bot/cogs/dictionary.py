@@ -5,7 +5,7 @@ import orjson
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from libs.ui.dictionary import (
+from libs.ui.dictionary.pages import (
     InclusivePages,
     NounPages,
     PronounsPages,

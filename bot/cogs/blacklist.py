@@ -1,7 +1,7 @@
 import discord
 from catherinecore import Catherine
 from discord.ext import commands
-from libs.ui.blacklist import BlacklistPages
+from libs.ui.blacklist.pages import BlacklistPages
 from libs.utils import get_blacklist
 
 
