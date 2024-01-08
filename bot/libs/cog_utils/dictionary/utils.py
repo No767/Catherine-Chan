@@ -10,11 +10,19 @@ def format_link_references(content: str) -> str:
     return f"[{keyword}]({url})"
 
 
+def format_pronouns_references(match: str) -> str:
+    cleaned = re.sub(r"^[/]", "", match)
+    parts = cleaned.split("=")
+    link = f"https://en.pronouns.page/{parts[0]}".replace(" ", "%20")
+    return f"[{parts[1]}]({link})"
+
+
 # What this does is if it's a term starting with an "#",
 # we strip that and give the result
 def format_term_references(match: str):
-    if match.startswith("#") or match.startswith("/"):
-        cleaned = re.sub(r"^[#/]", "", match)
+    # For terms
+    if match.startswith("#"):
+        cleaned = re.sub(r"^[#]", "", match)
         parts = cleaned.split("=")
         link = f"https://en.pronouns.page/terminology#{parts[0]}".replace(" ", "%20")
         return f"[{parts[1]}]({link})"
@@ -29,6 +37,8 @@ def format_inline_references(content: str):
         extracted_content = match.group(1)
         if link_regex.search(extracted_content) is not None:
             return format_link_references(extracted_content)
+        elif extracted_content.startswith("/"):
+            return format_pronouns_references(extracted_content)
         return format_term_references(extracted_content)
 
     regex = re.compile(r"{(.*?)}")
