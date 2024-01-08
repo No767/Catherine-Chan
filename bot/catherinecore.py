@@ -109,7 +109,7 @@ class Catherine(commands.Bot):
 
     async def fs_watcher(self) -> None:
         cogs_path = Path(__file__).parent.joinpath("cogs")
-        async for changes in awatch(cogs_path):
+        async for changes in awatch(cogs_path):  # type: ignore
             changes_list = list(changes)[0]
             if changes_list[0].modified == 2:
                 reload_file = Path(changes_list[1])
