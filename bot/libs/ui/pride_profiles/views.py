@@ -1,9 +1,7 @@
-import asyncio
-
 import asyncpg
 import discord
 from libs.utils import CatherineView
-from libs.utils.embeds import ErrorEmbed, SuccessEmbed, TimeoutEmbed
+from libs.utils.embeds import ErrorEmbed, SuccessEmbed
 
 from .selects import SelectPrideCategory
 
@@ -28,7 +26,6 @@ class DeleteProfileView(CatherineView):
     def __init__(self, interaction: discord.Interaction, pool: asyncpg.Pool) -> None:
         super().__init__(interaction=interaction)
         self.pool = pool
-        self.triggered = asyncio.Event()
 
     def build_register_embed(self, status: str) -> discord.Embed:
         if status[-1] == "0":
@@ -45,8 +42,9 @@ class DeleteProfileView(CatherineView):
 
     async def on_timeout(self) -> None:
         if self.original_response and not self.triggered.is_set():
-            embed = TimeoutEmbed()
-            await self.original_response.edit(embed=embed, view=None, delete_after=15.0)
+            await self.original_response.edit(
+                embed=self.build_timeout_embed(), view=None, delete_after=15.0
+            )
 
     @discord.ui.button(
         label="Confirm",
