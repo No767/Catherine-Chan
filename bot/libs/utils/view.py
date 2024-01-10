@@ -1,3 +1,4 @@
+import asyncio
 import traceback
 from typing import Any, Optional
 
@@ -29,14 +30,19 @@ class CatherineView(discord.ui.View):
     def __init__(
         self,
         interaction: discord.Interaction,
-        message_after: bool = True,
         *args,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.interaction = interaction
-        self.message_after = message_after
         self.original_response: Optional[discord.InteractionMessage]
+        self.triggered = asyncio.Event()
+
+    def build_timeout_embed(self) -> ErrorEmbed:
+        embed = ErrorEmbed()
+        embed.title = "\U00002757 Timed Out"
+        embed.description = "Timed out waiting for a response. Cancelling action."
+        return embed
 
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
         if interaction.user and interaction.user.id in (
@@ -49,18 +55,9 @@ class CatherineView(discord.ui.View):
 
     async def on_timeout(self) -> None:
         if self.original_response:
-            if self.message_after:
-                embed = ErrorEmbed()
-                embed.title = "\U00002757 Timed Out"
-                embed.description = (
-                    "Timed out waiting for a response. Cancelling action."
-                )
-                await self.original_response.edit(
-                    embed=embed, view=None, delete_after=15.0
-                )
-                return
-
-            await self.original_response.edit(view=None)
+            await self.original_response.edit(
+                embed=self.build_timeout_embed(), view=None, delete_after=15.0
+            )
 
     async def on_error(
         self,

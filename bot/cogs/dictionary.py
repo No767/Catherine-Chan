@@ -5,7 +5,7 @@ import orjson
 from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from libs.ui.dictionary import (
+from libs.ui.dictionary.pages import (
     InclusivePages,
     NounPages,
     PronounsPages,
@@ -139,6 +139,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
         Pronouns include she/her, they/them and many others. Singular pronouns (eg 'she') also work.
         """
+        await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/pronouns/")
         if pronouns:
             url = url / pronouns
@@ -179,7 +180,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                     name="Aliases", value=", ".join(pronouns_entry.aliases).rstrip(",")
                 )
                 embed.add_field(name="Normative", value=pronouns_entry.normative)
-                await interaction.response.send_message(embed=embed)
+                await interaction.followup.send(embed=embed)
             else:
                 converted = [
                     PronounsEntity(

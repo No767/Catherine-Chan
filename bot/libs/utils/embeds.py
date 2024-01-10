@@ -39,3 +39,15 @@ class ConfirmEmbed(discord.Embed):
         kwargs.setdefault("color", discord.Color.from_rgb(255, 191, 0))
         kwargs.setdefault("title", "Are you sure?")
         super().__init__(**kwargs)
+
+
+class TimeoutEmbed(discord.Embed):
+    """Timed out embed"""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("color", discord.Color.from_rgb(214, 6, 6))
+        kwargs.setdefault("title", "\U00002757 Timed Out")
+        kwargs.setdefault(
+            "description", "Timed out waiting for a response. Cancelling action."
+        )
+        super().__init__(**kwargs)

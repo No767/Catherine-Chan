@@ -1,5 +1,4 @@
 import logging
-import signal
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -15,15 +14,9 @@ from libs.cog_utils.prometheus_metrics import (
     fill_gauges,
 )
 from libs.ui.pronouns import ApprovePronounsExampleView
-from libs.utils import CatherineCommandTree
+from libs.utils.reloader import Reloader
+from libs.utils.tree import CatherineCommandTree
 from prometheus_async.aio.web import start_http_server
-
-# Some weird import logic to ensure that watchfiles is there
-_fsw = True
-try:
-    from watchfiles import awatch
-except ImportError:
-    _fsw = False
 
 
 class Catherine(commands.Bot):
@@ -54,6 +47,7 @@ class Catherine(commands.Bot):
         self.dev_mode = dev_mode
         self.logger: logging.Logger = logging.getLogger("catherine")
         self.ipc = ipcx.Server(self, host=ipc_host, secret_key=ipc_secret_key)
+        self.reloader = Reloader(self, Path(__file__).parent)
         self.metrics: Metrics = create_gauges()
         self._ipc_host = ipc_host
         self._metrics_port = 6789
@@ -107,22 +101,7 @@ class Catherine(commands.Bot):
     ) -> None:
         return
 
-    async def fs_watcher(self) -> None:
-        cogs_path = Path(__file__).parent.joinpath("cogs")
-        async for changes in awatch(cogs_path):
-            changes_list = list(changes)[0]
-            if changes_list[0].modified == 2:
-                reload_file = Path(changes_list[1])
-                self.logger.info(f"Reloading extension: {reload_file.name[:-3]}")
-                await self.reload_extension(f"cogs.{reload_file.name[:-3]}")
-
     async def setup_hook(self) -> None:
-        def stop():
-            self.loop.create_task(self.close())
-
-        self.loop.add_signal_handler(signal.SIGTERM, stop)
-        self.loop.add_signal_handler(signal.SIGINT, stop)
-
         self.add_view(ApprovePronounsExampleView("", 0, 10, self.pool))
 
         for cog in EXTENSIONS:
@@ -139,9 +118,8 @@ class Catherine(commands.Bot):
 
         fill_gauges(self)
 
-        if self.dev_mode is True and _fsw is True:
-            self.logger.info("Dev mode is enabled. Loading FSWatcher")
-            self.loop.create_task(self.fs_watcher())
+        if self.dev_mode:
+            self.reloader.start()
 
     async def on_ready(self):
         if not hasattr(self, "uptime") and not hasattr(self, "guild_metrics_created"):
@@ -160,3 +138,6 @@ class Catherine(commands.Bot):
             self.ipc.host,
             self.ipc.multicast_port,
         )
+
+    async def on_reloader_ready(self):
+        self.logger.info("Dev mode is enabled. Loaded Reloader")

@@ -1,32 +1,9 @@
 ####################################################################################################
-## Builder image
-####################################################################################################
-FROM python:3.11-slim-bookworm AS builder
-
-ENV DEBIAN_FRONTEND=noninteractive 
-
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-  curl \
-  git \
-  && apt-get clean
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-RUN curl -sSL https://install.python-poetry.org | python -
-ENV PATH="${PATH}:/root/.local/bin"
-
-WORKDIR /catherine
-
-COPY /pyproject.toml /catherine/
-COPY /poetry.lock /catherine/
-
-RUN poetry export --output requirements.txt --without-hashes --only main
-
-####################################################################################################
 ## Final image
 ####################################################################################################
 FROM python:3.11-slim-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive 
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -39,11 +16,10 @@ RUN apt-get update \
 WORKDIR /catherine
 COPY /bot/ /catherine/bot
 COPY /migrations /catherine/migrations
-COPY migrations-runner.py /catherine/migrations-runner.py
+COPY /migrations-runner.py /catherine/migrations-runner.py
+COPY /requirements/prod.txt /catherine/requirements.txt
 COPY /docker/start.sh /catherine/start.sh
 COPY /docker/wait-for /catherine/wait-for
-
-COPY --from=builder /catherine/requirements.txt /catherine/requirements.txt
 
 RUN adduser --disabled-password --gecos "" catherine \
   && chown -R catherine:catherine /catherine \

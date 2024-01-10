@@ -3,13 +3,13 @@ from catherinecore import Catherine
 from discord import app_commands
 from discord.app_commands import Choice
 from discord.ext import commands
-from libs.cog_utils.hrt import calc_e, calc_prog, calc_prolac, calc_t
 from libs.cog_utils.hrt.embeds import (
     EstrogenEmbed,
     ProgEmbed,
     ProlactinEmbed,
     TestosteroneEmbed,
 )
+from libs.cog_utils.hrt.utils import calc_e, calc_prog, calc_prolac, calc_t
 
 
 class HRTConversion(commands.GroupCog, group_name="hrt-convert"):

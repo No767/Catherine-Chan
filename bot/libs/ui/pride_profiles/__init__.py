@@ -13,6 +13,5 @@ from .utils import (
 )
 from .views import (
     ConfigureView as ConfigureView,
-    ConfirmRegisterView as ConfirmRegisterView,
     DeleteProfileView as DeleteProfileView,
 )
