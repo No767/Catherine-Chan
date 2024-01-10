@@ -1,21 +1,23 @@
-Patch release addressing several bugs.
-For the release of v0.6.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.6.0)
+QOL and bug-fixing update. See below for details
 
 ## ✨ TD;LR
 
-- Fixed dictionary entries having broken markdown due to poor regex implementations introduced in `v0.6.0`
+- Fixed unknown messages for timeout views
+- Fixed registering for pride profiles and deletion
 
 ## 🛠️ Changes
 
-- Fixed dictionary entries having broken markdown due to poor regex implementations introduced in `v0.6.0`
-- Remove `langcodes` (as this was an extra dependency) and replaced with internal lookup based on pronouns.page official locales
-- Replace mention in profile pages searches for the raw id instead
-- Cleanup Dockerfile
+- Require searching up using global usernames instead for pride profiles
+- Account for pronouns in dictionary commands
+- Removed button prompt for `/pride-profiles register`
+- Improved deletion prompts for `/pride-profiles delete` and `/tonetags delete`
+- Implement merged deletion backend for `/tonetags delete` and `/tonetags delete-id`
 
 ## ✨ Additions
 
-- N/A
+- Improved cog reloader
+- Nanika's signal handlers
 
 ## ➖ Removals
 
-- N/A
+- `cysystemd` (causing duplicate logs)
