@@ -11,3 +11,4 @@ ignore:
   - "bot/catherinecore.py"
   - "bot/catherinebot.py"
   - "bot/libs/utils/prompt.py"
+  - "bot/ilbs/utils/reloader.py"
