@@ -33,7 +33,6 @@ class DeleteTagView(CatherineView):
             await self.original_response.edit(
                 embed=self.build_timeout_embed(), view=None, delete_after=15.0
             )
-            return
 
     @discord.ui.button(
         label="Confirm",

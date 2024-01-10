@@ -11,7 +11,7 @@ def format_link_references(content: str) -> str:
 
 
 def format_pronouns_references(match: str) -> str:
-    cleaned = re.sub(r"^[/]", "", match)
+    cleaned = re.sub(r"^/", "", match)
     parts = cleaned.split("=")
     link = f"https://en.pronouns.page/{parts[0]}".replace(" ", "%20")
     return f"[{parts[1]}]({link})"
@@ -22,7 +22,7 @@ def format_pronouns_references(match: str) -> str:
 def format_term_references(match: str):
     # For terms
     if match.startswith("#"):
-        cleaned = re.sub(r"^[#]", "", match)
+        cleaned = re.sub(r"^#", "", match)
         parts = cleaned.split("=")
         link = f"https://en.pronouns.page/terminology#{parts[0]}".replace(" ", "%20")
         return f"[{parts[1]}]({link})"
