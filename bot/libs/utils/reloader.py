@@ -53,6 +53,16 @@ class Reloader:
         cog_index = parts.index("cogs")
         return ".".join(parts[cog_index:])
 
+    async def reload_cogs_and_libs(self, ctype: Change, true_module: str) -> None:
+        if true_module.startswith("cogs"):
+            if ctype == Change.modified or ctype == Change.added:
+                await self.reload_or_load_extension(true_module)
+            elif ctype == Change.deleted:
+                await self.bot.unload_extension(true_module)
+        elif true_module.startswith("libs"):
+            self.logger.info("Reloaded library module: %s", true_module)
+            await self.reload_lib_modules(true_module)
+
     async def _watch_cogs(self):
         async for changes in awatch(self._cogs_path, self._libs_path, recursive=True):
             for ctype, cpath in changes:
@@ -61,15 +71,7 @@ class Reloader:
                     continue
 
                 true_module = self.find_true_module(module)
-                if true_module.startswith("cogs"):
-                    if ctype == Change.modified or ctype == Change.added:
-                        await self.reload_or_load_extension(true_module)
-                    elif ctype == Change.deleted:
-                        await self.bot.unload_extension(true_module)
-                elif true_module.startswith("libs"):
-                    if ctype == Change.modified or ctype == Change.added:
-                        self.logger.info("Reloaded library module: %s", true_module)
-                        await self.reload_lib_modules(true_module)
+                await self.reload_cogs_and_libs(ctype, true_module)
 
     def start(self):
         self.loop.create_task(self._watch_cogs())
