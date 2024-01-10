@@ -72,6 +72,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         self, interaction: discord.Interaction, query: Optional[str] = None
     ) -> None:
         """Looks up gender neutral nouns and language"""
+        await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/nouns")
         if query:
             url = url / "search" / query
@@ -79,11 +80,11 @@ class Dictionary(commands.GroupCog, name="dictionary"):
             # If people start using this for pronouns, then a generator shows up
             # so that's in case this happens
             if r.content_type == "text/html":
-                await interaction.response.send_message("Uhhhhhhhhhhhh what mate")
+                await interaction.followup.send("Uhhhhhhhhhhhh what mate")
                 return
             data = await r.json(loads=orjson.loads)
             if len(data) == 0:
-                await interaction.response.send_message("No nouns were found")
+                await interaction.followup.send("No nouns were found")
                 return
             converted = [
                 NounEntity(
@@ -105,13 +106,14 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         self, interaction: discord.Interaction, term: Optional[str] = None
     ) -> None:
         """Provides inclusive terms for users to learn about"""
+        await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/inclusive")
         if term:
             url = url / "search" / term
         async with self.session.get(url) as r:
             data = await r.json(loads=orjson.loads)
             if len(data) == 0:
-                await interaction.response.send_message("No inclusive terms were found")
+                await interaction.followup.send("No inclusive terms were found")
                 return
             converted = [
                 InclusiveEntity(

@@ -25,7 +25,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         return f"Profile not found. Did you mean...\n{names}"
 
     @app_commands.command(name="view")
-    @app_commands.describe(name="The user's username (not global name)")
+    @app_commands.describe(name="The user's global or preferred name")
     async def view(self, interaction: discord.Interaction, name: str) -> None:
         """Look at a pride profile"""
         query = """
@@ -76,7 +76,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         async with self.pool.acquire() as conn:
             await register_user(interaction.user.id, conn)
             status = await conn.execute(
-                query, interaction.user.id, interaction.user.name
+                query, interaction.user.id, interaction.user.global_name
             )
 
             if status[-1] == "0":
