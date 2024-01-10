@@ -58,7 +58,6 @@ class CatherineView(discord.ui.View):
             await self.original_response.edit(
                 embed=self.build_timeout_embed(), view=None, delete_after=15.0
             )
-            return
 
     async def on_error(
         self,
