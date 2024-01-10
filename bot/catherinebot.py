@@ -1,4 +1,5 @@
 import os
+import signal
 from pathlib import Path
 
 import asyncpg
@@ -6,7 +7,7 @@ import discord
 from aiohttp import ClientSession
 from catherinecore import Catherine
 from dotenv import load_dotenv
-from libs.utils import CatherineLogger, read_env
+from libs.utils import CatherineLogger, KeyboardInterruptHandler, read_env
 
 if os.name == "nt":
     from winloop import run
@@ -40,6 +41,8 @@ async def main() -> None:
             pool=pool,
             dev_mode=DEV_MODE,
         ) as bot:
+            bot.loop.add_signal_handler(signal.SIGTERM, KeyboardInterruptHandler(bot))
+            bot.loop.add_signal_handler(signal.SIGINT, KeyboardInterruptHandler(bot))
             await bot.start(TOKEN)
 
 

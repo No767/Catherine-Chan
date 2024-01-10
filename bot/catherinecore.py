@@ -1,5 +1,4 @@
 import logging
-import signal
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -103,12 +102,6 @@ class Catherine(commands.Bot):
         return
 
     async def setup_hook(self) -> None:
-        def stop():
-            self.loop.create_task(self.close())
-
-        self.loop.add_signal_handler(signal.SIGTERM, stop)
-        self.loop.add_signal_handler(signal.SIGINT, stop)
-
         self.add_view(ApprovePronounsExampleView("", 0, 10, self.pool))
 
         for cog in EXTENSIONS:
