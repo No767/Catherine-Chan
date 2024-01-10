@@ -4,9 +4,6 @@ from types import TracebackType
 from typing import Optional, Type, TypeVar
 
 import discord
-from cysystemd import journal
-
-from .utils import is_docker
 
 BE = TypeVar("BE", bound=BaseException)
 
@@ -20,6 +17,7 @@ class CatherineLogger:
         max_bytes = 32 * 1024 * 1024  # 32 MiB
         self.log.setLevel(logging.INFO)
         logging.getLogger("discord").setLevel(logging.INFO)
+        logging.getLogger("watchfiles").setLevel(logging.WARNING)
         handler = RotatingFileHandler(
             filename="catherine.log",
             encoding="utf-8",
@@ -33,8 +31,6 @@ class CatherineLogger:
         )
         handler.setFormatter(fmt)
         self.log.addHandler(handler)
-        if not is_docker():
-            self.log.addHandler(journal.JournaldLogHandler())
         discord.utils.setup_logging(formatter=fmt)
 
     def __exit__(

@@ -25,7 +25,6 @@ better-profanity = "0.6.1"
 winloop = {markers = "sys_platform == \"win32\"", version = "^0.1.0"}
 jishaku = "^2.5.2"
 async-lru = "^2.0.4"
-cysystemd = "1.5.4"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
