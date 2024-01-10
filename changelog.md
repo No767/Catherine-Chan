@@ -1,23 +1,17 @@
-QOL and bug-fixing update. See below for details
+Patch to address two unnoticed bugs. For the release of v0.7.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.7.0)
 
 ## ✨ TD;LR
 
-- Fixed unknown messages for timeout views
-- Fixed registering for pride profiles and deletion
+- Addressed incorrect usage of username for pride profiles
 
 ## 🛠️ Changes
 
-- Require searching up using global usernames instead for pride profiles
-- Account for pronouns in dictionary commands
-- Removed button prompt for `/pride-profiles register`
-- Improved deletion prompts for `/pride-profiles delete` and `/tonetags delete`
-- Implement merged deletion backend for `/tonetags delete` and `/tonetags delete-id`
+- Defer all dictionary commands
+- Implement correct usage of global names for pride profiles
 
 ## ✨ Additions
 
-- Improved cog reloader
-- Nanika's signal handlers
-
+- N/A
 ## ➖ Removals
 
-- `cysystemd` (causing duplicate logs)
+- N/A
