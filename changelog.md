@@ -1,13 +1,12 @@
-Patch to address two unnoticed bugs. For the release of v0.7.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.7.0)
+Patch to address pride profiles not working. For the release of v0.7.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.7.0)
 
 ## ✨ TD;LR
 
-- Addressed incorrect usage of username for pride profiles
+- Addressed wrong SQL query
 
 ## 🛠️ Changes
 
-- Defer all dictionary commands
-- Implement correct usage of global names for pride profiles
+- Remove lower case checking for `/pride-profiles view`
 
 ## ✨ Additions
 

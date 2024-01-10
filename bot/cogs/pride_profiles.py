@@ -31,12 +31,12 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         query = """
         SELECT user_id, views, name, pronouns, gender_identity, sexual_orientation, romantic_orientation 
         FROM profiles
-        WHERE name = LOWER($1);
+        WHERE name = $1;
         """
         update_views_count = """
         UPDATE profiles
         SET views = views + 1
-        WHERE name = LOWER($1);
+        WHERE name = $1;
         """
         rows = await self.pool.fetchrow(query, name)
         if rows is None:
