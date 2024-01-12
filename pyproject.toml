@@ -30,7 +30,7 @@ watchfiles = "^0.21.0"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
 pyright = "^1.1.345"
-ruff = "^0.1.11"
+ruff = "^0.1.12"
 pyinstrument = "^4.6.1"
 
 
