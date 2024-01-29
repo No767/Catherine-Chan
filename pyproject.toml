@@ -44,7 +44,7 @@ sphinxext-opengraph = "^0.9.1"
 
 [tool.poetry.group.tests.dependencies]
 pytest = "^7.4.4"
-pytest-asyncio = "^0.23.3"
+pytest-asyncio = "^0.23.4"
 nox = "^2023.4.22"
 nox-poetry = "^1.0.3"
 pytest-cov = "^4.1.0"
