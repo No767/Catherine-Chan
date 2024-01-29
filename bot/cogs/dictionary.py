@@ -46,7 +46,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         async with self.session.get(url) as r:
             data = await r.json(loads=orjson.loads)
             if len(data) == 0:
-                await interaction.response.send_message("No terms were found")
+                await interaction.followup.send("No terms were found")
                 return
             converted = [
                 TermEntity(
@@ -148,9 +148,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         async with self.session.get(url) as r:
             data = await r.json(loads=orjson.loads)
             if data is None:
-                await interaction.response.send_message(
-                    "The pronouns requested were not found"
-                )
+                await interaction.followup.send("The pronouns requested were not found")
                 return
 
             if pronouns is not None:
