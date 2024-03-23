@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [3.8, 3.9, '3.10', '3.11']
+        version: [3.9, '3.10', '3.11', '3.12']
 
     steps:
       - name: Checkout
@@ -54,7 +54,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.version }}
-          
+
       - name: Install Tox
         run: |
           pip install "tox>=4.13.0,<5"
