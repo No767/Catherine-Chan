@@ -60,7 +60,7 @@ jobs:
 
       - name: Install Tox
         run: |
-          pip install tox>=4.13.0,<5
+          pip install "tox>=4.13.0,<5"
 
       - name: Run Tests
         run: |
