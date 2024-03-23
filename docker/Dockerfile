@@ -1,7 +1,7 @@
 ####################################################################################################
 ## Final image
 ####################################################################################################
-FROM python:3.11-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive 
 
@@ -17,7 +17,7 @@ WORKDIR /catherine
 COPY /bot/ /catherine/bot
 COPY /migrations /catherine/migrations
 COPY /migrations-runner.py /catherine/migrations-runner.py
-COPY /requirements/prod.txt /catherine/requirements.txt
+COPY /requirements.txt /catherine/requirements.txt
 COPY /docker/start.sh /catherine/start.sh
 COPY /docker/wait-for /catherine/wait-for
 
