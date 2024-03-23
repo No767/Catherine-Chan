@@ -47,12 +47,13 @@ jobs:
       if: steps.cache-pip.outputs.cache-hit != 'true'
       run: |
         pip install -r requirements.txt
-        
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: python
         setup-python-dependencies: false
+        
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
