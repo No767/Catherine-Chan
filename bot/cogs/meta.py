@@ -10,6 +10,7 @@ from discord import app_commands
 from discord.ext import commands
 from discord.utils import format_dt, oauth_url
 from libs.utils import Embed, human_timedelta
+from pygit2.enums import SortMode
 
 
 class Meta(commands.Cog):
@@ -39,11 +40,9 @@ class Meta(commands.Cog):
         return f"[`{short_sha2}`](https://github.com/No767/Catherine-Chan/commit/{commit.hex}) {short} ({offset})"
 
     def get_last_commits(self, count: int = 5):
-        repo = pygit2.Repository(".git")
+        repo = pygit2.Repository(".git")  # type: ignore
         commits = list(
-            itertools.islice(
-                repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count
-            )
+            itertools.islice(repo.walk(repo.head.target, SortMode.TOPOLOGICAL), count)
         )
         return "\n".join(self.format_commit(c) for c in commits)
 
