@@ -32,6 +32,14 @@ skips = ["B311", "B101"]
 lint.ignore = ["E501", "N999", "E402", "S101"]
 lint.select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra"
+testpaths = [
+    "tests"
+]
+pythonpath = ["bot"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
