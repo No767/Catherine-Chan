@@ -1,20 +1,20 @@
 import asyncio
 import logging
-import os
 from pathlib import Path
 
 import asyncpg
 from asyncpg_trek import Direction, execute, plan
 from asyncpg_trek.asyncpg import AsyncpgBackend
-from dotenv import load_dotenv
 
-ENV_PATH = Path(__file__).parent / "bot" / ".env"
+from bot.libs.utils.config import CatherineConfig
+
 MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 
-load_dotenv(dotenv_path=ENV_PATH)
+config_path = Path(__file__).parent / "bot" / "config.yml"
+config = CatherineConfig(config_path)
 
-POSTGRES_URI = os.environ["POSTGRES_URI"]
-TARGET_REVISION = os.environ["TARGET_REVISION"]
+POSTGRES_URI = config["postgres_uri"]
+TARGET_REVISION = config.catherine["revisions"]
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [Migrations] %(levelname)s    %(message)s",

@@ -15,7 +15,3 @@ watchfiles>=0.21.0,<1
 PyYAML>=6.0.1,<7
 async-lru>=2.0.4,<3
 asyncpg-trek>=0.3.1,<1
-
-# Slated for removal
-python-dotenv>=1.0.1,<2
-discord-ext-ipcx>=0.2.2,<1
