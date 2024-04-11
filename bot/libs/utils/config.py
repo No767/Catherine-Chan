@@ -20,8 +20,12 @@ class CatherineConfig(Generic[_T]):
             self._config = {}
 
     @property
-    def catherine(self) -> _T:
-        return self._config.get("catherine", {})
+    def bot(self) -> _T:
+        return self._config["bot"]
+
+    @property
+    def postgres(self) -> _T:
+        return self._config["postgres"]
 
     @overload
     def get(self, key: Any) -> Optional[Union[_T, Any]]:

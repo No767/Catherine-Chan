@@ -46,9 +46,9 @@ class Catherine(commands.Bot):
         self.session = session
         self.pool = pool
         self.version = str(VERSION)
-        self._dev_mode = config.catherine.get("dev_mode", False)
+        self._dev_mode = config.bot.get("dev_mode", False)
         self._reloader = Reloader(self, Path(__file__).parent)
-        self._prometheus = config.get("prometheus", {})
+        self._prometheus = config.bot.get("prometheus", {})
         self._prometheus_enabled = self._prometheus.get("enabled", False)
 
     # Basically silence all prefixed errors

@@ -18,8 +18,8 @@ else:
 config_path = Path(__file__).parent / "config.yml"
 config = CatherineConfig(config_path)
 
-TOKEN = config["catherine"]["token"]
-POSTGRES_URI = config["postgres_uri"]
+TOKEN = config["bot"]["token"]
+POSTGRES_URI = config["postgres"]["uri"]
 
 intents = discord.Intents.default()
 intents.members = True
