@@ -8,7 +8,7 @@ from asyncpg_trek.asyncpg import AsyncpgBackend
 
 from bot.libs.utils.config import CatherineConfig
 
-MIGRATIONS_DIR = Path(__file__).parent / "migrations"
+MIGRATIONS_DIR = Path(__file__).parent / "migrations-trek"
 
 config_path = Path(__file__).parent / "bot" / "config.yml"
 config = CatherineConfig(config_path)
