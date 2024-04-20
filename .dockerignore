@@ -1,6 +1,10 @@
 # ENV files
 **/.env
 
+# Configuration Files
+**/.yml
+**/.yaml
+
 # Cache files
 **/__pycache__
 **/*.py[cod]

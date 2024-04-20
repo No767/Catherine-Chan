@@ -18,34 +18,34 @@ Local Setup
         gh repo clone [username]/Catherine-Chan && cd Catherine-Chan
     
 
-2. Install all of the dependencies (including dev dependencies)
+2. Create an virtualenv and activate it
 
     .. code-block:: bash
 
-        poetry install
+        python3 -m venv catherine-venv
+        source catherine-venv/bin/activate
 
-3. Set up the Git Hooks through ``pre-commit`` 
-
-    .. code-block:: bash
-
-        poetry run pre-commit install
-
-4. Copy the ENV files into the correct places
+    On Windows you activate it with:
 
     .. code-block:: bash
 
-        cp envs/dev.env bot/.env
+        .\catherine-venv\Scripts\activate
 
-5. Edit the ``.env`` file placed in the root of the repo and in the ``bot`` folder to include any credentials needed for the bot to run
-    
+3. Install development dependencies. This will install dev and testing dependencies
+
     .. code-block:: bash
-        
-        # THIS IS ONLY AN EXAMPLE
-        POSTGRES_PASSWORD=...
-        POSTGRES_USER=...
-        POSTGRES_URI=postgres://user:somepass@localhost:5432/somedb
-        CATHERINE_PASSWORD=somepassword
-        
+
+        pip install -r requirements/dev.txt
+
+4. Activate pre-commit
+
+    .. code-block:: bash
+
+        pre-commit install
+
+5. Copy configuration file into the correct place. Edit these as needed
+
+    - ``config-example.yml`` --> ``bot/config.yml``
 
 6. Start the Docker Compose stack
 
@@ -57,13 +57,29 @@ Local Setup
 
     .. code-block:: bash
 
-        python migrations-runner.py
+        python3 migrations-runner.py
 
-Environment Variables
+Special Configuration Variables
 ---------------------
 
-Catherine includes an development mode feature, which will set up jishaku and a custom FS watcher. 
-The FS (File System) watcher is just like HMR (Hot Module Replacements). 
-Once you press Ctrl+s in your cog, it will automatically reload it so the code executed is changed. 
-Later on, there may be more development features that will be included. 
-Make sure you first install the dev dependencies first! And in order to enable it, set an environment variable called ``DEV_MODE`` to ``True``.
+Development Features
+^^^^^^^^^^^^^^^^^^^^
+
+Catherine-Chan includes an development mode allowing for continuous
+reloading of extensions and library code. Once the file is saved, the 
+module is reloaded and changes can be reflected. This can be enabled 
+through the ``dev_mode`` key in the configuration file. In addition,
+Jishaku is bundled with the bot, allowing for easy debugging and
+faster development.
+
+.. note::
+
+    You may need to restart the bot entirely for
+    some changes to be reflected.
+
+Prometheus Metrics
+^^^^^^^^^^^^^^^^^^
+
+Catherine-Chan also includes an Prometheus endpoint for metrics.
+This can enabled through the ``prometheus.enabled`` key. If 
+you don't need this feature, feel free to entirely disable it.

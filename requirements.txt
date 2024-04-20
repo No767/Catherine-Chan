@@ -2,6 +2,8 @@ discord.py[speed]>=2.3.2,<3
 uvloop>=0.19.0<1 ; sys_platform != "win32"
 winloop>=0.1.1<1 ; sys_platform == "win32"
 asyncpg>=0.29.0,<1
+asyncpg-trek>=0.3.1,<1
+async-lru>=2.0.4,<3
 discord-ext-menus @ git+https://github.com/Rapptz/discord-ext-menus@8686b5d1bbc1d3c862292eb436ab630d6e9c9b53
 python-dateutil>=2.9.0,<3
 msgspec>=0.18.6,<1
@@ -9,13 +11,6 @@ pygit2>=1.14.1,<2
 psutil>=5.9.8<6
 prometheus-client>=0.20.0,<1
 prometheus-async>=22.2.0,<23
-better-profanity>=0.6.1,<1
 jishaku>=2.5.2,<3
 watchfiles>=0.21.0,<1
 PyYAML>=6.0.1,<7
-async-lru>=2.0.4,<3
-asyncpg-trek>=0.3.1,<1
-
-# Slated for removal
-python-dotenv>=1.0.1,<2
-discord-ext-ipcx>=0.2.2,<1

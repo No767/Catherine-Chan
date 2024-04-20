@@ -1,0 +1,14 @@
+# Catherine-Chan's main configuration
+bot:
+  token: "BOT TOKEN HERE"
+  dev_mode: False
+
+  prometheus:
+    enabled: False
+    host: "127.0.0.1"
+    port: 6789
+
+# Postgres Configuration
+postgres:
+  revision: "rev5"
+  uri: "postgres://username:password@127.0.0.1:5432/postgres"
