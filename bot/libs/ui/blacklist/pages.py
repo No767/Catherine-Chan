@@ -21,7 +21,7 @@ class BlacklistPages(BaseBlacklistPages):
         entries: List[Dict[int, bool]],
         *,
         ctx: commands.Context,
-        per_page: int = 10
+        per_page: int = 10,
     ):
         converted = [BlacklistPageEntry(entry) for entry in entries]
         super().__init__(converted, per_page=per_page, ctx=ctx)

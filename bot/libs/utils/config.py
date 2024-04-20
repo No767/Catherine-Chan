@@ -28,12 +28,10 @@ class CatherineConfig(Generic[_T]):
         return self._config["postgres"]
 
     @overload
-    def get(self, key: Any) -> Optional[Union[_T, Any]]:
-        ...
+    def get(self, key: Any) -> Optional[Union[_T, Any]]: ...
 
     @overload
-    def get(self, key: Any, default: Any) -> Union[_T, Any]:
-        ...
+    def get(self, key: Any, default: Any) -> Union[_T, Any]: ...
 
     def get(self, key: Any, default: Any = None) -> Optional[Union[_T, Any]]:
         """Retrieves a config entry."""

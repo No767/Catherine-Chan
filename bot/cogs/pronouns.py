@@ -169,17 +169,19 @@ class Pronouns(commands.GroupCog, name="pronouns"):
                         for words in v["words"]
                     ],
                     timezone=v["timezone"]["tz"],
-                    circle=[
-                        PronounsProfileCircleEntry(
-                            username=member["username"],
-                            avatar=member["avatar"],
-                            mutual=member["circleMutual"],
-                            relationship=member["relationship"],
-                        )
-                        for member in v["circle"]
-                    ]
-                    if len(v["circle"]) != 0
-                    else None,
+                    circle=(
+                        [
+                            PronounsProfileCircleEntry(
+                                username=member["username"],
+                                avatar=member["avatar"],
+                                mutual=member["circleMutual"],
+                                relationship=member["relationship"],
+                            )
+                            for member in v["circle"]
+                        ]
+                        if len(v["circle"]) != 0
+                        else None
+                    ),
                 )
                 for k, v in data["profiles"].items()
             }
