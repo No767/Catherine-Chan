@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     branches:
-      - stable
+      - main
 jobs:
   Release:
     runs-on: ubuntu-latest
@@ -18,7 +18,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: stable
+        RELEASE_BRANCHES: main
         
     - name: Release New Version
       uses: ncipollo/release-action@v1

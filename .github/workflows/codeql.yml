@@ -3,7 +3,6 @@ name: "CodeQL"
 on:
   push:
     branches:
-      - stable
       - main
     
   pull_request:
@@ -49,7 +48,6 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: python
-        setup-python-dependencies: false
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
