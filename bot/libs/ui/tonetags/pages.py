@@ -20,7 +20,7 @@ class ToneTagPages(CatherinePages):
         entries: List[ToneTagInfo],
         *,
         interaction: discord.Interaction,
-        per_page: int = 1
+        per_page: int = 1,
     ):
         converted = [ToneTagInfoPageEntry(entry).to_dict() for entry in entries]
         super().__init__(
@@ -34,7 +34,7 @@ class ESToneTagsPages(CatherinePages):
         self,
         entries: List[ExactAndSimilarTonetags],
         *,
-        interaction: discord.Interaction
+        interaction: discord.Interaction,
     ):
         converted = [ESTonetagsPageEntry(entry).to_dict() for entry in entries]
         super().__init__(
@@ -49,7 +49,7 @@ class SimpleToneTagsPages(SimplePages):
         entries: List[SimpleToneTag],
         *,
         interaction: discord.Interaction,
-        per_page: int = 12
+        per_page: int = 12,
     ):
         converted = [SimpleToneTagPageEntry(entry) for entry in entries]
         super().__init__(converted, per_page=per_page, interaction=interaction)
@@ -61,7 +61,7 @@ class BareToneTagsPages(SimplePages):
         entries: List[BareToneTag],
         *,
         interaction: discord.Interaction,
-        per_page: int = 12
+        per_page: int = 12,
     ):
         converted = [BareToneTagPageEntry(entry) for entry in entries]
         super().__init__(converted, per_page=per_page, interaction=interaction)
@@ -73,7 +73,7 @@ class StatsBareToneTagsPages(SimplePages):
         entries: List[StatsBareToneTag],
         *,
         interaction: discord.Interaction,
-        per_page: int = 10
+        per_page: int = 10,
     ):
         converted = [StatsBareToneTagPageEntry(entry) for entry in entries]
         super().__init__(converted, per_page=per_page, interaction=interaction)

@@ -26,9 +26,12 @@ intents.members = True
 
 
 async def main() -> None:
-    async with ClientSession() as session, asyncpg.create_pool(
-        dsn=POSTGRES_URI, min_size=25, max_size=25, command_timeout=60
-    ) as pool:
+    async with (
+        ClientSession() as session,
+        asyncpg.create_pool(
+            dsn=POSTGRES_URI, min_size=25, max_size=25, command_timeout=60
+        ) as pool,
+    ):
         async with Catherine(
             config=config,
             intents=intents,

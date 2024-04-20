@@ -66,9 +66,11 @@ def format_inclusive_content(content: InclusiveContent):
         f"### Instead of \n{format_instead_of_options(content.instead_of)}",
         f"### Better Say\n{format_title_options(content.say)}",
         f"### Because\n{content.because}",
-        f"### Clarification\n{content.clarification}"
-        if content.clarification is not None
-        else "",
+        (
+            f"### Clarification\n{content.clarification}"
+            if content.clarification is not None
+            else ""
+        ),
     )
 
     return "\n".join(final_content)

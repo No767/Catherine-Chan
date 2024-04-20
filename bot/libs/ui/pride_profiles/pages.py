@@ -13,7 +13,7 @@ class ProfileSearchPages(CatherinePages):
         entries: List[SimpleProfileEntry],
         *,
         interaction: discord.Interaction,
-        per_page=1
+        per_page=1,
     ):
         converted = [SimpleProfilesPageEntry(entry) for entry in entries]
         super().__init__(
@@ -30,7 +30,7 @@ class ProfileStatsPages(CatherinePages):
         entries: List[SimpleViewsEntry],
         *,
         interaction: discord.Interaction,
-        per_page=1
+        per_page=1,
     ):
         converted = [ViewsProfilePageEntry(entry) for entry in entries]
         super().__init__(

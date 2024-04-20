@@ -18,7 +18,7 @@ class TermsPages(CatherinePages):
         entries: List[TermEntity],
         *,
         interaction: discord.Interaction,
-        per_page: int = 1
+        per_page: int = 1,
     ):
         converted = [TermEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
@@ -33,7 +33,7 @@ class InclusivePages(CatherinePages):
         entries: List[InclusiveEntity],
         *,
         interaction: discord.Interaction,
-        per_page: int = 1
+        per_page: int = 1,
     ):
         converted = [InclusiveEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
@@ -48,7 +48,7 @@ class NounPages(CatherinePages):
         entries: List[NounEntity],
         *,
         interaction: discord.Interaction,
-        per_page: int = 1
+        per_page: int = 1,
     ):
         converted = [NounEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
@@ -63,7 +63,7 @@ class PronounsPages(CatherinePages):
         entries: List[PronounsEntity],
         *,
         interaction: discord.Interaction,
-        per_page: int = 1
+        per_page: int = 1,
     ):
         converted = [PronounsEntityEntry(entry).to_dict() for entry in entries]
         super().__init__(
