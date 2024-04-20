@@ -13,11 +13,11 @@ MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 config_path = Path(__file__).parent / "bot" / "config.yml"
 config = CatherineConfig(config_path)
 
-POSTGRES_URI = config["postgres_uri"]
-TARGET_REVISION = config.catherine["revisions"]
+POSTGRES_URI = config["postgres"]["uri"]
+TARGET_REVISION = config["postgres"]["revision"]
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [Migrations] %(levelname)s    %(message)s",
+    format="%(asctime)s [Migrations] %(levelname)s\t%(message)s",
     datefmt="[%Y-%m-%d %H:%M:%S]",
 )
 
