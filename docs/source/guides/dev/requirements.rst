@@ -8,7 +8,6 @@ Before you get started, please ensure you have the following installed:
 
 - `Git <https://git-scm.com>`_
 - `Python 3 <https://python.org>`_
-- `Poetry <https://python-poetry.org>`_
 - `Docker <https://docker.com>`_
 - Discord Account + App
 
