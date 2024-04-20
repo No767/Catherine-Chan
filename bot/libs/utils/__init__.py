@@ -12,5 +12,5 @@ from .modal import CatherineModal as CatherineModal
 from .reloader import Reloader as Reloader
 from .time import human_timedelta as human_timedelta
 from .tree import CatherineCommandTree as CatherineCommandTree
-from .utils import is_docker as is_docker, read_env as read_env
+from .utils import is_docker as is_docker
 from .view import CatherineView as CatherineView
