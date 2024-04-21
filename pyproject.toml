@@ -36,6 +36,6 @@ select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 minversion = "6.0"
 addopts = "-ra"
 testpaths = [
-    "tests"
+    "bot/tests"
 ]
 pythonpath = ["bot"]
