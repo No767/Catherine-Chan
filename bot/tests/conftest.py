@@ -12,11 +12,9 @@ from libs.utils.config import CatherineConfig
 
 TESTING_EXTENSIONS = [
     "cogs.dictionary",
-    "cogs.fun",
     "cogs.hrt",
     "cogs.pride_profiles",
     "cogs.pronouns",
-    "cogs.tonetags",
 ]
 
 CONFIG_PATH = Path(__file__).parents[1] / "config.yml"
