@@ -40,7 +40,7 @@ class Meta(commands.Cog):
         return f"[`{short_sha2}`](https://github.com/No767/Catherine-Chan/commit/{commit.hex}) {short} ({offset})"
 
     def get_last_commits(self, count: int = 5):
-        repo = pygit2.Repository(".git")  # type: ignore
+        repo = pygit2.Repository(".git")
         commits = list(
             itertools.islice(repo.walk(repo.head.target, SortMode.TOPOLOGICAL), count)
         )
@@ -86,7 +86,7 @@ class Meta(commands.Cog):
             "Catherine-Chan is designed for members of the LGBTQ+ community ",
             "and serves as an informational toolkit for those who want to express themselves or learn more. "
             "Features include an pronouns tester, find LGBTQ+ terms and definitions, and many more!\n",
-            f"Latest Changes (Stable):\n {revisions}",
+            f"Latest Changes:\n {revisions}",
         ]
         embed.description = "\n".join(desc)
         embed.set_footer(

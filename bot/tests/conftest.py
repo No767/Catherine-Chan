@@ -1,10 +1,14 @@
 import glob
 import os
+from pathlib import Path
 
+import aiohttp
+import asyncpg
 import discord
 import discord.ext.commands as commands
 import discord.ext.test as dpytest
 import pytest_asyncio
+from libs.utils.config import CatherineConfig
 
 TESTING_EXTENSIONS = [
     "cogs.dictionary",
@@ -15,14 +19,34 @@ TESTING_EXTENSIONS = [
     "cogs.tonetags",
 ]
 
+CONFIG_PATH = Path(__file__).parents[1] / "config.yml"
+
+
+def load_postgres_uri() -> str:
+    config = CatherineConfig(CONFIG_PATH)
+    ideal_conf = config.postgres.get("uri")
+    if ideal_conf is None:
+        return os.environ["POSTGRES_URI"]
+    return ideal_conf
+
 
 class TestBot(commands.Bot):
+    pool: asyncpg.Pool
+    session: aiohttp.ClientSession
+
     def __init__(self, intents: discord.Intents):
         super().__init__(command_prefix="!", intents=intents)
 
+    async def close(self) -> None:
+        await self.session.close()
+        await self.pool.close()
+
     async def setup_hook(self) -> None:
+        self.pool = await asyncpg.create_pool(dsn=load_postgres_uri())  # type: ignore
+        self.session = aiohttp.ClientSession()
+
         for extension in TESTING_EXTENSIONS:
-            await self.load_extension(extension)
+            await self.load_extension(extension, package="..cogs")
 
 
 @pytest_asyncio.fixture
@@ -32,11 +56,14 @@ async def bot():
     intents.members = True
     intents.message_content = True
     b = TestBot(intents=intents)
+    await b._async_setup_hook()
+    await b.setup_hook()
     dpytest.configure(b)
 
     yield b
 
     # Teardown
+    await b.close()
     await dpytest.empty_queue()  # empty the global message queue as test teardown
 
 
