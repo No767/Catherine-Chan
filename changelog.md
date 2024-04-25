@@ -1,17 +1,26 @@
-Addresses one small bug with the dictionary commands not responding. For the release of v0.7.0, please see the [release notes](https://github.com/No767/Catherine-Chan/releases/tag/v0.7.0)
+Improved and standarized several components such as 
+configs, and others.
 
 ## ✨ TD;LR
 
-- Addressed improper followups
+- Internal codebase changes. No major changes for user features
 
 ## 🛠️ Changes
 
-- Updated error responses in `dictionary` commands to properly follow up instead of failing
-- Upgrade prod requirements
+- Migrated from ENV to YAML configs (https://github.com/No767/Catherine-Chan/pull/165)
+- Switched from Nox to Tox toolchains
+- Updated documentation to reflect all new changes
+- Cleaned up codebase (https://github.com/No767/Catherine-Chan/pull/166)
+- Proper pull request templates
 
 ## ✨ Additions
 
-- N/A
+- New YAML configuration system
+- Tox toolchain
+
 ## ➖ Removals
 
-- N/A
+- Poetry (https://github.com/No767/Catherine-Chan/pull/157)
+- ENV support
+- IPC support
+- Old libraries
