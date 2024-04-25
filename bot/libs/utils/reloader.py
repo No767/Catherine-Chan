@@ -54,7 +54,7 @@ class Reloader:
         return ".".join(parts[cog_index:])
 
     async def reload_cogs_and_libs(self, ctype: Change, true_module: str) -> None:
-        if true_module.startswith("cogs"):
+        if true_module.startswith("cogs") or true_module.startswith("ext"):
             if ctype == Change.modified or ctype == Change.added:
                 await self.reload_or_load_extension(true_module)
             elif ctype == Change.deleted:
