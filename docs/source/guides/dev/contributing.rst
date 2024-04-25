@@ -100,30 +100,8 @@ Example Cog:
 Python Version Support
 ----------------------
 
-Catherine-Chan's codebase is written to keep compatibility for Python versions 3.8 - 3.11. 
-Generally speaking, a Python version is supported until it's EOL (when the security support ends).
-
-When a new version of Python releases, support for that version cannot be added **until the next patch version of that release** 
-or until all packages and codebase internally support that new release. 
-This means support for Python 3.12 for example, will not be included until Python 3.12.1 releases.
-
-When writing code for this project, you must keep in mind to ensure that your code is compatible for versions 3.8 - 3.11. 
-If said code is not compatible, then it will not be merged.
-
-Upgrading Dependencies to the Latest Version
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Generally the protocol is to wait until the latest version rolls out the first
-bugfix version. But this may be broken **if and only if** all dependencies
-(including sub-dependencies) meet these two requirements:
-
-1. All dependencies (including sub-dependencies) support the newest version of Python and provide built wheels
-2. All dependencies (including sub-dependencies) build successfully on the newest version of Python
-
-.. NOTE::
-    Some libraries built using C require headers to be installed
-    (for example, ``cysystemd`` requires ``systemd/*.h`` headers, which are located under the ``libsystemd-dev`` package on Debian).
-    If the second requirement is met, you must denote the package (Debian/Ubuntu) that these headers are bundled in.
+Catherine-Chan generally follows `NEP-29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_. 
+Catherine-Chan is tested against versions supported by NEP-29.
 
 GitHub Contributing Guidelines
 -----------------------------------
@@ -146,16 +124,13 @@ Git Commit Styleguides
 Source Control Branching Models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. image:: /_static/gitflow.svg
+.. image:: /_static/trunk.png
    :align: center
    :width: 800
 
-This project uses the standard and quite old Git Flow model. 
-The development branch is ``main``, and the production branch is ``stable``. 
-Each commit into stable represents a version release, whether it is a small fix or a major update. 
-**DO NOT** make PRs off of the ``stable`` branch (you probably can't), as each version update is guaranteed to be completely stable and production ready. 
-
-Instead, you are encouraged to fork only the ``main`` branch, and make PRs off of that. Once merged, then the feature or change will be included within the latest release.
+This project uses an **trunk-based** development. The development branch is ``main``.
+Each commit into ``main`` represents an known working version of the project.
+You are encouraged to make PRs off of the ``main`` branch. 
 
 Releasing Tags
 ^^^^^^^^^^^^^^^
