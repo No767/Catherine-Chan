@@ -83,3 +83,4 @@ Prometheus Metrics
 Catherine-Chan also includes an Prometheus endpoint for metrics.
 This can enabled through the ``prometheus.enabled`` key. If 
 you don't need this feature, feel free to entirely disable it.
+Disabling this feature does not affect the bot.
