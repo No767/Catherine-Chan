@@ -14,3 +14,4 @@ prometheus-async>=22.2.0,<23
 jishaku>=2.5.2,<3
 watchfiles>=0.21.0,<1
 PyYAML>=6.0.1,<7
+typing_extensions>=4.11.0,<5
