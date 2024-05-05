@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import parse_tonetag
 from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed
-
-if TYPE_CHECKING:
-    pass
-
 
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 

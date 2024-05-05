@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import (
@@ -11,9 +9,6 @@ from libs.cog_utils.tonetags import (
     validate_tonetag,
 )
 from libs.utils import CatherineModal
-
-if TYPE_CHECKING:
-    pass
 
 
 class CreateToneTagModal(CatherineModal, title="Create a ToneTag"):
