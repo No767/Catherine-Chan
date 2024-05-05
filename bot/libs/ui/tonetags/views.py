@@ -8,7 +8,7 @@ from libs.cog_utils.tonetags import parse_tonetag
 from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed
 
 if TYPE_CHECKING:
-    from bot.catherinecore import Catherine
+    pass
 
 
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
@@ -53,9 +53,6 @@ class DeleteTagView(CatherineView):
         status = await self.pool.execute(
             query, self.indicator, interaction.user.id, self.indicator_id
         )
-
-        bot: Catherine = interaction.client  # type: ignore
-        bot.metrics.deleted_tonetags.inc()
 
         if status[-1] != "0":
             embed = SuccessEmbed()

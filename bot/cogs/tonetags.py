@@ -85,7 +85,6 @@ class ToneTags(commands.GroupCog, name="tonetags"):
         elif tonetag is None:
             await interaction.response.send_message(TONETAG_NOT_FOUND)
         else:
-            self.bot.metrics.successful_tonetags.inc()
             await interaction.response.send_message(
                 embed=self._build_tonetag_embed(tonetag)
             )
