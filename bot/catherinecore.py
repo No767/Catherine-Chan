@@ -37,7 +37,7 @@ class Catherine(commands.Bot):
             **kwargs,
         )
         self.logger: logging.Logger = logging.getLogger("catherine")
-        self.metrics: prometheus.Metrics = prometheus.create_gauges()
+        self.metrics = prometheus.create_gauges(self)
         self.session = session
         self.pool = pool
         self.version = str(VERSION)
@@ -69,7 +69,7 @@ class Catherine(commands.Bot):
             await start_http_server(addr=prom_host, port=prom_port)
             self.logger.info("Prometheus Server started on %s:%s", prom_host, prom_port)
 
-            self.metrics.fill_gauges(self)
+            self.metrics.fill_gauges()
 
         if self._dev_mode:
             self._reloader.start()
@@ -78,7 +78,7 @@ class Catherine(commands.Bot):
         if not hasattr(self, "uptime"):
             self.uptime = discord.utils.utcnow()
         elif self._prometheus_enabled and not hasattr(self, "guild_metrics_created"):
-            self.guild_metrics_created = self.metrics.create_guild_gauges(self)
+            self.guild_metrics_created = self.metrics.create_guild_gauges()
 
         curr_user = None if self.user is None else self.user.name
         self.logger.info(f"{curr_user} is fully ready!")

@@ -22,7 +22,6 @@ TOKEN = config["bot"]["token"]
 POSTGRES_URI = config["postgres"]["uri"]
 
 intents = discord.Intents.default()
-intents.members = True
 
 
 async def main() -> None:
