@@ -35,7 +35,7 @@ Local Setup
 
     .. code-block:: bash
 
-        pip install -r requirements/dev.txt
+        pip install -r requirements-dev.txt
 
 4. Activate pre-commit
 
