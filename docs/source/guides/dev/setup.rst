@@ -35,7 +35,7 @@ Local Setup
 
     .. code-block:: bash
 
-        pip install -r requirements/dev.txt
+        pip install -r requirements-dev.txt
 
 4. Activate pre-commit
 
@@ -83,4 +83,6 @@ Prometheus Metrics
 Catherine-Chan also includes an Prometheus endpoint for metrics.
 This can enabled through the ``prometheus.enabled`` key. If 
 you don't need this feature, feel free to entirely disable it.
-Disabling this feature does not affect the bot.
+Disabling this feature does not affect the bot, as the cog
+responsible for this feature is an extension that can be
+enabled at will. 

@@ -1,11 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import discord
-from libs.cog_utils.prometheus_metrics import Metrics
 from libs.cog_utils.pronouns import (
     convert_to_proper_name,
     convert_to_proper_sentence,
     parse_pronouns_sentence,
 )
 from libs.utils import CatherineModal
+
+if TYPE_CHECKING:
+    from bot.cogs.ext.prometheus import Metrics
 
 
 class PronounsTesterModal(CatherineModal, title="Input the fields"):
