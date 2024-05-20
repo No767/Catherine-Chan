@@ -10,5 +10,4 @@ bot:
 
 # Postgres Configuration
 postgres:
-  revision: "rev5"
   uri: "postgres://username:password@127.0.0.1:5432/postgres"
