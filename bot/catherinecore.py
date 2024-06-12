@@ -75,8 +75,10 @@ class Catherine(commands.Bot):
     async def on_ready(self):
         if not hasattr(self, "uptime"):
             self.uptime = discord.utils.utcnow()
-        
-        if self._prometheus.get("enabled", False) and not hasattr(self, "guild_metrics_created"):
+
+        if self._prometheus.get("enabled", False) and not hasattr(
+            self, "guild_metrics_created"
+        ):
             self.guild_metrics_created = self.metrics.guilds.fill()
 
         curr_user = None if self.user is None else self.user.name

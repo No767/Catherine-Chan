@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import platform
-from typing import TYPE_CHECKING, TypedDict, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import discord
-import msgspec
 from discord import app_commands
 from discord.ext import commands, tasks
-
 
 try:
 
@@ -32,20 +30,20 @@ class GuildCount(NamedTuple):
     text: int
     voice: int
     users: int
-    
+
+
 class GuildCollector:
     __slots__ = ("bot", "count", "text", "voice", "users")
-    
+
     def __init__(self, bot: Catherine):
         self.bot = bot
         self.count = Gauge(f"{METRIC_PREFIX}guilds", "Amount of guilds connected")
-        self.text = Gauge(f"{METRIC_PREFIX}text", "Amount of text channels that can be seen")
+        self.text = Gauge(
+            f"{METRIC_PREFIX}text", "Amount of text channels that can be seen"
+        )
         self.voice = Gauge(f"{METRIC_PREFIX}voice", "Amount of voice channels")
         self.users = Gauge(f"{METRIC_PREFIX}users", "Total users")
-        
-        # self.fill()
-        
-        
+
     def _get_stats(self) -> GuildCount:
         users = len(self.bot.users)
         text = 0
@@ -60,61 +58,83 @@ class GuildCollector:
                     text += 1
                 elif isinstance(channel, discord.VoiceChannel):
                     voice += 1
-                    
-        return GuildCount(
-            count=guilds,
-            text=text,
-            voice=voice,
-            users=users
-        )
-                    
+
+        return GuildCount(count=guilds, text=text, voice=voice, users=users)
+
     def fill(self) -> None:
         stats = self._get_stats()
-        
+
         self.count.set(stats.count)
         self.text.set(stats.text)
         self.voice.set(stats.voice)
         self.users.set(stats.users)
 
+
 class BlacklistCollector:
     __slots__ = ("bot", "users", "commands")
-    
+
     def __init__(self, bot: Catherine):
         self.bot = bot
-        
+
         # For now, until we can improve the blacklist system,
         # we will leave these to be blank
-        self.users = Gauge(f"{METRIC_PREFIX}blacklist_users", "Current amount of blacklisted users")
-        self.commands = Counter(f"{METRIC_PREFIX}blacklist_commands", "Counter of commands that were attempted for blacklisted users")
-        
-        
-    
+        self.users = Gauge(
+            f"{METRIC_PREFIX}blacklist_users", "Current amount of blacklisted users"
+        )
+        self.commands = Counter(
+            f"{METRIC_PREFIX}blacklist_commands",
+            "Counter of commands that were attempted for blacklisted users",
+        )
+
+
 class FeatureCollector:
     __slots__ = ("bot", "successful_pronouns")
-    
+
     def __init__(self, bot: Catherine):
         self.bot = bot
-        self.successful_pronouns = Counter(f"{METRIC_PREFIX}successful_pronouns", "Counter of successful pronouns tester invocations")
-        
+        self.successful_pronouns = Counter(
+            f"{METRIC_PREFIX}successful_pronouns",
+            "Counter of successful pronouns tester invocations",
+        )
+
+
 class CommandsCollector:
     __slots__ = ("bot", "total", "invocation", "count")
-    
+
     def __init__(self, bot: Catherine):
         self.bot = bot
-        
-        self.total = Summary(f"{METRIC_PREFIX}commands_total", "Total commands included")
-        self.invocation = Counter(f"{METRIC_PREFIX}commands_invocation", "Counter for invoked commands")
-        self.count = Counter(f"{METRIC_PREFIX}commands_count", "Individual count for commands", ["commands"])
-        
+
+        self.total = Summary(
+            f"{METRIC_PREFIX}commands_total", "Total commands included"
+        )
+        self.invocation = Counter(
+            f"{METRIC_PREFIX}commands_invocation", "Counter for invoked commands"
+        )
+        self.count = Counter(
+            f"{METRIC_PREFIX}commands_count",
+            "Individual count for commands",
+            ["commands"],
+        )
+
     def fill(self, amount: int) -> None:
         self.total.observe(amount)
 
+
 class MetricCollector:
-    __slots__ = ("bot", "connected", "latency", "commands", "version", "guilds", "blacklist", "features")
-    
+    __slots__ = (
+        "bot",
+        "connected",
+        "latency",
+        "commands",
+        "version",
+        "guilds",
+        "blacklist",
+        "features",
+    )
+
     def __init__(self, bot: Catherine):
         self.bot = bot
-        
+
         self.connected = Enum(
             f"{METRIC_PREFIX}connected",
             "Connected to Discord",
@@ -127,17 +147,16 @@ class MetricCollector:
         self.guilds = GuildCollector(bot)
         self.blacklist = BlacklistCollector(bot)
         self.features = FeatureCollector(bot)
-        
-        
+
     def _get_commands(self) -> int:
         total = 0
-        
+
         for command in self.bot.tree.walk_commands():
             if isinstance(command, (app_commands.Command)):
                 total += 1
-                
+
         return total
-    
+
     def fill(self) -> None:
         self.version.info(
             {
@@ -147,7 +166,7 @@ class MetricCollector:
             }
         )
         self.commands.fill(self._get_commands())
-        
+
     async def start(self, host: str, port: int) -> None:
         await start_http_server(addr=host, port=port)
 
@@ -169,7 +188,6 @@ class Prometheus(commands.Cog):
     @tasks.loop(seconds=5)
     async def latency_loop(self) -> None:
         self.bot.metrics.latency.labels(None).set(self.bot.latency)
-
 
     @commands.Cog.listener()
     async def on_connect(self) -> None:

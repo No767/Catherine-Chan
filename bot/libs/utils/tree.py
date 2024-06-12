@@ -10,7 +10,6 @@ from discord.app_commands import (
     CommandTree,
     MissingPermissions,
     NoPrivateMessage,
-    ContextMenu
 )
 from discord.utils import utcnow
 
@@ -60,26 +59,23 @@ def _build_missing_perm_embed(
 # At the very least better than Jade's on_interaction checks
 # https://github.com/LilbabxJJ-1/PrideBot/blob/master/main.py#L19-L36
 class CatherineCommandTree(CommandTree):
-            
+
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         bot: Catherine = interaction.client  # type: ignore # Pretty much returns the subclass anyways. I checked - Noelle
-        
+
         # TODO: Also check for blacklists here
         bot.metrics.commands.invocation.inc()
         # TODO: Need to skip whether this user is blacklisted or not
         if interaction.command:
             name = interaction.command.name
             bot.metrics.commands.count.labels(name).inc()
-        
+
         if (
             bot.owner_id == interaction.user.id
             or bot.application_id == interaction.user.id
         ):
             return True
-        
-            
-            
-        
+
         blacklist = await get_blacklist(interaction.user.id, bot.pool)
 
         # Two conditions must pass here:
@@ -95,8 +91,7 @@ class CatherineCommandTree(CommandTree):
                 f"My fellow user, {interaction.user.mention}, you just got the L. You are blacklisted from using this bot. Take an \U0001f1f1, \U0001f1f1oser. [Here is your appeal form](https://media.tenor.com/K9R9beOgPR4AAAAC/fortnite-thanos.gif)"
             )
             return False
-        
-            
+
         return True
 
     async def on_error(
