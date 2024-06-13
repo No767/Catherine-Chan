@@ -11,7 +11,6 @@ from libs.ui.pronouns import ApprovePronounsExampleView
 from libs.utils.config import CatherineConfig
 from libs.utils.reloader import Reloader
 from libs.utils.tree import CatherineCommandTree
-from prometheus_async.aio.web import start_http_server
 
 
 class Catherine(commands.Bot):
@@ -37,7 +36,7 @@ class Catherine(commands.Bot):
             **kwargs,
         )
         self.logger: logging.Logger = logging.getLogger("catherine")
-        self.metrics = prometheus.create_gauges(self)
+        self.metrics = prometheus.MetricCollector(self)
         self.session = session
         self.pool = pool
         self.version = str(VERSION)
@@ -66,10 +65,10 @@ class Catherine(commands.Bot):
             prom_host = self._prometheus.get("host", "127.0.0.1")
             prom_port = self._prometheus.get("port", 6789)
 
-            await start_http_server(addr=prom_host, port=prom_port)
+            await self.metrics.start(host=prom_host, port=prom_port)
             self.logger.info("Prometheus Server started on %s:%s", prom_host, prom_port)
 
-            self.metrics.fill_gauges()
+            self.metrics.fill()
 
         if self._dev_mode:
             self._reloader.start()
@@ -77,8 +76,9 @@ class Catherine(commands.Bot):
     async def on_ready(self):
         if not hasattr(self, "uptime"):
             self.uptime = discord.utils.utcnow()
-        elif self._prometheus_enabled and not hasattr(self, "guild_metrics_created"):
-            self.guild_metrics_created = self.metrics.create_guild_gauges()
+
+        if self._prometheus_enabled and not hasattr(self, "guild_metrics_created"):
+            self.guild_metrics_created = self.metrics.guilds.fill()
 
         curr_user = None if self.user is None else self.user.name
         self.logger.info(f"{curr_user} is fully ready!")

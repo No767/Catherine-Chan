@@ -44,7 +44,7 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
         """
         await self.pool.execute(query, given_id, True)
         get_blacklist.cache_invalidate(given_id, self.pool)
-        self.bot.metrics.blacklisted_users.inc()
+        self.bot.metrics.blacklist.users.inc()
         await ctx.send(f"Done. Added ID {given_id} to the blacklist")
 
     @blacklist.command(name="remove")
@@ -57,7 +57,7 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
         """
         await self.pool.execute(query, given_id)
         get_blacklist.cache_invalidate(given_id, self.pool)
-        self.bot.metrics.blacklisted_users.dec()
+        self.bot.metrics.blacklist.users.dec()
         await ctx.send(f"Done. Removed ID {given_id} from the blacklist")
 
 

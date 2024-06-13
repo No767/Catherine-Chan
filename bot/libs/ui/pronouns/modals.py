@@ -11,7 +11,7 @@ from libs.cog_utils.pronouns import (
 from libs.utils import CatherineModal
 
 if TYPE_CHECKING:
-    from bot.cogs.ext.prometheus import Metrics
+    from bot.cogs.ext.prometheus import MetricCollector
 
 
 class PronounsTesterModal(CatherineModal, title="Input the fields"):
@@ -20,7 +20,7 @@ class PronounsTesterModal(CatherineModal, title="Input the fields"):
         interaction: discord.Interaction,
         sentence: str,
         name: str,
-        metrics: Metrics,
+        metrics: MetricCollector,
     ):
         super().__init__(interaction=interaction)
         self.sentence = sentence
@@ -52,7 +52,6 @@ class PronounsTesterModal(CatherineModal, title="Input the fields"):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         # The new Regex-based solution to the pronouns tester command
         # Original: https://github.com/LilbabxJJ-1/PrideBot/blob/master/commands/pronouns.py#L15
-        self.metrics.pronouns_tester_counter.inc()
         replacements = {
             "$subjective_pronoun": self.sp.value.lower(),
             "$objective_pronoun": self.op.value.lower(),
@@ -63,4 +62,5 @@ class PronounsTesterModal(CatherineModal, title="Input the fields"):
         }
         parsed_sentence = parse_pronouns_sentence(replacements, self.sentence)
         complete_sentence = convert_to_proper_sentence(parsed_sentence)
+        self.metrics.features.successful_pronouns.inc()
         await interaction.response.send_message(complete_sentence)
