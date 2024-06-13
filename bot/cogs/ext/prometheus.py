@@ -194,6 +194,10 @@ class Prometheus(commands.Cog):
         self._connected_label.state("connected")
 
     @commands.Cog.listener()
+    async def on_resumed(self) -> None:
+        self._connected_label.state("connected")
+
+    @commands.Cog.listener()
     async def on_disconnect(self) -> None:
         self._connected_label.state("disconnected")
 
