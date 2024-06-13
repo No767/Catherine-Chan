@@ -43,6 +43,7 @@ class Catherine(commands.Bot):
         self._dev_mode = config.bot.get("dev_mode", False)
         self._reloader = Reloader(self, Path(__file__).parent)
         self._prometheus = config.bot.get("prometheus", {})
+        self._prometheus_enabled = self._prometheus.get("enabled", False)
 
     # Basically silence all prefixed errors
     async def on_command_error(
@@ -59,7 +60,7 @@ class Catherine(commands.Bot):
 
         await self.load_extension("jishaku")
 
-        if self._prometheus.get("enabled", False):
+        if self._prometheus_enabled:
             await self.load_extension("cogs.ext.prometheus")
             prom_host = self._prometheus.get("host", "127.0.0.1")
             prom_port = self._prometheus.get("port", 6789)
@@ -76,9 +77,7 @@ class Catherine(commands.Bot):
         if not hasattr(self, "uptime"):
             self.uptime = discord.utils.utcnow()
 
-        if self._prometheus.get("enabled", False) and not hasattr(
-            self, "guild_metrics_created"
-        ):
+        if self._prometheus_enabled and not hasattr(self, "guild_metrics_created"):
             self.guild_metrics_created = self.metrics.guilds.fill()
 
         curr_user = None if self.user is None else self.user.name
