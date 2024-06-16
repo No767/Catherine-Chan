@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 import platform
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, NamedTuple
 
 import discord
-import msgspec
 from discord import app_commands
 from discord.ext import commands, tasks
-from prometheus_client import Counter, Gauge, Info
+
+try:
+
+    from prometheus_async.aio.web import start_http_server
+    from prometheus_client import Counter, Enum, Gauge, Info, Summary
+except ImportError:
+    raise RuntimeError(
+        "Prometheus libraries are required to be installed. "
+        "Either install those libraries or disable Prometheus extension"
+    )
+
 
 if TYPE_CHECKING:
     from bot.catherinecore import Catherine
@@ -16,93 +25,27 @@ if TYPE_CHECKING:
 METRIC_PREFIX = "discord_"
 
 
-def create_gauges(bot: Catherine) -> "Metrics":
-    return Metrics(
-        bot=bot,
-        connection_gauge=Gauge(
-            f"{METRIC_PREFIX}connected",
-            "Determines if the bot is connected to Discord",
-            ["shard"],
-        ),
-        latency_gauge=Gauge(
-            f"{METRIC_PREFIX}latency",
-            "latency to Discord",
-            ["shard"],
-        ),
-        on_app_command_counter=Counter(
-            f"{METRIC_PREFIX}on_app_command",
-            "Amount of slash commands called by users",
-        ),
-        guild_gauge=Gauge(
-            f"{METRIC_PREFIX}stat_total_guilds",
-            "Amount of guilds this bot is in",
-        ),
-        text_channel_gauge=Gauge(
-            f"{METRIC_PREFIX}stat_total_text_channels",
-            "Amount of text channels this bot is has access to",
-        ),
-        voice_channel_gauge=Gauge(
-            f"{METRIC_PREFIX}stat_total_voice_channels",
-            "Amount of voice channels this bot is has access to",
-        ),
-        user_gauge=Gauge(
-            f"{METRIC_PREFIX}stat_total_users", "Amount of users this bot can see"
-        ),
-        user_unique_gauge=Gauge(
-            f"{METRIC_PREFIX}stat_total_unique_users",
-            "Amount of unique users this bot can see",
-        ),
-        commands_gauge=Gauge(
-            f"{METRIC_PREFIX}stat_app_total_commands", "Amount of commands"
-        ),
-        pronouns_tester_counter=Counter(
-            f"{METRIC_PREFIX}pronouns_tester",
-            "Amount of successful pronouns tested",
-        ),
-        version_info=Info(
-            "version_info", "Catherine-Chan's current version and other version info"
-        ),
-        attempted_commands=Counter(
-            f"{METRIC_PREFIX}attempted_commands",
-            "Amount of attempted commands ran by blacklisted users",
-        ),
-        blacklisted_users=Gauge(
-            f"{METRIC_PREFIX}blacklisted_users", "Number of blacklisted users"
-        ),
-    )
-
-
-class GuildMetrics(TypedDict):
+class GuildCount(NamedTuple):
+    count: int
     text: int
     voice: int
-    guilds: int
-    total_commands: int
+    users: int
 
 
-class MemberCounts(msgspec.Struct):
-    total: int = 0
-    unique: int = 0
+class GuildCollector:
+    __slots__ = ("bot", "count", "text", "voice", "users")
 
+    def __init__(self, bot: Catherine):
+        self.bot = bot
+        self.count = Gauge(f"{METRIC_PREFIX}guilds", "Amount of guilds connected")
+        self.text = Gauge(
+            f"{METRIC_PREFIX}text", "Amount of text channels that can be seen"
+        )
+        self.voice = Gauge(f"{METRIC_PREFIX}voice", "Amount of voice channels")
+        self.users = Gauge(f"{METRIC_PREFIX}users", "Total users")
 
-class Metrics(msgspec.Struct, frozen=True):
-    bot: Catherine
-    connection_gauge: Gauge
-    latency_gauge: Gauge
-    on_app_command_counter: Counter
-    guild_gauge: Gauge
-    text_channel_gauge: Gauge
-    voice_channel_gauge: Gauge
-    user_gauge: Gauge
-    user_unique_gauge: Gauge
-    commands_gauge: Gauge
-    version_info: Info
-    attempted_commands: Counter
-    blacklisted_users: Gauge
-    pronouns_tester_counter: Counter
-
-    def get_stats(self) -> GuildMetrics:
-        # The same way R. Danny does it
-        total_commands = 0
+    def _get_stats(self) -> GuildCount:
+        users = len(self.bot.users)
         text = 0
         voice = 0
         guilds = 0
@@ -116,45 +59,116 @@ class Metrics(msgspec.Struct, frozen=True):
                 elif isinstance(channel, discord.VoiceChannel):
                     voice += 1
 
-        for cmd in self.bot.tree.walk_commands():
-            if isinstance(cmd, app_commands.commands.Command):
-                total_commands += 1
+        return GuildCount(count=guilds, text=text, voice=voice, users=users)
 
-        return GuildMetrics(
-            text=text,
-            voice=voice,
-            guilds=guilds,
-            total_commands=total_commands,
+    def fill(self) -> None:
+        stats = self._get_stats()
+
+        self.count.set(stats.count)
+        self.text.set(stats.text)
+        self.voice.set(stats.voice)
+        self.users.set(stats.users)
+
+
+class BlacklistCollector:
+    __slots__ = ("bot", "users", "commands")
+
+    def __init__(self, bot: Catherine):
+        self.bot = bot
+
+        # For now, until we can improve the blacklist system,
+        # we will leave these to be blank
+        self.users = Gauge(
+            f"{METRIC_PREFIX}blacklist_users", "Current amount of blacklisted users"
+        )
+        self.commands = Counter(
+            f"{METRIC_PREFIX}blacklist_commands",
+            "Counter of commands that were attempted for blacklisted users",
         )
 
-    def create_guild_gauges(self) -> None:
-        stats = self.get_stats()
 
-        self.guild_gauge.set(stats["guilds"])
-        self.text_channel_gauge.set(stats["text"])
-        self.voice_channel_gauge.set(stats["voice"])
+class FeatureCollector:
+    __slots__ = ("bot", "successful_pronouns")
 
-    def fill_gauges(self):
-        stats = self.get_stats()
+    def __init__(self, bot: Catherine):
+        self.bot = bot
+        self.successful_pronouns = Counter(
+            f"{METRIC_PREFIX}successful_pronouns",
+            "Counter of successful pronouns tester invocations",
+        )
 
-        self.blacklisted_users.set(0)
-        self.attempted_commands.inc(0)
-        self.version_info.info(
+
+class CommandsCollector:
+    __slots__ = ("bot", "total", "invocation", "count")
+
+    def __init__(self, bot: Catherine):
+        self.bot = bot
+
+        self.total = Summary(
+            f"{METRIC_PREFIX}commands_total", "Total commands included"
+        )
+        self.invocation = Counter(
+            f"{METRIC_PREFIX}commands_invocation", "Counter for invoked commands"
+        )
+        self.count = Counter(
+            f"{METRIC_PREFIX}commands_count",
+            "Individual count for commands",
+            ["commands"],
+        )
+
+    def fill(self, amount: int) -> None:
+        self.total.observe(amount)
+
+
+class MetricCollector:
+    __slots__ = (
+        "bot",
+        "connected",
+        "latency",
+        "commands",
+        "version",
+        "guilds",
+        "blacklist",
+        "features",
+    )
+
+    def __init__(self, bot: Catherine):
+        self.bot = bot
+
+        self.connected = Enum(
+            f"{METRIC_PREFIX}connected",
+            "Connected to Discord",
+            ["shard"],
+            states=["connected", "disconnected"],
+        )
+        self.latency = Gauge(f"{METRIC_PREFIX}latency", "Latency to Discord", ["shard"])
+        self.version = Info(f"{METRIC_PREFIX}version", "Versions of the bot")
+        self.commands = CommandsCollector(bot)
+        self.guilds = GuildCollector(bot)
+        self.blacklist = BlacklistCollector(bot)
+        self.features = FeatureCollector(bot)
+
+    def _get_commands(self) -> int:
+        total = 0
+
+        for command in self.bot.tree.walk_commands():
+            if isinstance(command, (app_commands.Command)):
+                total += 1
+
+        return total
+
+    def fill(self) -> None:
+        self.version.info(
             {
                 "build_version": self.bot.version,
                 "dpy_version": discord.__version__,
                 "python_version": platform.python_version(),
             }
         )
-        self.commands_gauge.set(stats["total_commands"])
-        self.on_app_command_counter.inc(0)
-        self.pronouns_tester_counter.inc(0)
+        self.commands.fill(self._get_commands())
 
-        if self.bot.is_closed():
-            self.connection_gauge.labels(None).set(0)
-            return
-
-        self.connection_gauge.labels(None).set(1)
+    async def start(self, host: str, port: int) -> None:
+        await start_http_server(addr=host, port=port)
 
 
 class Prometheus(commands.Cog):
@@ -162,67 +176,38 @@ class Prometheus(commands.Cog):
 
     def __init__(self, bot: Catherine) -> None:
         self.bot = bot
-        self._prev_member_count = MemberCounts()
-        self.members = self._obtain_member_count()
-
-    def _obtain_member_count(self) -> MemberCounts:
-        total_members = 0
-        unique_members = len(self.bot.users)
-
-        for guild in self.bot.guilds:
-            if guild.unavailable:
-                continue
-            total_members += guild.member_count or 0
-
-        return MemberCounts(total=total_members, unique=unique_members)
-
-    def _update_member_count(self) -> None:
-        members = self._obtain_member_count()
-        temp = self.members
-
-        temp.total = members.total
-        temp.unique = members.unique
-
-        self.members = temp
-        self.bot.metrics.user_gauge.set(self.members.total)
-        self.bot.metrics.user_unique_gauge.set(self.members.unique)
+        self._connected_label = self.bot.metrics.connected.labels(None)
 
     async def cog_load(self) -> None:
         # For some reason it would only work inside here
         self.latency_loop.start()
-        self.member_loop.start()
 
     async def cog_unload(self) -> None:
         self.latency_loop.stop()
-        self.member_loop.stop()
 
     @tasks.loop(seconds=5)
     async def latency_loop(self) -> None:
-        self.bot.metrics.latency_gauge.labels(None).set(self.bot.latency)
-
-    @tasks.loop(seconds=10)
-    async def member_loop(self) -> None:
-        self._update_member_count()
+        self.bot.metrics.latency.labels(None).set(self.bot.latency)
 
     @commands.Cog.listener()
     async def on_connect(self) -> None:
-        self.bot.metrics.connection_gauge.labels(None).set(1)
+        self._connected_label.state("connected")
 
     @commands.Cog.listener()
     async def on_resumed(self) -> None:
-        self.bot.metrics.connection_gauge.labels(None).set(1)
+        self._connected_label.state("connected")
 
     @commands.Cog.listener()
     async def on_disconnect(self) -> None:
-        self.bot.metrics.connection_gauge.labels(None).set(0)
+        self._connected_label.state("disconnected")
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        self.bot.metrics.create_guild_gauges()
+        self.bot.metrics.guilds.fill()
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild) -> None:
-        self.bot.metrics.create_guild_gauges()
+        self.bot.metrics.guilds.fill()
 
 
 async def setup(bot: Catherine) -> None:
