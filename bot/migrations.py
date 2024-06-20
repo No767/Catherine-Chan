@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import re
 import traceback
 from functools import wraps
@@ -9,6 +8,7 @@ from typing import Optional, TypeVar
 
 import asyncpg
 import click
+from discord.utils import utcnow
 from libs.utils.config import CatherineConfig
 from typing_extensions import Self
 
@@ -126,7 +126,7 @@ class Migrations:
         stub = (
             f"-- Revision Version: V{self.version + 1}\n"
             f"-- Revises: V{self.version}\n"
-            f"-- Creation Date: {datetime.datetime.now(datetime.UTC)} UTC\n"
+            f"-- Creation Date: {utcnow()} UTC\n"
             f"-- Reason: {reason}\n\n"
         )
 
