@@ -17,7 +17,7 @@ config = CatherineConfig(path)
 
 BE = TypeVar("BE", bound=BaseException)
 
-REVISION_FILE = re.compile(r"(?P<kind>V)(?P<version>[0-9]+)__(?P<description>.+).sql")
+REVISION_FILE = re.compile(r"(?P<kind>V)(?P<version>\d+)__(?P<description>.+).sql")
 POSTGRES_URI = config["postgres"]["uri"]
 
 CREATE_MIGRATIONS_TABLE = """
@@ -169,6 +169,7 @@ async def create_migrations_table() -> None:
 
 @click.group(short_help="database migrations util", options_metavar="[options]")
 def main():
+    # grouped database commands
     pass
 
 
