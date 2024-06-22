@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS pride_profiles (
 CREATE INDEX IF NOT EXISTS pride_profiles_name_idx ON pride_profiles (name);
 CREATE INDEX IF NOT EXISTS pride_profiles_name_trgm_idx ON pride_profiles USING GIN (name gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS pride_profiles_name_lower_idx ON pride_profiles (LOWER(name));
-CREATE UNIQUE INDEX IF NOT EXISTS pride_profiles_user_idx ON pride_profiles (user_id);
+CREATE INDEX IF NOT EXISTS pride_profiles_user_idx ON pride_profiles (user_id);
 
 -- There isn't that much data in production so this is justify (and has been tested to work)
 INSERT INTO pride_profiles (SELECT id, user_id, name, pronouns, gender_identity, sexual_orientation, romantic_orientation, views FROM profiles);
