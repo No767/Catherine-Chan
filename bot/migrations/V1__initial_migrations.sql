@@ -4,6 +4,11 @@
 -- Reason: initial_migrations
 
 -- These migrations are intended to continue from the previous migrations
+CREATE TABLE IF NOT EXISTS catherine_users (
+    id BIGINT PRIMARY KEY,
+    created_at timestamp WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc')
+);
+
 CREATE TABLE IF NOT EXISTS profiles (
     id SERIAL PRIMARY KEY,
     views INT DEFAULT 0,
@@ -20,10 +25,6 @@ CREATE INDEX IF NOT EXISTS profiles_name_trgm_idx ON profiles USING GIN (name gi
 CREATE INDEX IF NOT EXISTS profiles_name_lower_idx ON profiles (LOWER(name));
 CREATE UNIQUE INDEX IF NOT EXISTS profiles_user_idx ON profiles (user_id);
 
-CREATE TABLE IF NOT EXISTS catherine_users (
-    id BIGINT PRIMARY KEY,
-    created_at timestamp WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc')
-);
 
 CREATE TABLE IF NOT EXISTS pronouns_examples (
     id SERIAL PRIMARY KEY,
@@ -35,7 +36,7 @@ CREATE TABLE IF NOT EXISTS pronouns_examples (
 
 CREATE INDEX IF NOT EXISTS pronouns_examples_user_idx ON pronouns_examples (user_id);
 
--- Keeping the tonetags for consitency
+-- Keeping the tonetags for consistency with previous migrations
 CREATE TABLE IF NOT EXISTS tonetags (
     id SERIAL PRIMARY KEY,
     indicator VARCHAR(255),
