@@ -57,7 +57,7 @@ Local Setup
 
     .. code-block:: bash
 
-        python3 migrations-runner.py
+        python3 bot/migrations.py
 
 Special Configuration Variables
 ---------------------

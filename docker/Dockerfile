@@ -15,8 +15,6 @@ RUN apt-get update \
 
 WORKDIR /catherine
 COPY /bot/ /catherine/bot
-COPY /migrations /catherine/migrations
-COPY /migrations-runner.py /catherine/migrations-runner.py
 COPY /requirements.txt /catherine/requirements.txt
 COPY /docker/start.sh /catherine/start.sh
 COPY /docker/wait-for /catherine/wait-for
