@@ -45,7 +45,7 @@ class GuildCollector:
         self.users = Gauge(f"{METRIC_PREFIX}users", "Total users")
 
     def _get_stats(self) -> GuildCount:
-        users = len(self.bot.users)
+        users = 0
         text = 0
         voice = 0
         guilds = 0
@@ -53,6 +53,9 @@ class GuildCollector:
             guilds += 1
             if guild.unavailable:
                 continue
+
+            users += guild.member_count or 0
+
             for channel in guild.channels:
                 if isinstance(channel, discord.TextChannel):
                     text += 1
