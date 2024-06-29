@@ -22,6 +22,20 @@ class CatherineContextPages(discord.ui.View):
         self.ctx: Context = ctx
         self.message: Optional[discord.Message] = None
         self.current_page: int = 0
+        self.clear_items()
+        self.fill_items()
+
+    def fill_items(self) -> None:
+        if self.source.is_paginating():
+            max_pages = self.source.get_max_pages()
+            use_last_and_first = max_pages is not None and max_pages >= 2
+            if use_last_and_first:
+                self.add_item(self.go_to_first_page)
+            self.add_item(self.go_to_previous_page)
+            self.add_item(self.go_to_next_page)
+            if use_last_and_first:
+                self.add_item(self.go_to_last_page)
+            self.add_item(self.stop_pages)
 
     async def get_kwargs_from_page(self, page: int) -> Dict[str, Any]:
         value = await discord.utils.maybe_coroutine(self.source.format_page, self, page)
