@@ -33,9 +33,9 @@ ignore = ["E501", "N999", "E402", "S101"]
 select = ["E", "F", "N", "ASYNC", "S", "ERA"]
 
 [tool.pytest.ini_options]
-minversion = "6.0"
+minversion = "8.0"
 addopts = "-ra"
 testpaths = [
-    "tests"
+    "bot/tests"
 ]
 pythonpath = ["bot"]
