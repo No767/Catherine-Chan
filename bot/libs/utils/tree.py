@@ -13,7 +13,6 @@ from discord.app_commands import (
 )
 from discord.utils import utcnow
 
-from .blacklist import get_blacklist
 from .embeds import ErrorEmbed
 
 if TYPE_CHECKING:
@@ -59,16 +58,18 @@ def _build_missing_perm_embed(
 # At the very least better than Jade's on_interaction checks
 # https://github.com/LilbabxJJ-1/PrideBot/blob/master/main.py#L19-L36
 class CatherineCommandTree(CommandTree):
+    async def _send_blacklist_response(self, interaction: discord.Interaction) -> None:
+        bot: Catherine = interaction.client  # type: ignore
+        bot.metrics.blacklist.commands.inc(1)
+        msg = (
+            f"My fellow user, {interaction.user.mention}, you just got the L. "
+            "You are blacklisted from using this bot. Take an \U0001f1f1, \U0001f1f1oser. "
+            "[Here is your appeal form](https://media.tenor.com/K9R9beOgPR4AAAAC/fortnite-thanos.gif)"
+        )
+        await interaction.response.send_message(msg, ephemeral=True)
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         bot: Catherine = interaction.client  # type: ignore # Pretty much returns the subclass anyways. I checked - Noelle
-
-        # TODO: Also check for blacklists here
-        bot.metrics.commands.invocation.inc()
-        # TODO: Need to skip whether this user is blacklisted or not
-        if interaction.command:
-            name = interaction.command.name
-            bot.metrics.commands.count.labels(name).inc()
 
         if (
             bot.owner_id == interaction.user.id
@@ -76,21 +77,18 @@ class CatherineCommandTree(CommandTree):
         ):
             return True
 
-        blacklist = await get_blacklist(interaction.user.id, bot.pool)
-
-        # Two conditions must pass here:
-        # 1. The blacklist entity must actually be blacklisted
-        # 2. It's not an "unknown" entity (i.e the user doesn't exist in the DB)
-        # This way, only *actual* blacklisted users get the message
-        if (
-            blacklist.blacklist_status is not None
-            and blacklist.blacklist_status is True
-        ):
-            bot.metrics.blacklist.commands.inc(1)
-            await interaction.response.send_message(
-                f"My fellow user, {interaction.user.mention}, you just got the L. You are blacklisted from using this bot. Take an \U0001f1f1, \U0001f1f1oser. [Here is your appeal form](https://media.tenor.com/K9R9beOgPR4AAAAC/fortnite-thanos.gif)"
-            )
+        if interaction.user.id in bot.blacklist:
+            await self._send_blacklist_response(interaction)
             return False
+
+        if interaction.guild and interaction.guild.id in bot.blacklist:
+            await self._send_blacklist_response(interaction)
+            return False
+
+        bot.metrics.commands.invocation.inc()
+        if interaction.command:
+            name = interaction.command.qualified_name
+            bot.metrics.commands.count.labels(name).inc()
 
         return True
 

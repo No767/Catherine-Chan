@@ -8,7 +8,7 @@ from cogs import EXTENSIONS, VERSION
 from cogs.ext import prometheus
 from discord.ext import commands
 from libs.ui.pronouns import ApprovePronounsExampleView
-from libs.utils.config import CatherineConfig
+from libs.utils.config import Blacklist, CatherineConfig
 from libs.utils.reloader import Reloader
 from libs.utils.tree import CatherineCommandTree
 
@@ -35,6 +35,7 @@ class Catherine(commands.Bot):
             *args,
             **kwargs,
         )
+        self.blacklist: Blacklist[bool] = Blacklist("blacklist.json")
         self.logger: logging.Logger = logging.getLogger("catherine")
         self.metrics = prometheus.MetricCollector(self)
         self.session = session
@@ -44,6 +45,15 @@ class Catherine(commands.Bot):
         self._reloader = Reloader(self, Path(__file__).parent)
         self._prometheus = config.bot.get("prometheus", {})
         self._prometheus_enabled = self._prometheus.get("enabled", False)
+
+    async def add_to_blacklist(self, object_id: int):
+        await self.blacklist.put(object_id, True)
+
+    async def remove_from_blacklist(self, object_id: int):
+        try:
+            await self.blacklist.remove(object_id)
+        except KeyError:
+            pass
 
     # Basically silence all prefixed errors
     async def on_command_error(

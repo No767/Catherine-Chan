@@ -1,8 +1,36 @@
+from typing import Any, AsyncIterator, TypeVar, Union
+
 import discord
 from catherinecore import Catherine
-from discord.ext import commands
-from libs.ui.blacklist.pages import BlacklistPages
-from libs.utils import get_blacklist
+from discord.ext import commands, menus
+from libs.utils.pages.context_paginator import CatherineContextPages
+
+_T = TypeVar("_T")
+
+
+class BlacklistPageSource(menus.AsyncIteratorPageSource):
+    def __init__(self, entries: dict[str, Union[_T, Any]]):
+        super().__init__(self.blacklist_iterator(entries), per_page=20)
+
+    async def blacklist_iterator(
+        self, entries: dict[str, Union[_T, Any]]
+    ) -> AsyncIterator[str]:
+        for key, entry in entries.items():
+            yield f"{key}: {entry}"
+
+    async def format_page(self, menu, entries: list[str]) -> discord.Embed:
+        pages = []
+        for index, entry in enumerate(entries, start=menu.current_page * self.per_page):
+            pages.append(f"{index + 1}. {entry}")
+
+        menu.embed.description = "\n".join(pages)
+        return menu.embed
+
+
+class BlacklistPages(CatherineContextPages):
+    def __init__(self, entries: dict[str, Union[_T, Any]], *, ctx: commands.Context):
+        super().__init__(BlacklistPageSource(entries), ctx=ctx, compact=True)
+        self.embed = discord.Embed(colour=discord.Colour.from_rgb(200, 168, 255))
 
 
 class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
@@ -17,33 +45,19 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.guild_only()
     async def blacklist(self, ctx: commands.Context) -> None:
         """Global blacklisting system - Without subcommand you are viewing the blacklist"""
-        query = """
-        SELECT id, blacklist_status
-        FROM blacklist;
-        """
-
-        records = await self.pool.fetch(query)
-        if len(records) == 0:
+        entries = self.bot.blacklist.all()
+        if len(entries) == 0:
             await ctx.send("No blacklist entries found")
             return
 
-        cache_to_list = [
-            {record["id"]: record["blacklist_status"]} for record in records
-        ]
-
-        pages = BlacklistPages(entries=cache_to_list, ctx=ctx)
+        pages = BlacklistPages(entries, ctx=ctx)
         await pages.start()
 
     @blacklist.command(name="add")
     async def add(self, ctx: commands.Context, id: discord.Object):
         """Adds an ID to the global blacklist"""
         given_id = id.id
-        query = """
-        INSERT INTO blacklist (id, blacklist_status)
-        VALUES ($1, $2) ON CONFLICT (id) DO NOTHING;
-        """
-        await self.pool.execute(query, given_id, True)
-        get_blacklist.cache_invalidate(given_id, self.pool)
+        await self.bot.add_to_blacklist(given_id)
         self.bot.metrics.blacklist.users.inc()
         await ctx.send(f"Done. Added ID {given_id} to the blacklist")
 
@@ -51,12 +65,7 @@ class Blacklist(commands.Cog, command_attrs=dict(hidden=True)):
     async def remove(self, ctx: commands.Context, id: discord.Object):
         """Removes an ID from the global blacklist"""
         given_id = id.id
-        query = """
-        DELETE FROM blacklist
-        WHERE id = $1;
-        """
-        await self.pool.execute(query, given_id)
-        get_blacklist.cache_invalidate(given_id, self.pool)
+        await self.bot.remove_from_blacklist(given_id)
         self.bot.metrics.blacklist.users.dec()
         await ctx.send(f"Done. Removed ID {given_id} from the blacklist")
 
