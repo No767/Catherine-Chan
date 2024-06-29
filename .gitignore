@@ -131,6 +131,9 @@ venv.bak/
 # Configuration file
 config.yml
 
+# Catherine-Chan Blacklist file
+blacklist.json
+
 # Spyder project settings
 .spyderproject
 .spyproject

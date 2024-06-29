@@ -1,15 +1,29 @@
+from __future__ import annotations
+
 import asyncio
 import importlib
 import os
 import re
 import subprocess  # nosec # We already know this is dangerous, but it's needed
 import sys
-from typing import List, Literal, Optional, Tuple
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncIterator,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import discord
-from catherinecore import Catherine
-from discord.ext import commands
-from discord.ext.commands import Context, Greedy
+from discord.ext import commands, menus
+from libs.utils.pages.paginator import CatherineContextPages
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
 
 # Although this regex does introduce polynomial backtracing, there is simply
 # no other alternatives as this is used for a partial search
@@ -18,6 +32,33 @@ from discord.ext.commands import Context, Greedy
 # (the marginal cost is off the roof for this one)
 GIT_PULL_REGEX = re.compile(r"\s+(?P<filename>.*)\b\s+\|\s+[\d]")
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
+
+_T = TypeVar("_T")
+
+
+class BlacklistPageSource(menus.AsyncIteratorPageSource):
+    def __init__(self, entries: dict[str, Union[_T, Any]]):
+        super().__init__(self.blacklist_iterator(entries), per_page=20)
+
+    async def blacklist_iterator(
+        self, entries: dict[str, Union[_T, Any]]
+    ) -> AsyncIterator[str]:
+        for key, entry in entries.items():
+            yield f"{key}: {entry}"
+
+    async def format_page(self, menu, entries: list[str]) -> discord.Embed:
+        pages = []
+        for index, entry in enumerate(entries, start=menu.current_page * self.per_page):
+            pages.append(f"{index + 1}. {entry}")
+
+        menu.embed.description = "\n".join(pages)
+        return menu.embed
+
+
+class BlacklistPages(CatherineContextPages):
+    def __init__(self, entries: dict[str, Union[_T, Any]], *, ctx: commands.Context):
+        super().__init__(BlacklistPageSource(entries), ctx=ctx)
+        self.embed = discord.Embed(colour=discord.Colour.from_rgb(200, 168, 255))
 
 
 # This is not a subclassed view as we need to use ctx for the implementation,
@@ -83,7 +124,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot: Catherine) -> None:
         self.bot = bot
 
-    async def cog_check(self, ctx: Context) -> bool:
+    async def cog_check(self, ctx: commands.Context) -> bool:
         return await self.bot.is_owner(ctx.author)
 
     async def reload_or_load_extension(self, module: str) -> None:
@@ -175,8 +216,8 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.command(name="sync", hidden=True)
     async def sync(
         self,
-        ctx: Context,
-        guilds: Greedy[discord.Object],
+        ctx: commands.Context,
+        guilds: commands.Greedy[discord.Object],
         spec: Optional[Literal["~", "*", "^"]] = None,
     ) -> None:
         """Performs a sync of the tree. This will sync, copy globally, or clear the tree."""
@@ -246,6 +287,34 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
                 statuses = await self.reload_exts(module)
 
         await ctx.send(self.format_results(statuses))
+
+    @commands.guild_only()
+    @commands.group(name="blacklist", invoke_without_command=True)
+    async def blacklist(self, ctx: commands.Context) -> None:
+        """Global blacklisting system - Without subcommand you are viewing the blacklist"""
+        entries = self.bot.blacklist.all()
+        if len(entries) == 0:
+            await ctx.send("No blacklist entries found")
+            return
+
+        pages = BlacklistPages(entries, ctx=ctx)
+        await pages.start()
+
+    @blacklist.command(name="add")
+    async def add(self, ctx: commands.Context, id: discord.Object):
+        """Adds an ID to the global blacklist"""
+        given_id = id.id
+        await self.bot.add_to_blacklist(given_id)
+        self.bot.metrics.blacklist.users.inc()
+        await ctx.send(f"Done. Added ID {given_id} to the blacklist")
+
+    @blacklist.command(name="remove")
+    async def remove(self, ctx: commands.Context, id: discord.Object):
+        """Removes an ID from the global blacklist"""
+        given_id = id.id
+        await self.bot.remove_from_blacklist(given_id)
+        self.bot.metrics.blacklist.users.dec()
+        await ctx.send(f"Done. Removed ID {given_id} from the blacklist")
 
 
 async def setup(bot: Catherine) -> None:

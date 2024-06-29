@@ -88,6 +88,10 @@ class BlacklistCollector:
             f"{METRIC_PREFIX}blacklist_commands",
             "Counter of commands that were attempted for blacklisted users",
         )
+        self.fill()
+
+    def fill(self) -> None:
+        self.users.set(len(self.bot.blacklist.all()))
 
 
 class FeatureCollector:
