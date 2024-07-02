@@ -39,5 +39,7 @@ class CatherineModal(discord.ui.Modal):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, /
     ) -> None:
-        await interaction.response.send_message(embed=FullErrorEmbed(error))
+        await interaction.response.send_message(
+            embed=FullErrorEmbed(error), ephemeral=True
+        )
         self.stop()

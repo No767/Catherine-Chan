@@ -42,5 +42,7 @@ class CatherineView(discord.ui.View):
         item: discord.ui.Item[Any],
         /,
     ) -> None:
-        await interaction.response.send_message(embed=FullErrorEmbed(error))
+        await interaction.response.send_message(
+            embed=FullErrorEmbed(error), ephemeral=True
+        )
         self.stop()
