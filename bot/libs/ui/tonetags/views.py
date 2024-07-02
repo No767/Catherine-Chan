@@ -5,7 +5,7 @@ from typing import Optional
 import asyncpg
 import discord
 from libs.cog_utils.tonetags import parse_tonetag
-from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed
+from libs.utils import CatherineView, ErrorEmbed, SuccessEmbed, TimeoutEmbed
 
 NO_CONTROL_MSG = "This menu cannot be controlled by you, sorry!"
 
@@ -27,7 +27,7 @@ class DeleteTagView(CatherineView):
     async def on_timeout(self) -> None:
         if self.original_response and not self.triggered.is_set():
             await self.original_response.edit(
-                embed=self.build_timeout_embed(), view=None, delete_after=15.0
+                embed=TimeoutEmbed(), view=None, delete_after=15.0
             )
 
     @discord.ui.button(
