@@ -1,7 +1,7 @@
 import asyncpg
 import discord
 from libs.utils import CatherineView
-from libs.utils.embeds import ErrorEmbed, SuccessEmbed
+from libs.utils.embeds import ErrorEmbed, SuccessEmbed, TimeoutEmbed
 
 from .selects import SelectPrideCategory
 
@@ -43,7 +43,7 @@ class DeleteProfileView(CatherineView):
     async def on_timeout(self) -> None:
         if self.original_response and not self.triggered.is_set():
             await self.original_response.edit(
-                embed=self.build_timeout_embed(), view=None, delete_after=15.0
+                embed=TimeoutEmbed(), view=None, delete_after=15.0
             )
 
     @discord.ui.button(
