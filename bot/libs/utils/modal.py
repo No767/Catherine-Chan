@@ -3,7 +3,7 @@ import traceback
 import discord
 from discord.utils import utcnow
 
-from .embeds import ErrorEmbed
+from .embeds import ErrorEmbed, FullErrorEmbed
 
 NO_CONTROL_MSG = "This modal cannot be controlled by you, sorry!"
 
@@ -39,7 +39,5 @@ class CatherineModal(discord.ui.Modal):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, /
     ) -> None:
-        await interaction.response.send_message(
-            embed=produce_error_embed(error), ephemeral=True
-        )
+        await interaction.response.send_message(embed=FullErrorEmbed(error))
         self.stop()
