@@ -19,7 +19,8 @@ exclude = [
     "**/.mypy_cache", 
     "**/.dmpypy.json", 
     "docs",
-    "docker"
+    "docker",
+    "bot/tests/**"
 ]
 reportMissingImports = true
 typeCheckingMode = "basic"
