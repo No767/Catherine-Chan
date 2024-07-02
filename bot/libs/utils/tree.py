@@ -1,63 +1,21 @@
 from __future__ import annotations
 
-import traceback
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING
 
 import discord
-from discord.app_commands import (
-    AppCommandError,
-    BotMissingPermissions,
-    CommandTree,
-    MissingPermissions,
-    NoPrivateMessage,
-)
-from discord.utils import utcnow
+from discord import app_commands
 
-from .embeds import ErrorEmbed
+from .embeds import FullErrorEmbed
 
 if TYPE_CHECKING:
     from bot.catherinecore import Catherine
-
-
-def _build_error_embed(error: AppCommandError) -> ErrorEmbed:
-    error_traceback = "\n".join(traceback.format_exception_only(type(error), error))
-    embed = ErrorEmbed()
-    embed.description = f"""
-    Uh oh! It seems like the command ran into an issue! For support, please visit [Catherine-Chan's Support Server](https://discord.gg/ns3e74frqn) to get help!
-    
-    **Error**:
-    ```{error_traceback}```
-    """
-    embed.set_footer(text="Happened At")
-    embed.timestamp = utcnow()
-    return embed
-
-
-def _build_premade_embed(title: str, description: str) -> ErrorEmbed:
-    embed = ErrorEmbed()
-    embed.title = title
-    embed.description = description
-    return embed
-
-
-def _build_missing_perm_embed(
-    missing_perms: List[str], user: Union[discord.User, discord.Member]
-) -> ErrorEmbed:
-    str_user = "Catherine-Chan is" if user.bot is True else "You are"
-    perms = ",".join(missing_perms).rstrip(",")
-    desc = f"""
-    {str_user} missing the following permissions in order to run the command:
-    
-    {perms}
-    """
-    return _build_premade_embed("Missing Permissions", desc)
 
 
 # This is needed for the blacklisting system
 # Yes a custom CommandTree lol.
 # At the very least better than Jade's on_interaction checks
 # https://github.com/LilbabxJJ-1/PrideBot/blob/master/main.py#L19-L36
-class CatherineCommandTree(CommandTree):
+class CatherineCommandTree(app_commands.CommandTree):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         bot: Catherine = interaction.client  # type: ignore # Pretty much returns the subclass anyways. I checked - Noelle
 
@@ -93,22 +51,24 @@ class CatherineCommandTree(CommandTree):
         return True
 
     async def on_error(
-        self, interaction: discord.Interaction, error: AppCommandError
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        if isinstance(error, MissingPermissions) or isinstance(
-            error, BotMissingPermissions
-        ):
-            await interaction.response.send_message(
-                embed=_build_missing_perm_embed(
-                    error.missing_permissions, interaction.user
-                )
+        bot: Catherine = interaction.client  # type: ignore
+
+        if bot._dev_mode:
+            bot.logger.exception("Ignoring exception:", exc_info=error)
+            return
+
+        if isinstance(error, app_commands.NoPrivateMessage):
+            await interaction.user.send(
+                "This command cannot be used in private messages"
             )
-        elif isinstance(error, NoPrivateMessage):
-            await interaction.response.send_message(
-                embed=_build_premade_embed(
-                    "DMs don't work",
-                    "The command you are trying to run does not work in DMs.",
+        elif isinstance(error, app_commands.CommandInvokeError):
+            original = error.original
+            if not isinstance(original, discord.HTTPException):
+                bot.logger.exception("In %s: ", interaction.command.qualified_name, exc_info=original)  # type: ignore
+                await interaction.response.send_message(
+                    embed=FullErrorEmbed(error), ephemeral=True
                 )
-            )
         else:
-            await interaction.response.send_message(embed=_build_error_embed(error))
+            await interaction.response.send_message(embed=FullErrorEmbed(error))

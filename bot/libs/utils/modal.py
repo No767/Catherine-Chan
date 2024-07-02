@@ -1,31 +1,22 @@
-import traceback
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import discord
-from discord.utils import utcnow
 
-from .embeds import ErrorEmbed
+from .embeds import FullErrorEmbed
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
 
 NO_CONTROL_MSG = "This modal cannot be controlled by you, sorry!"
-
-
-def produce_error_embed(error: Exception) -> ErrorEmbed:
-    error_traceback = "\n".join(traceback.format_exception_only(type(error), error))
-    embed = ErrorEmbed()
-    embed.description = f"""
-    Uh oh! It seems like the modal ran into an issue! For support, please visit [Catherine-Chan's Support Server](https://discord.gg/ns3e74frqn) to get help!
-    
-    **Error**:
-    ```{error_traceback}```
-    """
-    embed.set_footer(text="Happened At")
-    embed.timestamp = utcnow()
-    return embed
 
 
 class CatherineModal(discord.ui.Modal):
     def __init__(self, interaction: discord.Interaction, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.interaction = interaction
+        self.bot: Catherine = interaction.client  # type: ignore
 
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
         if interaction.user and interaction.user.id in (
@@ -39,7 +30,12 @@ class CatherineModal(discord.ui.Modal):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, /
     ) -> None:
+        self.bot.logger.exception(
+            "Ignoring modal exception from %s: ",
+            self.__class__.__name__,
+            exc_info=error,
+        )
         await interaction.response.send_message(
-            embed=produce_error_embed(error), ephemeral=True
+            embed=FullErrorEmbed(error), ephemeral=True
         )
         self.stop()
