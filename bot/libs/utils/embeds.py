@@ -52,15 +52,6 @@ class FullErrorEmbed(ErrorEmbed):
         return desc
 
 
-class ConfirmEmbed(discord.Embed):
-    """Kumiko's custom confirm embed"""
-
-    def __init__(self, **kwargs):
-        kwargs.setdefault("color", discord.Color.from_rgb(255, 191, 0))
-        kwargs.setdefault("title", "Are you sure?")
-        super().__init__(**kwargs)
-
-
 class TimeoutEmbed(discord.Embed):
     """Timed out embed"""
 
@@ -70,4 +61,13 @@ class TimeoutEmbed(discord.Embed):
         kwargs.setdefault(
             "description", "Timed out waiting for a response. Cancelling action."
         )
+        super().__init__(**kwargs)
+
+
+class ConfirmEmbed(discord.Embed):
+    """Kumiko's custom confirm embed"""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("color", discord.Color.from_rgb(255, 191, 0))
+        kwargs.setdefault("title", "Are you sure?")
         super().__init__(**kwargs)
