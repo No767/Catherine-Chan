@@ -1,4 +1,5 @@
 import asyncio
+import os
 import re
 import traceback
 from functools import wraps
@@ -12,13 +13,18 @@ from discord.utils import utcnow
 from libs.utils.config import CatherineConfig
 from typing_extensions import Self
 
-path = Path(__file__).parent / "config.yml"
-config = CatherineConfig(path)
+# If we can't load the configuration, then let's look for the environment variable
+try:
+    path = Path(__file__).parent / "config.yml"
+    config = CatherineConfig(path)
+    POSTGRES_URI = config["postgres"]["uri"]
+except KeyError:
+    POSTGRES_URI = os.environ["POSTGRES_URI"]
+
 
 BE = TypeVar("BE", bound=BaseException)
 
 REVISION_FILE = re.compile(r"(?P<kind>V)(?P<version>\d+)__(?P<description>.+).sql")
-POSTGRES_URI = config["postgres"]["uri"]
 
 CREATE_MIGRATIONS_TABLE = """
 CREATE TABLE IF NOT EXISTS migrations (
