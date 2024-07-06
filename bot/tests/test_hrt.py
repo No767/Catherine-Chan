@@ -8,4 +8,6 @@ def cog(bot) -> HRTConversion:
 
 
 def test_calc_e(cog: HRTConversion):
+    # In order not to return an exit code 5 from pytest
+    # we just make an mock test
     pass
