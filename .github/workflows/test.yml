@@ -44,7 +44,7 @@ jobs:
       - name: Install pg_trgm
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends postgresql
+          sudo apt-get install -y --no-install-recommends postgresql-client
           psql $POSTGRES_URI -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm;'
 
       - name: Set up Python
