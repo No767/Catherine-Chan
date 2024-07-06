@@ -60,7 +60,7 @@ Local Setup
         python3 bot/migrations.py
 
 Special Configuration Variables
----------------------
+-------------------------------
 
 Development Features
 ^^^^^^^^^^^^^^^^^^^^
@@ -68,7 +68,7 @@ Development Features
 Catherine-Chan includes an development mode allowing for continuous
 reloading of extensions and library code. Once the file is saved, the 
 module is reloaded and changes can be reflected. This can be enabled 
-through the ``dev_mode`` key in the configuration file. In addition,
+through the ``bot.dev_mode`` key in the configuration file. In addition,
 Jishaku is bundled with the bot, allowing for easy debugging and
 faster development.
 
@@ -81,7 +81,7 @@ Prometheus Metrics
 ^^^^^^^^^^^^^^^^^^
 
 Catherine-Chan also includes an Prometheus endpoint for metrics.
-This can enabled through the ``prometheus.enabled`` key. If 
+This can enabled through the ``bot.prometheus.enabled`` key. If 
 you don't need this feature, feel free to entirely disable it.
 Disabling this feature does not affect the bot, as the cog
 responsible for this feature is an extension that can be

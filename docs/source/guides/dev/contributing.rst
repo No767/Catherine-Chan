@@ -103,6 +103,13 @@ Python Version Support
 Catherine-Chan generally follows `NEP-29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_. 
 Catherine-Chan is tested against versions supported by NEP-29.
 
+Unit Tests
+----------
+
+Since `PR #189 <https://github.com/No767/Catherine-Chan/pull/189>`_, unit tests are now used to ensure software
+quality. Each feature PR should include unit tests on methods that are relevant to the cog, and features that
+can tested if possible. Please see ``bot/tests`` for examples of how to write these tests.
+
 GitHub Contributing Guidelines
 -----------------------------------
 
