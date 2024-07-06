@@ -21,11 +21,12 @@ CONFIG_PATH = Path(__file__).parents[1] / "config.yml"
 
 
 def load_postgres_uri() -> str:
-    config = CatherineConfig(CONFIG_PATH)
-    ideal_conf = config.postgres.get("uri")
-    if ideal_conf is None:
-        return os.environ["POSTGRES_URI"]
-    return ideal_conf
+    try:
+        config = CatherineConfig(CONFIG_PATH)
+        ideal_conf = config["postgres"]["uri"]
+        return ideal_conf
+    except KeyError:
+        return "postgresql://postgres:postgres@localhost:5432/postgres"
 
 
 class TestBot(commands.Bot):

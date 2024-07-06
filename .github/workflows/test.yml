@@ -11,8 +11,6 @@ on:
 
 env:
   POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/postgres
-  TARGET_REVISION: rev5
-
   
 jobs: 
   Test:
@@ -21,7 +19,7 @@ jobs:
 
     services:
       postgres:
-        image: no767/akari-pg:edge
+        image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -43,11 +41,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: Setup Codecov Uploader
-      #   run: |
-      #     curl -Os https://uploader.codecov.io/latest/linux/codecov
-      #     chmod +x codecov
-      #     ./codecov
+      - name: Install pg_trgm
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends postgresql
+          psql -h 127.0.0.1 -U postgres -d postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm;'
 
       - name: Set up Python
         id: setup-python
@@ -64,10 +62,3 @@ jobs:
           RAW_PYTHON_VERSION=${{ matrix.version }}
           PYTHON_VERSION=$(echo $RAW_PYTHON_VERSION | sed 's/\.//')
           tox -e $PYTHON_VERSION
-
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     files: ./coverage.xml
-      #   env:
-      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
