@@ -1,4 +1,5 @@
 import asyncio
+import os
 import re
 import traceback
 from functools import wraps
@@ -18,7 +19,7 @@ try:
     config = CatherineConfig(path)
     POSTGRES_URI = config["postgres"]["uri"]
 except KeyError:
-    POSTGRES_URI = "postgresql://postgres:postgres@localhost:5432/postgres"
+    POSTGRES_URI = os.environ["POSTGRES_URI"]
 
 
 BE = TypeVar("BE", bound=BaseException)

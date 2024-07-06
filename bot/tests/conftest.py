@@ -26,7 +26,7 @@ def load_postgres_uri() -> str:
         ideal_conf = config["postgres"]["uri"]
         return ideal_conf
     except KeyError:
-        return "postgresql://postgres:postgres@localhost:5432/postgres"
+        return os.environ["POSTGRES_URI"]
 
 
 class TestBot(commands.Bot):
