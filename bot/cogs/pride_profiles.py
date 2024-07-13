@@ -5,8 +5,9 @@ from discord.ext import commands
 from libs.cog_utils.commons import register_user
 from libs.cog_utils.pride_profiles.utils import present_info
 from libs.ui.pride_profiles.pages import ProfileSearchPages, ProfileStatsPages
-from libs.ui.pride_profiles.views import ConfigureView, DeleteProfileView
-from libs.utils.embeds import ConfirmEmbed, Embed
+from libs.ui.pride_profiles.views import ConfigureView
+from libs.utils.embeds import Embed
+from libs.utils.view import prompt
 
 
 class PrideProfiles(commands.GroupCog, name="pride-profiles"):
@@ -138,11 +139,25 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
     @app_commands.command(name="delete")
     async def delete(self, interaction: discord.Interaction) -> None:
         """Permanently deletes your pride profile"""
-        embed = ConfirmEmbed()
-        embed.description = "Are you sure you really want to delete your profile?"
-        view = DeleteProfileView(interaction, self.pool)
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-        view.original_response = await interaction.original_response()
+        msg = "Are you sure you really want to delete your profile?"
+        confirm = await prompt(interaction, msg, delete_after=True)
+
+        if confirm:
+            query = "DELETE FROM profiles WHERE user_id = $1;"
+            status = await self.pool.execute(query, interaction.user.id)
+            if status[-1] == "0":
+                await interaction.followup.send(
+                    "Your pride profile doesn't exist. Please create one first.",
+                    ephemeral=True,
+                )
+                return
+            await interaction.followup.send(content="hi this works", ephemeral=True)
+        elif confirm is None:
+            await interaction.followup.send(
+                content="Not removing your pride profile. Cancelling.", ephemeral=True
+            )
+        else:
+            await interaction.followup.send(content="Cancelling.", ephemeral=True)
 
 
 async def setup(bot: Catherine) -> None:
