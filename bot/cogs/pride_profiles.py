@@ -151,7 +151,9 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
                     ephemeral=True,
                 )
                 return
-            await interaction.followup.send(content="hi this works", ephemeral=True)
+            await interaction.followup.send(
+                content="Successfully deleted your pride profile.", ephemeral=True
+            )
         elif confirm is None:
             await interaction.followup.send(
                 content="Not removing your pride profile. Cancelling.", ephemeral=True
