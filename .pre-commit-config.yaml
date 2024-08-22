@@ -14,7 +14,7 @@ repos:
        additional_dependencies: ["bandit[toml]"]
        
 -   repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 24.8.0
     hooks:
     -   id: black
         name: Black
@@ -30,7 +30,7 @@ repos:
         stages: [commit]
 
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.1
+    rev: v0.6.1
     hooks:
       - id: ruff
         name: Ruff
