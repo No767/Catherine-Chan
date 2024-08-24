@@ -20,6 +20,9 @@ def format_title(value: str) -> str:
     return " ".join(word.capitalize() for word in value.split("_"))
 
 
+### Structs
+
+
 class PrideProfile(msgspec.Struct, frozen=True):
     id: int
     name: str
@@ -37,15 +40,6 @@ class PrideProfile(msgspec.Struct, frozen=True):
         }
 
 
-class PrideProfileEmbed(Embed):
-    def __init__(self, profile: PrideProfile, user: discord.User, **kwargs):
-        super().__init__(**kwargs)
-        self.title = f"{profile.name}'s Profile"
-        self.add_field(name="Views", value=profile.views)
-        self.set_thumbnail(url=user.display_avatar.url)
-        self.set_footer(text=f"User ID: {profile.id}")
-
-
 class IndexedPrideProfile(msgspec.Struct, frozen=True):
     id: int
     name: str
@@ -58,16 +52,16 @@ class IndexedPrideProfile(msgspec.Struct, frozen=True):
         return f"{self.name} (ID: {self.id} | {self.pronouns or 'None'})"
 
 
-class ProfileName(app_commands.Transformer):
-    async def transform(self, interaction: discord.Interaction, value: str):
-        lowered = value.lower()
+class PrideProfileEmbed(Embed):
+    def __init__(self, profile: PrideProfile, user: discord.User, **kwargs):
+        super().__init__(**kwargs)
+        self.title = f"{profile.name}'s Profile"
+        self.add_field(name="Views", value=profile.views)
+        self.set_thumbnail(url=user.display_avatar.url)
+        self.set_footer(text=f"User ID: {profile.id}")
 
-        if len(lowered) < 3:
-            raise app_commands.AppCommandError(
-                "Your query must have 3 characters or more."
-            )
 
-        return value
+### UI components (Modals, Pages, Views, Selects)
 
 
 class IndexedPrideProfilePages(CatherinePages):
@@ -167,6 +161,22 @@ class ConfigureView(CatherineView):
         self.stop()
 
 
+### Transformers
+
+
+class ProfileName(app_commands.Transformer):
+    async def transform(self, interaction: discord.Interaction, value: str):
+        lowered = value.lower()
+
+        if len(lowered) < 3:
+            # I'm not really sure if this is the correct error or not
+            raise app_commands.AppCommandError(
+                "Your query must have 3 characters or more."
+            )
+
+        return value
+
+
 class PrideProfiles(commands.GroupCog, name="pride-profiles"):
     """Create pride profiles to let others know who you are!"""
 
@@ -175,7 +185,9 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         self.pool = self.bot.pool
         super().__init__()
 
-    def _disambiguate(self, rows) -> str:
+    ### Utilities
+
+    def disambiguate(self, rows) -> str:
         if rows is None or len(rows) == 0:
             return "Profile not found."
 
@@ -214,7 +226,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
             LIMIT 3;
             """
             rows = await self.pool.fetch(query, name)
-            await interaction.response.send_message(self._disambiguate(rows))
+            await interaction.response.send_message(self.disambiguate(rows))
             return
 
         profile = PrideProfile(**dict(rows))
@@ -323,6 +335,8 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
             )
         else:
             await interaction.followup.send(content="Cancelling.", ephemeral=True)
+
+    ### Error Handlers
 
     @search.error
     async def on_search_error(
