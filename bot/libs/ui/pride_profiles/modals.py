@@ -1,7 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import asyncpg
 import discord
-from libs.cog_utils.pride_profiles import snake_case_to_title
 from libs.utils import CatherineModal
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
+    from cogs.pride_profiles import PrideProfiles
 
 
 class EditProfileModal(CatherineModal, title="Edit Profile"):
@@ -9,9 +16,11 @@ class EditProfileModal(CatherineModal, title="Edit Profile"):
         self, interaction: discord.Interaction, profile_type: str, pool: asyncpg.Pool
     ) -> None:
         super().__init__(interaction=interaction)
+        bot: Catherine = interaction.client  # type: ignore
+        self.cog: PrideProfiles = bot.get_cog("PrideProfiles")  # type: ignore
         self.pool = pool
         self.profile_type = profile_type
-        self.cleaned_type = snake_case_to_title(profile_type)
+        self.cleaned_type = self.cog.format_title(profile_type)
         self.profile_category = discord.ui.TextInput(
             label=f"Change your {self.cleaned_type} status",
             placeholder=f"Enter your new {self.cleaned_type} status",
