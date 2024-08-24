@@ -7,13 +7,17 @@ import discord
 import msgspec
 from discord import app_commands
 from discord.ext import commands
-from libs.ui.pride_profiles.views import ConfigureView
 from libs.utils.embeds import Embed
+from libs.utils.modal import CatherineModal
 from libs.utils.pages import CatherinePages, SimplePageSource
-from libs.utils.view import prompt
+from libs.utils.view import CatherineView, prompt
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
+
+
+def format_title(value: str) -> str:
+    return " ".join(word.capitalize() for word in value.split("_"))
 
 
 class PrideProfile(msgspec.Struct, frozen=True):
@@ -82,6 +86,87 @@ class IndexedPrideProfilePages(CatherinePages):
         self.embed = discord.Embed(colour=discord.Colour.from_rgb(217, 156, 255))
 
 
+class EditProfileModal(CatherineModal, title="Edit Profile"):
+    def __init__(
+        self, interaction: discord.Interaction, profile_type: str, bot: Catherine
+    ) -> None:
+        super().__init__(interaction=interaction)
+        self.pool = bot.pool
+        self.profile_type = profile_type
+        self.cleaned_type = format_title(profile_type)
+        self.profile_category = discord.ui.TextInput(
+            label=f"Change your {self.cleaned_type} status",
+            placeholder=f"Enter your new {self.cleaned_type} status",
+            min_length=1,
+            max_length=50,
+        )
+        self.add_item(self.profile_category)
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        # https://github.com/MagicStack/asyncpg/issues/208
+        # Because of this, we are going to use it the good old fashioned way
+        # not the best lol
+
+        constraint = "SET name = $2"
+
+        if self.profile_type in ("pronouns"):
+            constraint = "SET pronouns = $2"
+        elif self.profile_type in ("gender_identity"):
+            constraint = "SET gender_identity = $2"
+        elif self.profile_type in ("sexual_orientation"):
+            constraint = "SET sexual_orientation = $2"
+        elif self.profile_type in ("romantic_orientation"):
+            constraint = "SET romantic_orientation = $2"
+
+        query = f"""
+        UPDATE pride_profiles
+        {constraint}
+        WHERE id = $1;
+        """
+        await self.pool.execute(query, interaction.user.id, self.profile_category.value)
+        await interaction.response.send_message(
+            f"Changed your `{self.cleaned_type}` status to `{self.profile_category.value}`",
+            ephemeral=True,
+        )
+
+
+class SelectPrideCategory(discord.ui.Select):
+    def __init__(self, bot: Catherine) -> None:
+        options = [
+            discord.SelectOption(label="Name", value="name"),
+            discord.SelectOption(label="Pronouns", value="pronouns"),
+            discord.SelectOption(label="Gender Identity", value="gender_identity"),
+            discord.SelectOption(
+                label="Sexual Orientation", value="sexual_orientation"
+            ),
+            discord.SelectOption(
+                label="Romantic Orientation", value="romantic_orientation"
+            ),
+        ]
+        super().__init__(placeholder="Select a category", options=options, row=0)
+        self.bot = bot
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        profile_type = self.values[0]
+        await interaction.response.send_modal(
+            EditProfileModal(interaction, profile_type, self.bot)
+        )
+
+
+class ConfigureView(CatherineView):
+    def __init__(self, interaction: discord.Interaction, bot: Catherine) -> None:
+        super().__init__(interaction=interaction)
+        self.add_item(SelectPrideCategory(bot))
+
+    @discord.ui.button(label="Finish", style=discord.ButtonStyle.green, row=1)
+    async def finish(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ) -> None:
+        await interaction.response.defer()
+        await interaction.delete_original_response()
+        self.stop()
+
+
 class PrideProfiles(commands.GroupCog, name="pride-profiles"):
     """Create pride profiles to let others know who you are!"""
 
@@ -97,15 +182,12 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         names = "\n".join(r["name"] for r in rows)
         return f"Profile not found. Did you mean...\n{names}"
 
-    def format_title(self, value: str) -> str:
-        return " ".join(word.capitalize() for word in value.split("_"))
-
     async def send_profile(
         self, interaction: discord.Interaction, profile: PrideProfile
     ) -> None:
 
         query = """
-        UPDATE profile_profiles
+        UPDATE pride_profiles
         SET views = views + 1
         WHERE id = $1;
         """
@@ -114,8 +196,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         profile_fmt = profile.to_format_dict()
         embed = PrideProfileEmbed(profile, user)
         embed.description = "\n".join(
-            f"**{self.format_title(key)}**: {value}"
-            for key, value in profile_fmt.items()
+            f"**{format_title(key)}**: {value}" for key, value in profile_fmt.items()
         )
         await interaction.response.send_message(embed=embed)
 
@@ -131,7 +212,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         rows = await self.pool.fetchrow(query, name)
         if rows is None:
             query = """
-            SELECT name FROM profiles
+            SELECT name FROM pride_profiles
             WHERE name % $1
             ORDER BY similarity(name, $1) DESC
             LIMIT 3;
@@ -164,11 +245,10 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
                 "Registered your pride profile! In order to customize your profile, please use `/pride-profile configure`."
             )
 
-    # TODO: rewrite this
     @app_commands.command(name="configure")
     async def configure(self, interaction: discord.Interaction) -> None:
         """Configure your pride profile"""
-        view = ConfigureView(interaction, self.pool)
+        view = ConfigureView(interaction, self.bot)
         embed = Embed(title="Configuring your pride profile")
         embed.description = "In order to configure your pride profile, select at one of the categories listed in the drop down."
         await interaction.response.send_message(embed=embed, view=view)
