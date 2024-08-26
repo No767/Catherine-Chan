@@ -204,6 +204,7 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         WHERE id = $1;
         """
         await self.pool.execute(query, profile.id)
+        self.bot.metrics.features.pride_profile_views.inc()
         user = self.bot.get_user(profile.id) or (await self.bot.fetch_user(profile.id))
         profile_fmt = profile.to_format_dict()
         embed = PrideProfileEmbed(profile, user)
