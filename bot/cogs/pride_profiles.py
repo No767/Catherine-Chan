@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING, Optional
 
 import asyncpg
@@ -14,6 +15,8 @@ from libs.utils.view import CatherineView, prompt
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
+
+MENTION_REGEX = r"@(everyone|here)"
 
 
 def format_title(value: str) -> str:
@@ -112,6 +115,12 @@ class EditProfileModal(CatherineModal, title="Edit Profile"):
         elif self.profile_type in ("romantic_orientation"):
             constraint = "SET romantic_orientation = $2"
 
+        # You could remove the profile type check to make even more harsher
+        if self.profile_type == "name" and re.match(
+            MENTION_REGEX, self.profile_category.value
+        ):
+            raise RuntimeError("Nuh uh uh! You can't use everyone or here mentions!")
+
         query = f"""
         UPDATE pride_profiles
         {constraint}
@@ -177,6 +186,9 @@ class ProfileName(app_commands.Transformer):
             raise app_commands.AppCommandError(
                 "Your query must have less than 50 characters."
             )
+
+        if re.match(value, MENTION_REGEX):
+            raise app_commands.AppCommandError("Can't use everyone or here mentions!")
 
         return discord.utils.escape_mentions(value)
 
