@@ -165,7 +165,7 @@ class ConfigureView(CatherineView):
 
 
 class ProfileName(app_commands.Transformer):
-    async def transform(self, interaction: discord.Interaction, value: str):
+    async def transform(self, interaction: discord.Interaction, value: str) -> str:
         lowered = value.lower()
 
         if len(lowered) < 3:
@@ -173,8 +173,12 @@ class ProfileName(app_commands.Transformer):
             raise app_commands.AppCommandError(
                 "Your query must have 3 characters or more."
             )
+        elif len(lowered) > 50:
+            raise app_commands.AppCommandError(
+                "Your query must have less than 50 characters."
+            )
 
-        return value
+        return discord.utils.escape_mentions(value)
 
 
 class PrideProfiles(commands.GroupCog, name="pride-profiles"):
@@ -342,6 +346,12 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
             await interaction.followup.send(content="Cancelling.", ephemeral=True)
 
     ### Error Handlers
+
+    @view.error
+    async def on_view_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
+        await interaction.response.send_message(str(error))
 
     @search.error
     async def on_search_error(
