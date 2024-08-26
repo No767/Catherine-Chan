@@ -215,7 +215,11 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
 
     @app_commands.command(name="view")
     @app_commands.describe(name="The user's global or preferred name")
-    async def view(self, interaction: discord.Interaction, name: str) -> None:
+    async def view(
+        self,
+        interaction: discord.Interaction,
+        name: app_commands.Transform[str, ProfileName],
+    ) -> None:
         """Look at a pride profile"""
         query = "SELECT * FROM pride_profiles WHERE name = $1;"
         rows = await self.pool.fetchrow(query, name)
