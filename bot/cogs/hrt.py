@@ -1,10 +1,14 @@
-from typing import TypedDict
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, TypedDict
 
 import discord
-from catherinecore import Catherine
 from discord import app_commands
 from discord.app_commands import Choice
 from discord.ext import commands
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
 
 ESTRADIOL = 3.6712337
 PROGESTERONE = 3.18
