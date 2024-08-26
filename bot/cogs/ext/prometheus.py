@@ -95,13 +95,17 @@ class BlacklistCollector:
 
 
 class FeatureCollector:
-    __slots__ = ("bot", "successful_pronouns")
+    __slots__ = ("bot", "successful_pronouns", "pride_profile_views")
 
     def __init__(self, bot: Catherine):
         self.bot = bot
         self.successful_pronouns = Counter(
             f"{METRIC_PREFIX}successful_pronouns",
             "Counter of successful pronouns tester invocations",
+        )
+        self.pride_profile_views = Counter(
+            f"{METRIC_PREFIX}_pride_profile_views",
+            "Counter of globally total successful pride profile views",
         )
 
 
