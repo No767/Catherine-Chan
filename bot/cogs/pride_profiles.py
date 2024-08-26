@@ -56,9 +56,9 @@ class PrideProfileEmbed(Embed):
     def __init__(self, profile: PrideProfile, user: discord.User, **kwargs):
         super().__init__(**kwargs)
         self.title = f"{profile.name}'s Profile"
+        self.add_field(name="User ID", value=profile.id)
         self.add_field(name="Views", value=profile.views)
         self.set_thumbnail(url=user.display_avatar.url)
-        self.set_footer(text=f"User ID: {profile.id}")
 
 
 ### UI components (Modals, Pages, Views, Selects)
