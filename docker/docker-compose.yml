@@ -1,0 +1,43 @@
+name: catherine
+
+services:
+  catherine:
+    container_name: catherine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Do not edit the next line. If you want to change the path of the configuration file, please edit the CONFIG_LOCATION variable
+      - ${CONFIG_LOCATION}:/catherine/bot/config.yml
+    env_file:
+      - .env
+    ports:
+      - 6789:6789
+    depends_on:
+      - database
+    command: sh -c '/catherine/wait-for database:5432 -- echo "[Wait-for] PostgreSQL is fully up. Starting Catherine-Chan." && /catherine/start.sh'
+    restart: always
+
+  database:
+    container_name: catherine_postgres
+    build:
+      context: ./pg
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    ports:
+      - 5432:5432
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready --dbname='${DB_DATABASE_NAME}' --username='${DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${DB_DATABASE_NAME}' --username='${DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
+      interval: 5m
+      start_interval: 30s
+      start_period: 5m
+    restart: always
+
+volumes:
+  database:

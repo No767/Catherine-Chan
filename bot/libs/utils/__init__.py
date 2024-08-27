@@ -1,4 +1,3 @@
-from .blacklist import get_blacklist as get_blacklist
 from .embeds import (
     ConfirmEmbed as ConfirmEmbed,
     Embed as Embed,
