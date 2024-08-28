@@ -51,7 +51,6 @@ Features
 * Pride Profile creator (create profiles to let others know about your pronouns and more)
 * Full pronouns.page integration
 * Resources for support
-* ToneTags support
 * HRT Converter
 
 If there is a feature that you would like to see, please either suggest it within the `Discord Server <https://discord.gg/ns3e74frqn>`_ or preferably make a `feature request ticket <https://github.com/No767/Catherine-Chan/issues/>`_ on GitHub.
