@@ -37,5 +37,25 @@ services:
       start_period: 5m
     restart: always
 
+  catherine-prometheus:
+    container_name: catherine_prometheus
+    ports:
+      - 9090:9090
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+
+  # first login uses admin/admin
+  # add data source for http://catherine-prometheus:9090 to get started
+  catherine-grafana:
+    container_name: catherine_grafana
+    command: ['./run.sh', '-disable-reporting']
+    ports:
+      - 3000:3000
+    image: grafana/grafana-enterprise:latest-ubuntu
+    volumes:
+      - grafana-data:/var/lib/grafana
+
 volumes:
   database:
