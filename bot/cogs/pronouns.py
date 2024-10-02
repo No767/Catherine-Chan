@@ -26,6 +26,7 @@ class PartialProfileInfo(msgspec.Struct, frozen=True):
     names: str
     pronouns: str
     flags: str
+    circle: str
 
 
 class ProfileMeta(msgspec.Struct, frozen=True):
@@ -34,7 +35,7 @@ class ProfileMeta(msgspec.Struct, frozen=True):
     avatar: str
     tz: Optional[str]
     age: int
-    circle: Optional[list[dict[str, str]]]
+    circle: list[dict[str, str]]
 
 
 class ProfileInfo(msgspec.Struct, frozen=True):
@@ -369,6 +370,11 @@ class ProfilePageSource(menus.PageSource):
             return f"**{value}**"
         return f"{value}"
 
+    def determine_mutual(self, username: str, mutual: bool) -> str:
+        if mutual:
+            return f"@{username} (Mutual)"
+        return f"@{username}"
+
     def parse_opinion(self, opinion: str) -> str:
         data = {
             "yes": "\U00002764",
@@ -377,19 +383,25 @@ class ProfilePageSource(menus.PageSource):
             "meh": "\U0001f44c",
             "no": "\U0001f6ab",
         }
-        return data[opinion]
+        try:
+            return data[opinion]
+        except KeyError:
+            # Basically return a question mark
+            # These are basically custom emojis that I can't predict
+            return "\U00002753"
 
     def format_info(self, entry: ProfileInfo) -> PartialProfileInfo:
         return PartialProfileInfo(
             names="\n".join(
-                f"{self.parse_opinion(sub_entry["opinion"])} {self.determine_bold(sub_entry["value"], sub_entry["opinion"])}"
+                f"{self.parse_opinion(sub_entry['opinion'])} {self.determine_bold(sub_entry['value'], sub_entry['opinion'])}"
                 for sub_entry in entry.names
             ),
             pronouns="\n".join(
-                f"{self.parse_opinion(sub_entry["opinion"])} {self.determine_bold(sub_entry["value"], sub_entry["opinion"])}"
+                f"{self.parse_opinion(sub_entry['opinion'])} {self.determine_bold(sub_entry['value'], sub_entry['opinion'])}"
                 for sub_entry in entry.pronouns
             ),
             flags=", ".join(flag for flag in entry.flags),
+            circle="\n".join(f"- {self.determine_mutual(entity['username'], entity['circleMutual'])}\n\t- Relationship: {entity['relationship']}" for entity in entry.meta.circle) if len(entry.meta.circle) != 0 else "None",  # type: ignore
         )
 
     async def format_page(self, menu: ProfilePages, page):
@@ -414,6 +426,19 @@ class ProfilePageSource(menus.PageSource):
             menu.embed.add_field(
                 name="Timezone", value=entry.meta.tz or "Unknown", inline=False
             )
+            menu.embed.add_field(
+                name="Relationships", value=profile_info.circle, inline=False
+            )
+        elif self.index == 1:
+            menu.embed.description = ""
+            for entity in entry.words:
+                fmt_words = "\n".join(
+                    f"- {self.parse_opinion(entry['opinion'])} {entry['value']}"
+                    for entry in entity["values"]
+                )
+                menu.embed.add_field(
+                    name=entity["header"] or "Unknown", value=fmt_words, inline=False
+                )
         return menu.embed
 
 
@@ -673,7 +698,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
                         avatar=data["avatarSource"],
                         tz=v["timezone"]["tz"] if v["timezone"] else None,
                         age=v["age"],
-                        circle=v["circle"] if len(v["circle"]) == 0 else None,
+                        circle=v["circle"],
                     ),
                     words=v["words"],
                 )
