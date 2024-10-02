@@ -1,28 +1,50 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional, Sequence, Union
 
 import asyncpg
 import discord
+import msgspec
 import orjson
 from discord import app_commands
-from discord.ext import commands
-from libs.ui.pronouns import (
-    PronounsProfileCircleEntry,
-    PronounsProfileEntry,
-    PronounsProfilePages,
-    PronounsValuesEntry,
-    PronounsWordsEntry,
-)
+from discord.ext import commands, menus
 from libs.utils.embeds import Embed, FullErrorEmbed
 from libs.utils.modal import CatherineModal
+from libs.utils.pages import CatherinePages
 from yarl import URL
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
 
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
+
+### Structs
+
+
+class PartialProfileInfo(msgspec.Struct, frozen=True):
+    names: str
+    pronouns: str
+    flags: str
+
+
+class ProfileMeta(msgspec.Struct, frozen=True):
+    username: str
+    locale: str
+    avatar: str
+    tz: Optional[str]
+    age: int
+    circle: Optional[list[dict[str, str]]]
+
+
+class ProfileInfo(msgspec.Struct, frozen=True):
+    names: list[dict[str, str]]
+    description: str
+    pronouns: list[dict[str, str]]
+    flags: list[str]
+    meta: ProfileMeta
+    words: Sequence[dict]  # typing may not be correct
+
 
 ### Embeds
 
@@ -162,9 +184,9 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
         WITH pronouns_id AS (
             INSERT INTO pronouns_test_examples (owner_id, content)
             VALUES ($1, $2)
-            RETURNING id AS last_id
+            RETURNING id
         )
-        SELECT (last_id) FROM pronouns_id;
+        SELECT (id) FROM pronouns_id;
         """
         async with self.pool.acquire() as connection:
             id = 0
@@ -324,6 +346,158 @@ class SuggestionView(discord.ui.View):
             await interaction.delete_original_response()
 
         self.stop()
+
+
+class ProfilePageSource(menus.PageSource):
+    def __init__(self, locale: str):
+        self.locale = locale
+
+    def is_paginating(self) -> bool:
+        return True
+
+    def get_max_pages(self) -> Optional[int]:
+        return 2
+
+    async def get_page(self, page_number: int) -> Any:
+        self.index = page_number
+        return self
+
+    ### Utilities
+
+    def determine_bold(self, value: str, opinion: str) -> str:
+        if "yes" in opinion:
+            return f"**{value}**"
+        return f"{value}"
+
+    def parse_opinion(self, opinion: str) -> str:
+        data = {
+            "yes": "\U00002764",
+            "jokingly": "\U0001f61b",
+            "close": "\U0001f465",
+            "meh": "\U0001f44c",
+            "no": "\U0001f6ab",
+        }
+        return data[opinion]
+
+    def format_info(self, entry: ProfileInfo) -> PartialProfileInfo:
+        return PartialProfileInfo(
+            names="\n".join(
+                f"{self.parse_opinion(sub_entry["opinion"])} {self.determine_bold(sub_entry["value"], sub_entry["opinion"])}"
+                for sub_entry in entry.names
+            ),
+            pronouns="\n".join(
+                f"{self.parse_opinion(sub_entry["opinion"])} {self.determine_bold(sub_entry["value"], sub_entry["opinion"])}"
+                for sub_entry in entry.pronouns
+            ),
+            flags=", ".join(flag for flag in entry.flags),
+        )
+
+    async def format_page(self, menu: ProfilePages, page):
+        menu.embed.clear_fields()
+
+        entry = menu.entries[self.locale]
+        menu.embed.title = f"@{entry.meta.username}"
+        menu.embed.set_thumbnail(url=entry.meta.avatar)
+
+        menu.embed.set_footer(
+            text="\U00002764 = Yes | \U0001f61b = Jokingly | \U0001f465 = Only if we're close | \U0001f44c = Okay | \U0001f6ab = Nope"
+        )
+        if self.index == 0:
+            menu.embed.description = entry.description
+            if len(menu.embed.fields) == 0:
+                profile_info = self.format_info(entry)
+                menu.embed.add_field(
+                    name="Names", value=profile_info.names, inline=False
+                )
+                menu.embed.add_field(
+                    name="Pronouns", value=profile_info.pronouns, inline=False
+                )
+                menu.embed.add_field(
+                    name="Flags", value=profile_info.flags, inline=False
+                )
+        return menu.embed
+
+
+class ProfileLangMenu(discord.ui.Select["ProfilePages"]):
+    def __init__(self, entries: dict[str, ProfileInfo]):
+        super().__init__(placeholder="Select a language")
+        self.entries = entries
+        # The list of officially supported langs
+        # https://gitlab.com/PronounsPage/PronounsPage/-/blob/main/locale/locales.js
+        self.lang_codes = {
+            "de": "Deutsch",
+            "es": "Español",
+            "eo": "Esperanto",
+            "en": "English",
+            "et": "Eesti keel",
+            "fr": "Français",
+            "gl": "Galego",
+            "he": "עברית",
+            "it": "Italiano",
+            "lad": "Ladino (Djudezmo)",
+            "nl": "Nederlands",
+            "no": "Norsk (Bokmål)",
+            "pl": "Polski",
+            "pt": "Português",
+            "ro": "Română",
+            "sv": "Svenska",
+            "tr": "Türkçe",
+            "vi": "Tiếng Việt",
+            "ar": "العربية",
+            "ru": "Русский",
+            "ua": "Українська",
+            "ja": "日本語",
+            "ko": "한국어",
+            "yi": "ייִדיש",
+            "zh": "中文",
+            "tok": "toki pona",
+        }
+        self.__fill_options()
+
+    def __fill_options(self):
+        for entry in self.entries.keys():
+            lang = self.lang_codes[entry]
+            self.add_option(label=f"{lang}", value=entry)
+
+    async def callback(self, interaction: discord.Interaction):
+        if self.view is not None:
+            value = self.values[0]
+            if value == "en":
+                await self.view.rebind(ProfilePageSource(locale="en"), interaction)
+            else:
+                await self.view.rebind(ProfilePageSource(locale=value), interaction)
+
+
+class ProfilePages(CatherinePages):
+    def __init__(
+        self, entries: dict[str, ProfileInfo], *, interaction: discord.Interaction
+    ):
+        self.entries = entries
+        super().__init__(
+            ProfilePageSource(locale="en"),
+            interaction=interaction,
+            compact=True,
+        )
+        self.add_cats()
+
+        self.embed = discord.Embed(colour=discord.Colour.from_rgb(255, 125, 212))
+
+    def add_cats(self):
+        self.clear_items()
+        self.add_item(ProfileLangMenu(self.entries))
+        self.fill_items()
+
+    async def rebind(
+        self, source: menus.PageSource, interaction: discord.Interaction
+    ) -> None:
+        self.source = source
+        self.current_page = 0
+
+        await self.source._prepare_once()
+        page = await self.source.get_page(0)
+        kwargs = await self._get_kwargs_from_page(page)
+        self._update_labels(0)
+        await interaction.response.edit_message(**kwargs, view=self)
 
 
 class Pronouns(commands.GroupCog, name="pronouns"):
@@ -488,59 +662,25 @@ class Pronouns(commands.GroupCog, name="pronouns"):
             if len(data["profiles"]) == 0:
                 await interaction.followup.send("The profile was not found")
                 return
-            curr_username = data["username"]
-            avatar = data["avatar"]
-            converted = {
-                k: PronounsProfileEntry(
-                    username=curr_username,
-                    avatar=avatar,
-                    locale=k,
-                    names=[
-                        PronounsValuesEntry(
-                            value=name["value"], opinion=name["opinion"]
-                        )
-                        for name in v["names"]
-                    ],
-                    pronouns=[
-                        PronounsValuesEntry(
-                            value=pronoun["value"], opinion=pronoun["opinion"]
-                        )
-                        for pronoun in v["pronouns"]
-                    ],
+            entries = {
+                k: ProfileInfo(
+                    names=v["names"],
                     description=v["description"],
-                    age=v["age"],
-                    links=v["links"],
+                    pronouns=v["pronouns"],
                     flags=v["flags"],
-                    words=[
-                        PronounsWordsEntry(
-                            header=words["header"],
-                            values=[
-                                PronounsValuesEntry(
-                                    value=value["value"], opinion=value["opinion"]
-                                )
-                                for value in words["values"]
-                            ],
-                        )
-                        for words in v["words"]
-                    ],
-                    timezone=v["timezone"]["tz"],
-                    circle=(
-                        [
-                            PronounsProfileCircleEntry(
-                                username=member["username"],
-                                avatar=member["avatar"],
-                                mutual=member["circleMutual"],
-                                relationship=member["relationship"],
-                            )
-                            for member in v["circle"]
-                        ]
-                        if len(v["circle"]) != 0
-                        else None
+                    meta=ProfileMeta(
+                        username=data["username"],
+                        locale=k,
+                        avatar=data["avatarSource"],
+                        tz=v["timezone"]["tz"] if v["timezone"] else None,
+                        age=v["age"],
+                        circle=v["circle"] if len(v["circle"]) == 0 else None,
                     ),
+                    words=v["words"],
                 )
                 for k, v in data["profiles"].items()
             }
-            pages = PronounsProfilePages(entries=converted, interaction=interaction)
+            pages = ProfilePages(entries=entries, interaction=interaction)
             await pages.start()
 
 
