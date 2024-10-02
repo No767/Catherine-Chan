@@ -372,8 +372,8 @@ class ProfilePageSource(menus.PageSource):
 
     def determine_mutual(self, username: str, mutual: bool) -> str:
         if mutual:
-            return f"@{username} (Mutual)"
-        return f"@{username}"
+            return f"**@{username}** (Mutual)"
+        return f"**@{username}**"
 
     def parse_opinion(self, opinion: str) -> str:
         data = {
