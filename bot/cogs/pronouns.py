@@ -404,17 +404,16 @@ class ProfilePageSource(menus.PageSource):
         )
         if self.index == 0:
             menu.embed.description = entry.description
-            if len(menu.embed.fields) == 0:
-                profile_info = self.format_info(entry)
-                menu.embed.add_field(
-                    name="Names", value=profile_info.names, inline=False
-                )
-                menu.embed.add_field(
-                    name="Pronouns", value=profile_info.pronouns, inline=False
-                )
-                menu.embed.add_field(
-                    name="Flags", value=profile_info.flags, inline=False
-                )
+            profile_info = self.format_info(entry)
+            menu.embed.add_field(name="Names", value=profile_info.names, inline=False)
+            menu.embed.add_field(
+                name="Pronouns", value=profile_info.pronouns, inline=False
+            )
+            menu.embed.add_field(name="Age", value=entry.meta.age, inline=False)
+            menu.embed.add_field(name="Flags", value=profile_info.flags, inline=False)
+            menu.embed.add_field(
+                name="Timezone", value=entry.meta.tz or "Unknown", inline=False
+            )
         return menu.embed
 
 
