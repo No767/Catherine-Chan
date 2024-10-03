@@ -76,14 +76,13 @@ class PronounsTesterModal(CatherineModal, title="Input the fields"):
     def __init__(
         self,
         bot: Catherine,
-        cog: Pronouns,
         interaction: discord.Interaction,
         sentence: str,
         name: str,
     ):
         super().__init__(interaction=interaction)
         self.bot = bot
-        self.cog = cog
+        self.cog: Pronouns = bot.get_cog("pronouns")  # type: ignore
         self.sentence = sentence
         self.name = name
         self.metrics = bot.metrics
@@ -148,28 +147,13 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
             max_length=250,
         )
         self.bot = bot
+        self.cog: Pronouns = self.bot.get_cog("pronouns")  # type: ignore
         self.pool = self.bot.pool
         self.add_item(self.sentence)
         self.add_item(self.example_sentence)
 
-    def validate(self, sentence: str) -> bool:
-        valid_variables = [
-            "$subjective_pronoun",
-            "$objective_pronoun",
-            "$possessive_pronoun",
-            "$possessive_determiner",
-            "$reflective_pronoun",
-            "$name",
-        ]
-        result = [item for item in sentence.split(" ") if item.startswith("$")]
-        if len(result) == 0:
-            return False
-
-        is_valid = all(var in valid_variables for var in result)
-        return is_valid
-
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        if self.validate(self.sentence.value) is False:
+        if self.cog.validate(self.sentence.value) is False:
             msg = """
             It seems you tried to submit an invalid example. The example may be invalid for the following reasons:
             
@@ -566,6 +550,22 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         )
         return parsed_str
 
+    def validate(self, sentence: str) -> bool:
+        valid_variables = [
+            "$subjective_pronoun",
+            "$objective_pronoun",
+            "$possessive_pronoun",
+            "$possessive_determiner",
+            "$reflective_pronoun",
+            "$name",
+        ]
+        result = [item for item in sentence.split(" ") if item.startswith("$")]
+        if len(result) == 0:
+            return False
+
+        is_valid = all(var in valid_variables for var in result)
+        return is_valid
+
     ### Misc utils
 
     def parse_pronouns(self, entry: list[str]) -> str:
@@ -603,7 +603,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
             await interaction.response.send_message("Can't find any examples")
             return
         await interaction.response.send_modal(
-            PronounsTesterModal(self.bot, self, interaction, value, name)
+            PronounsTesterModal(self.bot, interaction, value, name)
         )
 
     @app_commands.command(name="suggest-examples")
