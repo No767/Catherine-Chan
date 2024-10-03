@@ -617,7 +617,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         **Once you are done, please click the finish button to finish the suggestion**
         Reference can be found [here](https://catherine-chan.readthedocs.io/en/latest/guides/user/pronoun-suggestions.html)
         
-        In order to provide an example, you will need to follow the templating system used. You essentially use these as variables so when others use your sentence, it will be formatted correctly. Here is the list:
+        In order to provide an example, you will need to follow the template used. You essentially use these as variables so when others use your sentence, it will be formatted correctly. Here is the list:
         
         - Name: `$name`
         - Subjective Pronoun: `$subjective_pronoun` (Subjective / Nominative pronouns include ones like he, she, they, it, etc)
