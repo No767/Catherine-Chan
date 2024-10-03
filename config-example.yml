@@ -3,6 +3,8 @@ bot:
   token: "BOT TOKEN HERE"
   dev_mode: False
 
+  approval_channel_id: 12345656
+
   prometheus:
     enabled: False
     host: "127.0.0.1"

@@ -6,8 +6,8 @@ import discord
 from aiohttp import ClientSession
 from cogs import EXTENSIONS, VERSION
 from cogs.ext import prometheus
+from cogs.pronouns import ApprovePronounsExampleView
 from discord.ext import commands
-from libs.ui.pronouns import ApprovePronounsExampleView
 from libs.utils.config import Blacklist, CatherineConfig
 from libs.utils.reloader import Reloader
 from libs.utils.tree import CatherineCommandTree
@@ -41,10 +41,15 @@ class Catherine(commands.Bot):
         self.session = session
         self.pool = pool
         self.version = str(VERSION)
+        self._config = config
         self._dev_mode = config.bot.get("dev_mode", False)
         self._reloader = Reloader(self, Path(__file__).parent)
         self._prometheus = config.bot.get("prometheus", {})
         self._prometheus_enabled = self._prometheus.get("enabled", False)
+
+    @property
+    def approval_channel_id(self) -> int:
+        return self._config.bot["approval_channel_id"]
 
     async def add_to_blacklist(self, object_id: int):
         await self.blacklist.put(object_id, True)
@@ -62,7 +67,7 @@ class Catherine(commands.Bot):
         return
 
     async def setup_hook(self) -> None:
-        self.add_view(ApprovePronounsExampleView("", 0, 10, self.pool))
+        self.add_view(ApprovePronounsExampleView(self, "", 0, 10))
 
         for cog in EXTENSIONS:
             self.logger.debug(f"Loaded extension: {cog}")
