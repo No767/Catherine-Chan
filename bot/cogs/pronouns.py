@@ -199,10 +199,10 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
                 channel = self.bot.get_channel(self.bot.approval_channel_id)
                 if channel and isinstance(channel, discord.TextChannel):
                     view = ApprovePronounsExampleView(
+                        self.bot,
                         self.sentence.value,
                         int(example_id),
                         interaction.user.id,
-                        self.pool,
                     )
                     await channel.send(
                         content="<@here>",
@@ -219,14 +219,12 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
 
 
 class ApprovePronounsExampleView(discord.ui.View):
-    def __init__(
-        self, sentence: str, example_id: int, owner_id: int, pool: asyncpg.Pool
-    ):
+    def __init__(self, bot: Catherine, sentence: str, example_id: int, owner_id: int):
         super().__init__(timeout=None)
+        self.bot = bot
         self.sentence = sentence
         self.example_id = example_id
         self.owner_id = owner_id
-        self.pool = pool
 
     @discord.ui.button(
         label="Approve",
@@ -242,7 +240,7 @@ class ApprovePronounsExampleView(discord.ui.View):
         SET approved = $3
         WHERE id = $1 AND owner_id = $2;
         """
-        await self.pool.execute(query, self.example_id, self.owner_id, True)
+        await self.bot.pool.execute(query, self.example_id, self.owner_id, True)
         await interaction.response.edit_message(
             content=f"Successfully approved the sentence (From: {self.owner_id}, Example ID: {self.example_id})\n\nSentence: {self.sentence}",
             embed=None,
@@ -260,9 +258,9 @@ class ApprovePronounsExampleView(discord.ui.View):
     ) -> None:
         query = """
         DELETE FROM pronouns_test_examples
-        WHERE id = $1 AND user_id = $2;
+        WHERE id = $1 AND owner_id = $2;
         """
-        await self.pool.execute(query, self.example_id, self.owner_id)
+        await self.bot.pool.execute(query, self.example_id, self.owner_id)
         await interaction.response.edit_message(
             content=f"Denied entry. (From: {self.owner_id}, ID: {self.example_id})\n\nSentence: {self.sentence}",
             embed=None,

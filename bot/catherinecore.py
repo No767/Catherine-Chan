@@ -67,7 +67,7 @@ class Catherine(commands.Bot):
         return
 
     async def setup_hook(self) -> None:
-        self.add_view(ApprovePronounsExampleView("", 0, 10, self.pool))
+        self.add_view(ApprovePronounsExampleView(self, "", 0, 10))
 
         for cog in EXTENSIONS:
             self.logger.debug(f"Loaded extension: {cog}")
