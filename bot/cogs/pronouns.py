@@ -190,12 +190,12 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
         SELECT (id) FROM pronouns_id;
         """
         async with self.pool.acquire() as connection:
-            id = 0
+            example_id = 0
             tr = connection.transaction()
             await tr.start()
 
             try:
-                id = await connection.fetchval(
+                example_id = await connection.fetchval(
                     query, interaction.user.id, self.sentence.value
                 )
             except asyncpg.UniqueViolationError:
@@ -216,7 +216,7 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
                 if channel and isinstance(channel, discord.TextChannel):
                     view = ApprovePronounsExampleView(
                         self.sentence.value,
-                        int(id),
+                        int(example_id),
                         interaction.user.id,
                         self.pool,
                     )
@@ -579,7 +579,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
             if item in pronouns:
                 entry[idx] = pronouns[item]
 
-        return ", ".join(entry).rstrip(",")
+        return ", ".join(entry)
 
     @app_commands.command(name="test")
     @app_commands.describe(
