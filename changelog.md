@@ -1,3 +1,5 @@
+Entire rewrite of core components of Catherine-Chan
+
 > [!CAUTION]
 > This release essentially is a rewrite. Stuff **will** break, and changes are not finalized.
 > If you run into any issues, feel free to submit a GitHub issues report.
