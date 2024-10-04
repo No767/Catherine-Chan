@@ -1,5 +1,3 @@
-Entire rewrite of core components of Catherine-Chan
-
 > [!CAUTION]
 > This release essentially is a rewrite. Stuff **will** break, and changes are not finalized.
 > If you run into any issues, feel free to submit a GitHub issues report.
@@ -19,7 +17,7 @@ Entire rewrite of core components of Catherine-Chan
 ## ✨ Additions
 
 - Rewrote:
-  - Unit tests (https://github.com/No767/Catherine-Chan/pull/18)
+  - Unit tests (https://github.com/No767/Catherine-Chan/pull/189)
   - Prometheus exporter (https://github.com/No767/Catherine-Chan/pull/170, https://github.com/No767/Catherine-Chan/pull/178)
   - Docker support (https://github.com/No767/Catherine-Chan/pull/197)
   - Blacklist (https://github.com/No767/Catherine-Chan/pull/185)
