@@ -6,7 +6,7 @@ class VersionInfo(NamedTuple):
     major: int
     minor: int
     micro: int
-    releaselevel: Literal["dev", "staging", "final"]
+    releaselevel: Literal["alpha", "beta", "final"]
 
     def __str__(self) -> str:
         return f"{self.major}.{self.minor}.{self.micro}-{self.releaselevel}"
