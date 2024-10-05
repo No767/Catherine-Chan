@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, Optional, Sequence, Union
 
-import asyncpg
 import discord
 import msgspec
 import orjson
@@ -182,17 +181,11 @@ class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
                 example_id = await connection.fetchval(
                     query, interaction.user.id, self.sentence.value
                 )
-            except asyncpg.UniqueViolationError:
+            except Exception as e:
                 await tr.rollback()
                 await interaction.response.send_message(
-                    "The sentence you are trying to suggest already exists!",
+                    f"Suggestion entirely failed for unknown reason ({str(e)})",
                     ephemeral=True,
-                )
-                return
-            except Exception:
-                await tr.rollback()
-                await interaction.response.send_message(
-                    "Suggestion entirely failed for unknown reason", ephemeral=True
                 )
             else:
                 await tr.commit()
