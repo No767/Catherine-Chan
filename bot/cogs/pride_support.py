@@ -1,10 +1,14 @@
-from typing import Literal
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal
 
 import discord
-from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
 from libs.utils import Embed
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
 
 
 class PrideSupport(commands.Cog):
