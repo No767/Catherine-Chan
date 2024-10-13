@@ -47,7 +47,7 @@ class Meta(commands.Cog):
         return f"[`{short_sha2}`](https://github.com/No767/Catherine-Chan/commit/{commit_id}) {short} ({offset})"
 
     def get_last_commits(self, count: int = 5):
-        repo = pygit2.Repository(".git")
+        repo = pygit2.Repository(".git")  # type: ignore # Pyright is incorrect
         commits = list(
             itertools.islice(repo.walk(repo.head.target, SortMode.TOPOLOGICAL), count)
         )
