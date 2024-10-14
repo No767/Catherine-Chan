@@ -92,11 +92,13 @@ def format_gender_neutral_content(content: NounEntity) -> str:
     return "\n".join(final_content)
 
 
+# DONT NEED
 def split_flags(content: str) -> List[str]:
     regex = re.compile(r"(?<=\[).*(?=\])")
     return regex.findall(content)
 
 
+# DONT NEED
 def determine_author(author: Optional[str]) -> str:
     author_base_url = URL("https://pronouns.page/")
     if author is None:
@@ -105,6 +107,7 @@ def determine_author(author: Optional[str]) -> str:
     return f"[{author}]({author_link})"
 
 
+# DONT NEED
 def determine_image_url(assets: TermAssets) -> str:
     if len(assets.flags[0]) != 0:
         base_flags_url = URL("https://en.pronouns.page/flags/")

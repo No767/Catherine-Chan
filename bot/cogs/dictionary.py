@@ -1,15 +1,18 @@
-from typing import Optional
+from __future__ import annotations
+
+import re
+from typing import TYPE_CHECKING, Any, Optional
 
 import discord
+import msgspec
 import orjson
-from catherinecore import Catherine
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands, menus
 from libs.ui.dictionary.pages import (
     InclusivePages,
     NounPages,
     PronounsPages,
-    TermsPages,
+    TermsPages as OldTermsPage,
 )
 from libs.ui.dictionary.structs import (
     InclusiveContent,
@@ -21,9 +24,78 @@ from libs.ui.dictionary.structs import (
     TermAssets,
     TermEntity,
 )
-from libs.ui.dictionary.utils import format_pronouns_info, split_flags
+from libs.ui.dictionary.utils import format_pronouns_info
 from libs.utils import Embed
+from libs.utils.pages import CatherinePages
 from yarl import URL
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
+
+
+class TermInfo(msgspec.Struct, frozen=True):
+    term: str
+    original: str
+    definition: str
+    locale: str
+    author: str
+    category: str
+
+
+class TermSource(menus.ListPageSource):
+    def __init__(self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int):
+        super().__init__(entries=entries, per_page=per_page)
+        self.cog: Dictionary = bot.get_cog("dictionary")  # type: ignore
+
+    def determine_author(self, author: Optional[str]) -> str:
+        author_base_url = URL("https://pronouns.page/")
+        if author is None:
+            return "Unknown"
+        author_link = str(author_base_url / f"@{author}")
+        return f"[{author}]({author_link})"
+
+    def format_info(self, entry: dict[str, Any]) -> TermInfo:
+        return TermInfo(
+            term=",".join(entry["term"].split("|")),
+            original=entry["original"],
+            definition=entry["definition"],  # NEEDS TO BE FORMATTED!
+            locale=entry["locale"],
+            author=self.determine_author(entry["author"]),
+            category=", ".join(entry["category"].split(",")),
+        )
+
+    async def format_page(self, menu: "TermsPages", entries: dict[str, Any]) -> Embed:
+        menu.embed.clear_fields()
+        entry = self.format_info(entries)
+
+        menu.embed.title = entry.term
+        menu.embed.set_thumbnail(url=self.cog.determine_image_url(entries))
+        menu.embed.set_footer(
+            text=f"Page {menu.current_page + 1}/{self.get_max_pages()}"
+        )
+
+        menu.embed.description = entry.definition
+
+        # We need to swap the name value for what is in it's native locale
+        menu.embed.add_field(name="Author", value=entry.author)
+        menu.embed.add_field(name="Category", value=entry.category)
+
+        return menu.embed
+
+
+# TODO: write this below
+# Later on we need a locale system, with a dropdown menu to choose the lang that is available
+# The title, description, field name and values will be translated to the correct language
+# field names are translated using a lookup table
+class TermsPages(CatherinePages):
+    def __init__(
+        self, entries: list[dict[str, Any]], *, interaction: discord.Interaction
+    ):
+        super().__init__(
+            source=TermSource(entries, bot=interaction.client, per_page=1),  # type: ignore
+            interaction=interaction,
+        )
+        self.embed = Embed()
 
 
 class Dictionary(commands.GroupCog, name="dictionary"):
@@ -31,7 +103,43 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     def __init__(self, bot: Catherine) -> None:
         self.bot = bot
+        self.decoder = msgspec.json.Decoder()
         self.session = self.bot.session
+        self.base_cdn = URL("https://dclu0bpcdglik.cloudfront.net/images/")
+        self.base_flags = URL("https://en.pronouns.page/flags/")
+
+    def split_flags(self, content: str) -> list[str]:
+        regex = re.compile(r"(?<=\[).*(?=\])")
+        return regex.findall(content)
+
+    ### Term utilities
+
+    def determine_image_url(self, entry: dict[str, Any]) -> str:
+        flags = self.split_flags(entry["flags"])
+        if len(flags[0]) != 0:
+            flag_entity = flags[0].replace('"', "")
+            return str(self.base_flags / f"{flag_entity}.png")
+        elif entry["images"] and "[object Object]" not in entry["images"]:
+            asset = entry["images"].split(",")
+            return str(
+                self.base_cdn / f"{asset[0]}-flag.png"
+            )  # For general use, we'll just use the first flag shown
+        return ""
+
+    @app_commands.command(name="test-terms")
+    async def test_terms(
+        self, interaction: discord.Interaction, query: Optional[str] = None
+    ) -> None:
+        url = URL("https://en.pronouns.page/api/terms")
+        if query:
+            url = url / "search" / query
+        async with self.session.get(url) as r:
+            data = await r.json(loads=self.decoder.decode)
+            if len(data) == 0:
+                await interaction.followup.send("No terms were found")
+                return
+            pages = TermsPages(data, interaction=interaction)
+            await pages.start()
 
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
@@ -55,7 +163,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                     definition=term["definition"],
                     key=term["key"],
                     assets=TermAssets(
-                        flags=split_flags(term["flags"]),
+                        flags=self.split_flags(term["flags"]),
                         images=term["images"] if len(term["images"]) > 0 else None,
                     ),
                     category=term["category"].split(","),
@@ -63,7 +171,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 )
                 for term in data
             ]
-            pages = TermsPages(entries=converted, interaction=interaction)
+            pages = OldTermsPage(entries=converted, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="nouns")
