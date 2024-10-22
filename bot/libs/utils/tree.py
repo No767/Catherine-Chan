@@ -19,10 +19,7 @@ class CatherineCommandTree(app_commands.CommandTree):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         bot: Catherine = interaction.client  # type: ignore # Pretty much returns the subclass anyways. I checked - Noelle
 
-        if (
-            bot.owner_id == interaction.user.id
-            or bot.application_id == interaction.user.id
-        ):
+        if bot.owner_id == interaction.user.id or bot.application_id == interaction.user.id:
             return True
 
         if interaction.user.id in bot.blacklist:
@@ -60,17 +57,15 @@ class CatherineCommandTree(app_commands.CommandTree):
             return
 
         if isinstance(error, app_commands.NoPrivateMessage):
-            await interaction.user.send(
-                "This command cannot be used in private messages"
-            )
+            await interaction.user.send("This command cannot be used in private messages")
         elif isinstance(error, app_commands.CommandInvokeError):
             original = error.original
             if not isinstance(original, discord.HTTPException):
                 bot.logger.exception(
-                    "In %s: ", interaction.command.qualified_name, exc_info=original
-                )  # type: ignore
-                await interaction.response.send_message(
-                    embed=FullErrorEmbed(error), ephemeral=True
+                    "In %s: ",
+                    interaction.command.qualified_name,  # type: ignore
+                    exc_info=original,
                 )
+                await interaction.response.send_message(embed=FullErrorEmbed(error), ephemeral=True)
         else:
             await interaction.response.send_message(embed=FullErrorEmbed(error))

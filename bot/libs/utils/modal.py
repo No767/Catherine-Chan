@@ -27,15 +27,11 @@ class CatherineModal(discord.ui.Modal):
         await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
         return False
 
-    async def on_error(
-        self, interaction: discord.Interaction, error: Exception, /
-    ) -> None:
+    async def on_error(self, interaction: discord.Interaction, error: Exception, /) -> None:
         self.bot.logger.exception(
             "Ignoring modal exception from %s: ",
             self.__class__.__name__,
             exc_info=error,
         )
-        await interaction.response.send_message(
-            embed=FullErrorEmbed(error), ephemeral=True
-        )
+        await interaction.response.send_message(embed=FullErrorEmbed(error), ephemeral=True)
         self.stop()

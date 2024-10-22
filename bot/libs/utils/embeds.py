@@ -58,9 +58,7 @@ class TimeoutEmbed(discord.Embed):
     def __init__(self, **kwargs):
         kwargs.setdefault("color", discord.Color.from_rgb(214, 6, 6))
         kwargs.setdefault("title", "\U00002757 Timed Out")
-        kwargs.setdefault(
-            "description", "Timed out waiting for a response. Cancelling action."
-        )
+        kwargs.setdefault("description", "Timed out waiting for a response. Cancelling action.")
         super().__init__(**kwargs)
 
 

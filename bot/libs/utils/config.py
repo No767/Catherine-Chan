@@ -87,9 +87,7 @@ class Blacklist(Generic[_T]):
     def _dump(self):
         temp = f"{uuid.uuid4()}-{self.name}.tmp"
         with open(temp, "w", encoding="utf-8") as tmp:
-            encoded = msgspec.json.format(
-                self.encoder.encode(self._db.copy()), indent=2
-            )
+            encoded = msgspec.json.format(self.encoder.encode(self._db.copy()), indent=2)
             tmp.write(encoded.decode())
 
         # atomically move the file

@@ -22,6 +22,7 @@ tasks:
   
   check:
     cmds:
+      - pyright bot
       - ruff check bot --fix --exit-non-zero-on-fix --config pyproject.toml
     silent: true
 
