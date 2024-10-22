@@ -59,9 +59,7 @@ class ApprovalEmbed(discord.Embed):
     ):
         super().__init__(color=discord.Colour.from_rgb(255, 61, 255), **kwargs)
         self.title = "New Pronouns Example Suggestion"
-        self.description = (
-            f"**Sentence**: \n{sentence}\n\n**Example Sentence**: \n{example}"
-        )
+        self.description = f"**Sentence**: \n{sentence}\n\n**Example Sentence**: \n{example}"
         self.add_field(name="Suggested By", value=user.mention)
         self.set_thumbnail(url=user.display_avatar.url)
         self.set_footer(text="Created at")
@@ -127,9 +125,7 @@ class PronounsTesterModal(CatherineModal, title="Input the fields"):
 
 class SuggestPronounsExamplesModal(CatherineModal, title="Suggest an example"):
     def __init__(self, interaction: discord.Interaction, bot: Catherine) -> None:
-        super().__init__(
-            interaction=interaction, custom_id="suggest_pronouns_example:modal"
-        )
+        super().__init__(interaction=interaction, custom_id="suggest_pronouns_example:modal")
         self.sentence = discord.ui.TextInput(
             label="Sentence",
             placeholder="Enter your sentence",
@@ -225,9 +221,7 @@ class ApprovePronounsExampleView(discord.ui.View):
         emoji="<:greenTick:596576670815879169>",
         custom_id="approve_pronouns_view:confirm",
     )
-    async def confirm(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         query = """
         UPDATE pronouns_test_examples
         SET approved = $3
@@ -246,9 +240,7 @@ class ApprovePronounsExampleView(discord.ui.View):
         emoji="<:redTick:596576672149667840>",
         custom_id="approve_pronouns_view:deny",
     )
-    async def deny(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def deny(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         query = """
         DELETE FROM pronouns_test_examples
         WHERE id = $1 AND owner_id = $2;
@@ -304,18 +296,14 @@ class SuggestionView(discord.ui.View):
         bot.logger.exception(
             "Ignoring view exception from %s: ", self.__class__.__name__, exc_info=error
         )
-        await interaction.response.send_message(
-            embed=FullErrorEmbed(error), ephemeral=True
-        )
+        await interaction.response.send_message(embed=FullErrorEmbed(error), ephemeral=True)
         self.stop()
 
     @discord.ui.button(
         label="Start",
         style=discord.ButtonStyle.green,
     )
-    async def start(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def start(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         modal = SuggestPronounsExamplesModal(interaction, self.bot)
         await interaction.response.send_modal(modal)
         if self.delete_after:
@@ -377,11 +365,11 @@ class ProfilePageSource(menus.PageSource):
             ),
             flags=", ".join(flag for flag in entry.flags),
             circle="\n".join(
-                f"- {self.determine_mutual(entity['username'], entity['circleMutual'])}\n\t- Relationship: {entity['relationship']}" # type: ignore
+                f"- {self.determine_mutual(entity['username'], entity['circleMutual'])}\n\t- Relationship: {entity['relationship']}"  # type: ignore
                 for entity in entry.meta.circle
             )
             if len(entry.meta.circle) != 0
-            else "None"
+            else "None",
         )
 
     async def format_page(self, menu: ProfilePages, page):
@@ -398,17 +386,11 @@ class ProfilePageSource(menus.PageSource):
             menu.embed.description = entry.description
             profile_info = self.format_info(entry)
             menu.embed.add_field(name="Names", value=profile_info.names, inline=False)
-            menu.embed.add_field(
-                name="Pronouns", value=profile_info.pronouns, inline=False
-            )
+            menu.embed.add_field(name="Pronouns", value=profile_info.pronouns, inline=False)
             menu.embed.add_field(name="Age", value=entry.meta.age, inline=False)
             menu.embed.add_field(name="Flags", value=profile_info.flags, inline=False)
-            menu.embed.add_field(
-                name="Timezone", value=entry.meta.tz or "Unknown", inline=False
-            )
-            menu.embed.add_field(
-                name="Relationships", value=profile_info.circle, inline=False
-            )
+            menu.embed.add_field(name="Timezone", value=entry.meta.tz or "Unknown", inline=False)
+            menu.embed.add_field(name="Relationships", value=profile_info.circle, inline=False)
         elif self.index == 1:
             menu.embed.description = ""
             for entity in entry.words:
@@ -473,9 +455,7 @@ class ProfileLangMenu(discord.ui.Select["ProfilePages"]):
 
 
 class ProfilePages(CatherinePages):
-    def __init__(
-        self, entries: dict[str, ProfileInfo], *, interaction: discord.Interaction
-    ):
+    def __init__(self, entries: dict[str, ProfileInfo], *, interaction: discord.Interaction):
         self.entries = entries
         super().__init__(
             ProfilePageSource(locale="en"),
@@ -491,9 +471,7 @@ class ProfilePages(CatherinePages):
         self.add_item(ProfileLangMenu(self.entries))
         self.fill_items()
 
-    async def rebind(
-        self, source: menus.PageSource, interaction: discord.Interaction
-    ) -> None:
+    async def rebind(self, source: menus.PageSource, interaction: discord.Interaction) -> None:
         self.source = source
         self.current_page = 0
 
@@ -517,9 +495,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
 
     # Thank you stack overflow
     # code comes from this: https://stackoverflow.com/a/15175239/16526522
-    def parse_pronouns_sentence(
-        self, replacements: dict[str, str], sentence: str
-    ) -> str:
+    def parse_pronouns_sentence(self, replacements: dict[str, str], sentence: str) -> str:
         regex = re.compile("(%s[s]?)" % "|".join(map(re.escape, replacements.keys())))
         return regex.sub(lambda mo: replacements[mo.group()], sentence)
 
@@ -634,9 +610,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
 
     @app_commands.command(name="db")
     @app_commands.describe(member="The member to lookup")
-    async def db(
-        self, interaction: discord.Interaction, member: discord.Member
-    ) -> None:
+    async def db(self, interaction: discord.Interaction, member: discord.Member) -> None:
         """Obtains the pronouns of a Discord user from PronounDB
 
         This is not directly from Discord but a third party extension
@@ -646,14 +620,10 @@ class Pronouns(commands.GroupCog, name="pronouns"):
             return
 
         params = {"platform": "discord", "ids": member.id}
-        async with self.session.get(
-            "https://pronoundb.org/api/v2/lookup", params=params
-        ) as r:
+        async with self.session.get("https://pronoundb.org/api/v2/lookup", params=params) as r:
             data = await r.json(loads=orjson.loads)
             if len(data) == 0:
-                await interaction.response.send_message(
-                    "No pronouns found for these user(s)."
-                )
+                await interaction.response.send_message("No pronouns found for these user(s).")
                 return
             embed = Embed()
             embed.set_author(
@@ -661,10 +631,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
                 icon_url=member.display_avatar.url,
             )
             embed.description = "\n".join(
-                [
-                    f"{k}: {self.parse_pronouns(v)}"
-                    for k, v in data[f"{member.id}"]["sets"].items()
-                ]
+                [f"{k}: {self.parse_pronouns(v)}" for k, v in data[f"{member.id}"]["sets"].items()]
             )
             await interaction.response.send_message(embed=embed)
 

@@ -25,32 +25,22 @@ class Meta(commands.Cog):
         self.process = psutil.Process()
 
     def get_bot_uptime(self, *, brief: bool = False) -> str:
-        return human_timedelta(
-            self.bot.uptime, accuracy=None, brief=brief, suffix=False
-        )
+        return human_timedelta(self.bot.uptime, accuracy=None, brief=brief, suffix=False)
 
     def format_commit(self, commit: pygit2.Commit) -> str:
         short, _, _ = commit.message.partition("\n")
         short_sha2 = str(commit.id)[0:6]
-        commit_tz = datetime.timezone(
-            datetime.timedelta(minutes=commit.commit_time_offset)
-        )
-        commit_time = datetime.datetime.fromtimestamp(commit.commit_time).astimezone(
-            commit_tz
-        )
+        commit_tz = datetime.timezone(datetime.timedelta(minutes=commit.commit_time_offset))
+        commit_time = datetime.datetime.fromtimestamp(commit.commit_time).astimezone(commit_tz)
 
         # [`hash`](url) message (offset)
-        offset = discord.utils.format_dt(
-            commit_time.astimezone(datetime.timezone.utc), "R"
-        )
+        offset = discord.utils.format_dt(commit_time.astimezone(datetime.timezone.utc), "R")
         commit_id = str(commit.id)
         return f"[`{short_sha2}`](https://github.com/No767/Catherine-Chan/commit/{commit_id}) {short} ({offset})"
 
     def get_last_commits(self, count: int = 5):
         repo = pygit2.Repository(".git")  # type: ignore # Pyright is incorrect
-        commits = list(
-            itertools.islice(repo.walk(repo.head.target, SortMode.TOPOLOGICAL), count)
-        )
+        commits = list(itertools.islice(repo.walk(repo.head.target, SortMode.TOPOLOGICAL), count))
         return "\n".join(self.format_commit(c) for c in commits)
 
     @app_commands.command(name="uptime")
@@ -87,8 +77,9 @@ class Meta(commands.Cog):
         revisions = self.get_last_commits()
         embed = Embed()
         embed.set_author(
-            name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url # type: ignore
-        ) 
+            name=self.bot.user.name,  # type: ignore
+            icon_url=self.bot.user.display_avatar.url,  # type: ignore
+        )
         embed.title = "Support Server Invite"
         embed.url = "https://discord.gg/ns3e74frqn"
         desc = [
@@ -103,12 +94,8 @@ class Meta(commands.Cog):
             icon_url="https://cdn.discordapp.com/emojis/596577034537402378.png?size=128",
         )
         embed.add_field(name="Guilds", value=guilds)
-        embed.add_field(
-            name="Users", value=f"{total_members} total\n{total_unique} unique"
-        )
-        embed.add_field(
-            name="Process", value=f"{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU"
-        )
+        embed.add_field(name="Users", value=f"{total_members} total\n{total_unique} unique")
+        embed.add_field(name="Process", value=f"{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU")
         embed.add_field(name="Python Version", value=platform.python_version())
         embed.add_field(name="Catherine-Chan Version", value=str(self.bot.version))
         embed.add_field(name="Uptime", value=self.get_bot_uptime(brief=True))

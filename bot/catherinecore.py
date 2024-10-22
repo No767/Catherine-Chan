@@ -61,9 +61,7 @@ class Catherine(commands.Bot):
             pass
 
     # Basically silence all prefixed errors
-    async def on_command_error(
-        self, ctx: commands.Context, error: commands.CommandError
-    ) -> None:
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
         return
 
     async def setup_hook(self) -> None:

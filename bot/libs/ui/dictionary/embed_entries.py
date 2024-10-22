@@ -62,9 +62,7 @@ class TermEntityEntry:
         possible_image_url = determine_image_url(self.assets)
         possible_author = determine_author(self.author)
         title = format_term_titles(self.term)
-        formatted_original = format_multi_reference(
-            cleaning_regex.sub("", dirty_original)
-        )
+        formatted_original = format_multi_reference(cleaning_regex.sub("", dirty_original))
         formatted_def = cleaning_regex.sub(
             "", format_inline_references(self.definition)
         ).capitalize()

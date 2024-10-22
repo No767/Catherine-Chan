@@ -24,7 +24,7 @@ reportUnnecessaryTypeIgnoreComment = "warning"
 skips = ["B311", "B101"]
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 indent-width = 4
 
 [tool.ruff.lint]

@@ -40,9 +40,7 @@ class BlacklistPageSource(menus.AsyncIteratorPageSource):
     def __init__(self, entries: dict[str, Union[_T, Any]]):
         super().__init__(self.blacklist_iterator(entries), per_page=20)
 
-    async def blacklist_iterator(
-        self, entries: dict[str, Union[_T, Any]]
-    ) -> AsyncIterator[str]:
+    async def blacklist_iterator(self, entries: dict[str, Union[_T, Any]]) -> AsyncIterator[str]:
         for key, entry in entries.items():
             yield f"{key}: {entry}"
 
@@ -99,9 +97,7 @@ class ConfirmationView(discord.ui.View):
         style=discord.ButtonStyle.green,
         emoji="<:greenTick:596576670815879169>",
     )
-    async def confirm(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         self.value = True
         if self.delete_after:
             await self.delete_response(interaction)
@@ -111,9 +107,7 @@ class ConfirmationView(discord.ui.View):
         style=discord.ButtonStyle.red,
         emoji="<:redTick:596576672149667840>",
     )
-    async def cancel(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         self.value = False
         await self.delete_response(interaction)
 
@@ -172,7 +166,9 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         return emoji
 
     def format_results(self, statuses: List) -> str:
-        desc = "\U00002705 - Successful reload | \U0000274c - Failed reload | \U000023e9 - Skipped\n\n"
+        desc = (
+            "\U00002705 - Successful reload | \U0000274c - Failed reload | \U000023e9 - Skipped\n\n"
+        )
         status = "\n".join(f"- {status}: `{module}`" for status, module in statuses)
         desc += status
         return desc
@@ -270,9 +266,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         mods_text = "\n".join(
             f"{index}. `{module}`" for index, (_, module) in enumerate(modules, start=1)
         )
-        prompt_text = (
-            f"This will update the following modules, are you sure?\n{mods_text}"
-        )
+        prompt_text = f"This will update the following modules, are you sure?\n{mods_text}"
 
         confirm = await self.prompt(ctx, prompt_text)
         if not confirm:

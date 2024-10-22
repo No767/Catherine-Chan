@@ -137,9 +137,7 @@ class HRTConversion(commands.GroupCog, group_name="hrt-convert"):
             Choice(name="ng/dL", value="ng_dl"),
         ]
     )
-    async def testosterone(
-        self, interaction: discord.Interaction, amount: int, units: Choice[str]
-    ):
+    async def testosterone(self, interaction: discord.Interaction, amount: int, units: Choice[str]):
         """Converts one unit of testosterone to another unit"""
         res = self.calc_testosterone(amount, units.value)
 
@@ -188,9 +186,7 @@ class HRTConversion(commands.GroupCog, group_name="hrt-convert"):
     @app_commands.choices(
         units=[Choice(name="mIU/L", value="miu_l"), Choice(name="ng/mL", value="ng_ml")]
     )
-    async def prolactin(
-        self, interaction: discord.Interaction, amount: int, units: Choice[str]
-    ):
+    async def prolactin(self, interaction: discord.Interaction, amount: int, units: Choice[str]):
         """Converts one unit of prolactin to another unit"""
         res = self.calc_prolactin(amount, units.value)
 
