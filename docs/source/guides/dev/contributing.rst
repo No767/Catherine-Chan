@@ -100,8 +100,8 @@ Example Cog:
 Python Version Support
 ----------------------
 
-Catherine-Chan generally follows `NEP-29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_. 
-Catherine-Chan is tested against versions supported by NEP-29.
+Catherine-Chan generally supports all `active <https://devguide.python.org/developer-workflow/development-cycle/index.html#in-development-main-branch>`_
+and `maintenance <https://devguide.python.org/devcycle/#maintenance-branches>`_ releases.
 
 Unit Tests
 ----------
