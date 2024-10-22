@@ -377,11 +377,11 @@ class ProfilePageSource(menus.PageSource):
             ),
             flags=", ".join(flag for flag in entry.flags),
             circle="\n".join(
-                f"- {self.determine_mutual(entity['username'], entity['circleMutual'])}\n\t- Relationship: {entity['relationship']}"
+                f"- {self.determine_mutual(entity['username'], entity['circleMutual'])}\n\t- Relationship: {entity['relationship']}" # type: ignore
                 for entity in entry.meta.circle
             )
             if len(entry.meta.circle) != 0
-            else "None",  # type: ignore
+            else "None"
         )
 
     async def format_page(self, menu: ProfilePages, page):
