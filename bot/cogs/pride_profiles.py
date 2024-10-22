@@ -213,7 +213,6 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
     async def send_profile(
         self, interaction: discord.Interaction, profile: PrideProfile
     ) -> None:
-
         query = """
         UPDATE pride_profiles
         SET views = views + 1

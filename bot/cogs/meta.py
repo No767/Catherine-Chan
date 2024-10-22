@@ -86,7 +86,9 @@ class Meta(commands.Cog):
 
         revisions = self.get_last_commits()
         embed = Embed()
-        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)  # type: ignore
+        embed.set_author(
+            name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url
+        )  # type: ignore
         embed.title = "Support Server Invite"
         embed.url = "https://discord.gg/ns3e74frqn"
         desc = [
