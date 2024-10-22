@@ -66,7 +66,9 @@ class CatherineCommandTree(app_commands.CommandTree):
         elif isinstance(error, app_commands.CommandInvokeError):
             original = error.original
             if not isinstance(original, discord.HTTPException):
-                bot.logger.exception("In %s: ", interaction.command.qualified_name, exc_info=original)  # type: ignore
+                bot.logger.exception(
+                    "In %s: ", interaction.command.qualified_name, exc_info=original
+                )  # type: ignore
                 await interaction.response.send_message(
                     embed=FullErrorEmbed(error), ephemeral=True
                 )

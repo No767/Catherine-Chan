@@ -1,8 +1,9 @@
 -r requirements.txt
 
 # Development libraries
-pre-commit>=3.5.0,<5
+lefthook>=1.7.22,<2
 pyright>=1.1.355,<2
+bandit[toml]>=1.7.10,<2
 ruff>=0.3.4,<1
 tox>=4.14.2,<5
 

@@ -364,7 +364,10 @@ class CatherineContextPages(discord.ui.View):
     async def start(
         self, *, content: Optional[str] = None, ephemeral: bool = False
     ) -> None:
-        if self.check_embeds and not self.ctx.channel.permissions_for(self.ctx.me).embed_links:  # type: ignore
+        if (
+            self.check_embeds
+            and not self.ctx.channel.permissions_for(self.ctx.me).embed_links
+        ):  # type: ignore
             await self.ctx.send(
                 "Bot does not have embed links permission in this channel.",
                 ephemeral=True,
