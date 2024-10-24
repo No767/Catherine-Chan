@@ -8,7 +8,6 @@ from discord import app_commands
 from discord.ext import commands, tasks
 
 try:
-
     from prometheus_async.aio.web import start_http_server
     from prometheus_client import Counter, Enum, Gauge, Info, Summary
 except ImportError:
@@ -38,9 +37,7 @@ class GuildCollector:
     def __init__(self, bot: Catherine):
         self.bot = bot
         self.count = Gauge(f"{METRIC_PREFIX}guilds", "Amount of guilds connected")
-        self.text = Gauge(
-            f"{METRIC_PREFIX}text", "Amount of text channels that can be seen"
-        )
+        self.text = Gauge(f"{METRIC_PREFIX}text", "Amount of text channels that can be seen")
         self.voice = Gauge(f"{METRIC_PREFIX}voice", "Amount of voice channels")
         self.users = Gauge(f"{METRIC_PREFIX}users", "Total users")
 
@@ -81,9 +78,7 @@ class BlacklistCollector:
 
         # For now, until we can improve the blacklist system,
         # we will leave these to be blank
-        self.users = Gauge(
-            f"{METRIC_PREFIX}blacklist_users", "Current amount of blacklisted users"
-        )
+        self.users = Gauge(f"{METRIC_PREFIX}blacklist_users", "Current amount of blacklisted users")
         self.commands = Counter(
             f"{METRIC_PREFIX}blacklist_commands",
             "Counter of commands that were attempted for blacklisted users",
@@ -115,9 +110,7 @@ class CommandsCollector:
     def __init__(self, bot: Catherine):
         self.bot = bot
 
-        self.total = Summary(
-            f"{METRIC_PREFIX}commands_total", "Total commands included"
-        )
+        self.total = Summary(f"{METRIC_PREFIX}commands_total", "Total commands included")
         self.invocation = Counter(
             f"{METRIC_PREFIX}commands_invocation", "Counter for invoked commands"
         )

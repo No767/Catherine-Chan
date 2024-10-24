@@ -33,7 +33,7 @@ Local Setup
 .. code-block:: bash
 
    pip install -r requirements-dev.txt \
-   && pre-commit install
+   && lefthook install
 
 5. Copy over the ``config-example.yml`` template over to the ``bot`` directory. Modify the values as appropriate.
 

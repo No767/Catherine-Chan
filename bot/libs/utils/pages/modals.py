@@ -6,9 +6,7 @@ import discord
 
 
 class NumberedPageModal(discord.ui.Modal, title="Go to page"):
-    page = discord.ui.TextInput(
-        label="Page", placeholder="Enter a number", min_length=1
-    )
+    page = discord.ui.TextInput(label="Page", placeholder="Enter a number", min_length=1)
 
     def __init__(self, max_pages: Optional[int]) -> None:
         super().__init__()

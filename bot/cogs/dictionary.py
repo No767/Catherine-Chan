@@ -143,9 +143,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
-    async def terms(
-        self, interaction: discord.Interaction, query: Optional[str] = None
-    ) -> None:
+    async def terms(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
         """Looks up LGBTQ+ terms up"""
         await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/terms")
@@ -176,9 +174,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     @app_commands.command(name="nouns")
     @app_commands.describe(query="The noun to look for")
-    async def nouns(
-        self, interaction: discord.Interaction, query: Optional[str] = None
-    ) -> None:
+    async def nouns(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
         """Looks up gender neutral nouns and language"""
         await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/nouns")
@@ -198,9 +194,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 NounEntity(
                     masc=NounContent(regular=entry["masc"], plural=entry["mascPl"]),
                     fem=NounContent(regular=entry["fem"], plural=entry["femPl"]),
-                    neutral=NounContent(
-                        regular=entry["neutr"], plural=entry["neutrPl"]
-                    ),
+                    neutral=NounContent(regular=entry["neutr"], plural=entry["neutrPl"]),
                     author=entry["author"],
                 )
                 for entry in data
@@ -210,9 +204,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     @app_commands.command(name="inclusive")
     @app_commands.describe(term="The inclusive term to look for")
-    async def inclusive(
-        self, interaction: discord.Interaction, term: Optional[str] = None
-    ) -> None:
+    async def inclusive(self, interaction: discord.Interaction, term: Optional[str] = None) -> None:
         """Provides inclusive terms for users to learn about"""
         await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/inclusive")
@@ -269,9 +261,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                     morphemes=PronounsMorphemes(
                         pronoun_subject=data["morphemes"]["pronoun_subject"],
                         pronoun_object=data["morphemes"]["pronoun_object"],
-                        possessive_determiner=data["morphemes"][
-                            "possessive_determiner"
-                        ],
+                        possessive_determiner=data["morphemes"]["possessive_determiner"],
                         possessive_pronoun=data["morphemes"]["possessive_pronoun"],
                         reflexive=data["morphemes"]["reflexive"],
                     ),
@@ -284,9 +274,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 embed = Embed()
                 embed.title = pronouns_info["title"]
                 embed.description = pronouns_info["desc"]
-                embed.add_field(
-                    name="Aliases", value=", ".join(pronouns_entry.aliases).rstrip(",")
-                )
+                embed.add_field(name="Aliases", value=", ".join(pronouns_entry.aliases).rstrip(","))
                 embed.add_field(name="Normative", value=pronouns_entry.normative)
                 await interaction.followup.send(embed=embed)
             else:
@@ -300,9 +288,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                         morphemes=PronounsMorphemes(
                             pronoun_subject=entry["morphemes"]["pronoun_subject"],
                             pronoun_object=entry["morphemes"]["pronoun_object"],
-                            possessive_determiner=entry["morphemes"][
-                                "possessive_determiner"
-                            ],
+                            possessive_determiner=entry["morphemes"]["possessive_determiner"],
                             possessive_pronoun=entry["morphemes"]["possessive_pronoun"],
                             reflexive=entry["morphemes"]["reflexive"],
                         ),

@@ -12,3 +12,21 @@ tasks:
       - test -f docker/docker-compose.dev.yml
     cmds:
       - docker compose -f docker/docker-compose.dev.yml stop
+
+  bot:
+    preconditions:
+      -  test -f bot/config.yml
+    cmds:
+      - python3 bot/catherinebot.py
+    silent: true
+  
+  check:
+    cmds:
+      - pyright bot
+      - ruff check bot --fix --exit-non-zero-on-fix --config pyproject.toml
+    silent: true
+
+  fmt:
+    cmds:
+      - ruff format bot --config pyproject.toml
+    silent: true

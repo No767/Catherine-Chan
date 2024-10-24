@@ -6,12 +6,6 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.9,<4.0"
 
-[tool.isort]
-profile = 'black'
-combine_as_imports = true
-combine_star = true
-line_length = 80
-
 [tool.pyright]
 include = ["bot/**"]
 exclude = [
@@ -29,9 +23,43 @@ reportUnnecessaryTypeIgnoreComment = "warning"
 [tool.bandit]
 skips = ["B311", "B101"]
 
+[tool.ruff]
+line-length = 100
+indent-width = 4
+
 [tool.ruff.lint]
-ignore = ["E501", "N999", "E402", "S101", "ASYNC109"]
+ignore = [
+    "E501", 
+    "N999", 
+    "E402", 
+    "S311", 
+    "ASYNC109",
+    "S101",
+    
+    # These are recommended by Ruff if the formatter is to be used: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002"
+    ]
 select = ["E", "F", "N", "ASYNC", "S", "ERA"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.format]
+docstring-code-format = true
 
 [tool.pytest.ini_options]
 minversion = "8.0"
