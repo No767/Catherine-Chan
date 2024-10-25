@@ -196,21 +196,6 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     def format_references(self, content: str) -> str:
         return self.format_inline_term_reference(content, self.extract_reference(content))
 
-    @app_commands.command(name="test-terms")
-    async def test_terms(
-        self, interaction: discord.Interaction, query: Optional[str] = None
-    ) -> None:
-        await interaction.response.defer()
-        url = URL("https://en.pronouns.page/api/terms")
-        if query:
-            url = url / "search" / query
-        async with self.session.get(url) as r:
-            data = await r.json(loads=self.decoder.decode)
-            if len(data) == 0:
-                await interaction.followup.send("No terms were found")
-                return
-            pages = TermsPages(data, interaction=interaction)
-            await pages.start()
 
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
