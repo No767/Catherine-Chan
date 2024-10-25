@@ -196,7 +196,6 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     def format_references(self, content: str) -> str:
         return self.format_inline_term_reference(content, self.extract_reference(content))
 
-
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
     async def terms(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
