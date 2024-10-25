@@ -1,18 +1,9 @@
-import re
-
-from libs.cog_utils.dictionary import (
-    format_inline_references,
-    format_multi_reference,
-)
-
-from .structs import InclusiveEntity, NounEntity, PronounsEntity, TermEntity
+from .structs import InclusiveEntity, NounEntity, PronounsEntity
 from .utils import (
     determine_author,
-    determine_image_url,
     format_gender_neutral_content,
     format_inclusive_content,
     format_pronouns_info,
-    format_term_titles,
 )
 
 
@@ -28,58 +19,6 @@ class InclusiveEntityEntry:
         data = {
             "description": desc,
             "fields": [{"name": "Author", "value": determine_author(self.author)}],
-        }
-        return data
-
-
-class TermEntityEntry:
-    __slots__ = (
-        "term",
-        "original",
-        "definition",
-        "key",
-        "assets",
-        "category",
-        "author",
-    )
-
-    def __init__(self, entry: TermEntity):
-        self.term = entry.term
-        self.original = entry.original
-        self.definition = entry.definition
-        self.key = entry.key
-        self.assets = entry.assets
-        self.category = entry.category
-        self.author = entry.author
-
-    def to_dict(self):
-        dirty_original = (
-            f"({format_term_titles(format_inline_references(self.original))})"
-            if self.original is not None
-            else ""
-        )
-        cleaning_regex = re.compile(r"[\{\}]")
-        possible_image_url = determine_image_url(self.assets)
-        possible_author = determine_author(self.author)
-        title = format_term_titles(self.term)
-        formatted_original = format_multi_reference(cleaning_regex.sub("", dirty_original))
-        formatted_def = cleaning_regex.sub(
-            "", format_inline_references(self.definition)
-        ).capitalize()
-        formatted_category = ", ".join(self.category).rstrip(",")
-        desc = f"""
-        {formatted_original}
-        
-        {formatted_def}
-        """
-        data = {
-            "title": title,
-            "description": desc,
-            "thumbnail": possible_image_url,
-            "fields": [
-                {"name": "Author", "value": possible_author, "inline": True},
-                {"name": "Category", "value": formatted_category, "inline": True},
-            ],
         }
         return data
 

@@ -43,11 +43,3 @@ def format_inline_references(content: str):
 
     regex = re.compile(r"{(.*?)}")
     return regex.sub(lambda match: _format_reference(match), content)
-
-
-def format_multi_reference(content: str, sep: str = "|") -> str:
-    if sep in content:
-        parts = content.split(sep)
-        formatted = "; ".join(format_inline_references(part) for part in parts)
-        return f"({formatted})"
-    return format_inline_references(content)

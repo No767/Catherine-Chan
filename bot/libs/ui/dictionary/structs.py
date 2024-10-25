@@ -20,16 +20,6 @@ class TermAssets(msgspec.Struct):
     images: Optional[str]
 
 
-class TermEntity(msgspec.Struct):
-    term: str
-    original: Optional[str]
-    definition: str
-    key: str
-    assets: TermAssets
-    category: List[str]
-    author: Optional[str]
-
-
 class NounContent(msgspec.Struct):
     regular: str
     plural: str

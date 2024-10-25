@@ -1,4 +1,3 @@
-import re
 from typing import List, Optional, TypedDict
 
 from libs.cog_utils.dictionary import format_inline_references
@@ -9,18 +8,12 @@ from .structs import (
     NounContent,
     NounEntity,
     PronounsEntity,
-    TermAssets,
 )
 
 
 class PronounsInfo(TypedDict):
     title: str
     desc: str
-
-
-def format_term_titles(title: str):
-    title_list = title.split("|")
-    return ", ".join(title_list).rstrip(",")
 
 
 def format_title_options(title: str):
@@ -93,36 +86,9 @@ def format_gender_neutral_content(content: NounEntity) -> str:
 
 
 # DONT NEED
-def split_flags(content: str) -> List[str]:
-    regex = re.compile(r"(?<=\[).*(?=\])")
-    return regex.findall(content)
-
-
-# DONT NEED
 def determine_author(author: Optional[str]) -> str:
     author_base_url = URL("https://pronouns.page/")
     if author is None:
         return "Unknown"
     author_link = str(author_base_url / f"@{author}")
     return f"[{author}]({author_link})"
-
-
-# DONT NEED
-def determine_image_url(assets: TermAssets) -> str:
-    if len(assets.flags[0]) != 0:
-        base_flags_url = URL("https://en.pronouns.page/flags/")
-        asset = assets.flags[0].replace('"', "")
-        complete_url = (
-            base_flags_url / f"{asset}.png"
-        )  # Always grab the first one bc i doubt there are two or more flags
-        return str(complete_url)
-    else:
-        # Apparently the "[object Object]" thing is a pronouns.page bug
-        if assets.images is None or "[object Object]" in assets.images:
-            return ""
-
-        # If there isn't a flag, then it's probably a custom one
-        base_cdn_asset = URL("https://dclu0bpcdglik.cloudfront.net/images/")
-        asset = assets.images.split(",")
-        image_file = f"{asset[0]}-flag.png"
-        return str(base_cdn_asset / image_file)
