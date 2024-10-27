@@ -196,8 +196,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     ### Term utilities
 
     def split_flags(self, content: str) -> list[str]:
-        regex = re.compile(r"(?<=\[).*(?=\])")
-        return regex.findall(content)
+        return re.findall(r"(?<=\[).*(?=\])", content)
 
     def determine_image_url(self, entry: dict[str, Any]) -> str:
         flags = self.split_flags(entry["flags"])
