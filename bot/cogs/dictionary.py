@@ -231,10 +231,10 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 )
             elif self.link_regex.match(entity):
                 # Special case here
-                if "perseus.tufts.edu" in entity:
-                    keyword = entity.split("=")[-1]
-                    keyword_length = len(keyword) + 1
-                    reference_url = URL(entity[:-keyword_length])
+                keyword = entity.split("=")[-1]
+                keyword_length = len(keyword) + 1
+                reference_url = URL(entity[:-keyword_length])
+                if reference_url.host and reference_url.host == "www.perseus.tufts.edu":
                     replacements.update(
                         {
                             entity: f"[{keyword}]({reference_url.with_query({'doc': reference_url.query['doc'].replace(')', '%29').replace('(', '%28')})})"
