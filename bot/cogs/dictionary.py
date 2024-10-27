@@ -227,7 +227,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
             if entity.startswith("#"):
                 parts = entity[1:].partition("=")
                 replacements.update(
-                    {entity: f"[{parts[-1]}]({url.with_query({"filter": parts[0]})})"}
+                    {entity: f"[{parts[-1]}]({url.with_query({'filter': parts[0]})})"}
                 )
             elif self.link_regex.match(entity):
                 # Special case here
