@@ -26,6 +26,7 @@
   - Pride Profiles (https://github.com/No767/Catherine-Chan/pull/198)
   - HRT Conversion (https://github.com/No767/Catherine-Chan/pull/200)
   - Pronouns (https://github.com/No767/Catherine-Chan/pull/207)
+  - Dictionary (https://github.com/No767/Catherine-Chan/pull/221)
 - Include Taskfile (https://github.com/No767/Catherine-Chan/pull/208)
 
 ## ➖ Removals
