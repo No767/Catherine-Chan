@@ -14,6 +14,10 @@ from yarl import URL
 if TYPE_CHECKING:
     from catherinecore import Catherine
 
+BASE_URL = URL("https://pronouns.page/")
+CDN_FLAGS_URL = URL("https://dclu0bpcdglik.cloudfront.net/images/")
+PRONOUNS_FLAGS_URL = URL("https://en.pronouns.page/flags/")
+
 ### Structs
 
 
@@ -186,31 +190,8 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     def __init__(self, bot: Catherine) -> None:
         self.bot = bot
         self.decoder = msgspec.json.Decoder()
-        self.session = self.bot.session
-        self.base_cdn = URL("https://dclu0bpcdglik.cloudfront.net/images/")
-        self.base_flags = URL("https://en.pronouns.page/flags/")
         self.link_regex = re.compile(r"^(http|https)://")
-        self.lang_term_codes = {
-            "de": "terminologie",
-            "es": "terminologia",
-            "en": "terminology",
-            "et": "terminoloogia",
-            "fr": "terminologie",
-            "it": "terminologia",
-            "lad": "terminolojia",
-            "nl": "erminologie",
-            "no": "terminology",
-            "pl": "terminologia",
-            "pt": "terminologia",
-            "ro": "terminologie",
-            "sv": "terminologi",
-            "tr": "terminoloji",
-            "vi": "thuật-ngữ",
-            "ar": "المصطلحات",
-            "ru": "terminology",
-            "ua": "terminology",
-            "ja": "用語",
-        }
+        self.session = self.bot.session
 
     ### Term utilities
 
@@ -222,21 +203,19 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         flags = self.split_flags(entry["flags"])
         if len(flags[0]) != 0:
             flag_entity = flags[0].replace('"', "")
-            return str(self.base_flags / f"{flag_entity}.png")
+            return str(CDN_FLAGS_URL / f"{flag_entity}.png")
         elif entry["images"] and "[object Object]" not in entry["images"]:
             asset = entry["images"].split(",")
             return str(
-                self.base_cdn / f"{asset[0]}-flag.png"
+                PRONOUNS_FLAGS_URL / f"{asset[0]}-flag.png"
             )  # For general use, we'll just use the first flag shown
         return ""
 
-    def format_inline_term_reference(self, content: str, entities: list[str], locale: str = "en"):
+    def format_inline_term_reference(self, content: str, entities: list[str]):
         if len(entities) == 0:
             return content
 
-        url = URL.build(
-            scheme="https", host=f"{locale}.pronouns.page", path=f"/{self.lang_term_codes[locale]}"
-        )
+        url = URL.build(scheme="https", host="en.pronouns.page", path="/terminology")
         replacements = {}
         cleaned_content = re.sub(r"\{|\}", "", content)
 
@@ -271,7 +250,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 # Since we are only using english for now, this doesn't matter
                 pronouns_parts = entity[1].partition("=")
                 pronouns_url = URL.build(
-                    scheme="https", host=f"{locale}.pronouns.page", path=f"/{pronouns_parts[0]}"
+                    scheme="https", host="en.pronouns.page", path=f"/{pronouns_parts[0]}"
                 )
                 replacements.update({entity: f"[{pronouns_parts[-1]}]({pronouns_url})"})
             else:
@@ -289,10 +268,9 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     ### General utilities
 
     def determine_author(self, author: Optional[str]) -> str:
-        author_base_url = URL("https://pronouns.page/")
         if author is None:
             return "Unknown"
-        author_link = str(author_base_url / f"@{author}")
+        author_link = str(BASE_URL / f"@{author}")
         return f"[{author}]({author_link})"
 
     @app_commands.command(name="terms")
