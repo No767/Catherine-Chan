@@ -233,11 +233,13 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 # Special case here
                 if "perseus.tufts.edu" in entity:
                     keyword = entity.split("=")[-1]
-                    reference_url = URL(entity[: -len(keyword) + 1])
-                    updated_ref = reference_url.with_query(
-                        {"doc": reference_url.query["doc"].replace(")", "%29").replace("(", "%28")}
+                    keyword_length = len(keyword) + 1
+                    reference_url = URL(entity[:-keyword_length])
+                    replacements.update(
+                        {
+                            entity: f"[{keyword}]({reference_url.with_query({'doc': reference_url.query['doc'].replace(')', '%29').replace('(', '%28')})})"
+                        }
                     )
-                    replacements.update({entity: f"[{keyword}]({updated_ref})"})
                     continue
 
                 link_parts = entity.partition("=")
