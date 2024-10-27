@@ -300,10 +300,11 @@ class Dictionary(commands.GroupCog, name="dictionary"):
             # If people start using this for pronouns, then a generator shows up
             # so that's in case this happens
             if r.status == 204:
-                await interaction.response.send_message("Uhhhhhhhhhhhh what mate")
+                await interaction.response.send_message("Uhhhhhhhhhhhh what")
                 return
 
             data = await r.json(loads=self.decoder.decode)
+
             if len(data) == 0:
                 await interaction.response.send_message("No nouns were found")
                 return
