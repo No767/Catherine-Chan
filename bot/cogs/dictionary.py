@@ -10,14 +10,11 @@ from discord import app_commands
 from discord.ext import commands, menus
 from libs.ui.dictionary.pages import (
     InclusivePages,
-    NounPages,
     PronounsPages,
 )
 from libs.ui.dictionary.structs import (
     InclusiveContent,
     InclusiveEntity,
-    NounContent,
-    NounEntity,
     PronounsEntity,
     PronounsMorphemes,
 )
@@ -37,6 +34,18 @@ class TermInfo(msgspec.Struct, frozen=True):
     locale: str
     author: str
     category: str
+
+
+class NounEntity(msgspec.Struct, frozen=True):
+    regular: str
+    plural: str
+
+
+class NounInfo(msgspec.Struct, frozen=True):
+    masc: str
+    fem: str
+    neutral: str
+    author: str
 
 
 class TermSource(menus.ListPageSource):
@@ -87,6 +96,54 @@ class TermsPages(CatherinePages):
             interaction=interaction,
             compact=False,
         )
+        self.embed = Embed()
+
+
+class NounSource(menus.ListPageSource):
+    def __init__(self, entries: list[dict[str, Any]], *, per_page: int = 1):
+        super().__init__(entries=entries, per_page=per_page)
+
+    def determine_author(self, author: Optional[str]) -> str:
+        if author is None:
+            return "Unknown"
+        return author
+
+    def format_info(self, entries: dict[str, Any]):
+        # I'm not entirely sure whether I like this approach or not
+        # But we basically need to merge the plural versions together into one list
+
+        def _fmt_prefix(value: str) -> str:
+            if value:
+                return f"- {value}"
+            return value
+
+        return NounInfo(
+            masc="\n".join(map(_fmt_prefix, f"{entries["masc"]}|{entries["mascPl"]}".split("|"))),
+            fem="\n".join(map(_fmt_prefix, f"{entries["fem"]}|{entries["femPl"]}".split("|"))),
+            neutral="\n".join(
+                map(_fmt_prefix, f"{entries["neutr"]}|{entries["neutrPl"]}".split("|"))
+            ),
+            author=self.determine_author(entries["author"]),
+        )
+
+    async def format_page(self, menu: "TermsPages", entries: dict[str, Any]):
+        menu.embed.clear_fields()
+        entry = self.format_info(entries)
+
+        menu.embed.set_footer(
+            text=f"{entry.author} | Page {menu.current_page + 1}/{self.get_max_pages()}"
+        )
+
+        menu.embed.add_field(name="Masculine", value=entry.masc)
+        menu.embed.add_field(name="Feminine", value=entry.fem)
+        menu.embed.add_field(name="Neutral", value=entry.neutral)
+        return menu.embed
+
+
+class NounPages(CatherinePages):
+    def __init__(self, entries: list[dict[str, Any]], *, interaction: discord.Interaction):
+        self.bot: Catherine = interaction.client  # type: ignore
+        super().__init__(source=NounSource(entries, per_page=1), interaction=interaction)
         self.embed = Embed()
 
 
@@ -216,30 +273,22 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     @app_commands.describe(query="The noun to look for")
     async def nouns(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
         """Looks up gender neutral nouns and language"""
-        await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/nouns")
         if query:
             url = url / "search" / query
         async with self.session.get(url) as r:
             # If people start using this for pronouns, then a generator shows up
             # so that's in case this happens
-            if r.content_type == "text/html":
-                await interaction.followup.send("Uhhhhhhhhhhhh what mate")
+            if r.status == 204:
+                await interaction.response.send_message("Uhhhhhhhhhhhh what mate")
                 return
-            data = await r.json(loads=orjson.loads)
+
+            data = await r.json(loads=self.decoder.decode)
             if len(data) == 0:
-                await interaction.followup.send("No nouns were found")
+                await interaction.response.send_message("No nouns were found")
                 return
-            converted = [
-                NounEntity(
-                    masc=NounContent(regular=entry["masc"], plural=entry["mascPl"]),
-                    fem=NounContent(regular=entry["fem"], plural=entry["femPl"]),
-                    neutral=NounContent(regular=entry["neutr"], plural=entry["neutrPl"]),
-                    author=entry["author"],
-                )
-                for entry in data
-            ]
-            pages = NounPages(entries=converted, interaction=interaction)
+
+            pages = NounPages(data, interaction=interaction)
             await pages.start()
 
     @app_commands.command(name="inclusive")
