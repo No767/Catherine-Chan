@@ -111,10 +111,10 @@ class NounSource(menus.ListPageSource):
             return value
 
         return NounInfo(
-            masc="\n".join(map(_fmt_prefix, f"{entries["masc"]}|{entries["mascPl"]}".split("|"))),
-            fem="\n".join(map(_fmt_prefix, f"{entries["fem"]}|{entries["femPl"]}".split("|"))),
+            masc="\n".join(map(_fmt_prefix, f"{entries['masc']}|{entries['mascPl']}".split("|"))),
+            fem="\n".join(map(_fmt_prefix, f"{entries['fem']}|{entries['femPl']}".split("|"))),
             neutral="\n".join(
-                map(_fmt_prefix, f"{entries["neutr"]}|{entries["neutrPl"]}".split("|"))
+                map(_fmt_prefix, f"{entries['neutr']}|{entries['neutrPl']}".split("|"))
             ),
             author=self.determine_author(entries["author"]),
         )
