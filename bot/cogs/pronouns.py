@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Optional, Sequence, Union
 
 import discord
 import msgspec
-import orjson
 from discord import app_commands
 from discord.ext import commands, menus
 from libs.utils.embeds import Embed, FullErrorEmbed
@@ -487,6 +486,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
 
     def __init__(self, bot: Catherine) -> None:
         self.bot = bot
+        self.decoder = msgspec.json.Decoder()
         self.session = self.bot.session
         self.pool = self.bot.pool
         super().__init__()
@@ -621,7 +621,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
 
         params = {"platform": "discord", "ids": member.id}
         async with self.session.get("https://pronoundb.org/api/v2/lookup", params=params) as r:
-            data = await r.json(loads=orjson.loads)
+            data = await r.json(loads=self.decoder.decode)
             if len(data) == 0:
                 await interaction.response.send_message("No pronouns found for these user(s).")
                 return
@@ -645,7 +645,7 @@ class Pronouns(commands.GroupCog, name="pronouns"):
         url = URL("https://en.pronouns.page/api/profile/get/") / username
         params = {"version": 2}
         async with self.session.get(url, params=params) as r:
-            data = await r.json(loads=orjson.loads)
+            data = await r.json(loads=self.decoder.decode)
             if len(data["profiles"]) == 0:
                 await interaction.followup.send("The profile was not found")
                 return
