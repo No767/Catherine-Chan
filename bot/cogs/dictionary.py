@@ -5,26 +5,16 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import discord
 import msgspec
-import orjson
 from discord import app_commands
 from discord.ext import commands, menus
-from libs.ui.dictionary.pages import (
-    InclusivePages,
-    PronounsPages,
-)
-from libs.ui.dictionary.structs import (
-    InclusiveContent,
-    InclusiveEntity,
-    PronounsEntity,
-    PronounsMorphemes,
-)
-from libs.ui.dictionary.utils import format_pronouns_info
 from libs.utils import Embed
 from libs.utils.pages import CatherinePages
 from yarl import URL
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
+
+### Structs
 
 
 class TermInfo(msgspec.Struct, frozen=True):
@@ -48,17 +38,19 @@ class NounInfo(msgspec.Struct, frozen=True):
     author: str
 
 
+class InclusiveInfo(msgspec.Struct, frozen=True):
+    instead_of: str
+    say: str
+    because: str
+    clarification: Optional[str]
+    author: str
+
+
+### UI components (Page Sources, Pages)
 class TermSource(menus.ListPageSource):
     def __init__(self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int = 1):
         super().__init__(entries=entries, per_page=per_page)
         self.cog: Dictionary = bot.get_cog("dictionary")  # type: ignore
-
-    def determine_author(self, author: Optional[str]) -> str:
-        author_base_url = URL("https://pronouns.page/")
-        if author is None:
-            return "Unknown"
-        author_link = str(author_base_url / f"@{author}")
-        return f"[{author}]({author_link})"
 
     def format_info(self, entry: dict[str, Any]) -> TermInfo:
         return TermInfo(
@@ -66,7 +58,7 @@ class TermSource(menus.ListPageSource):
             original=self.cog.format_references(entry["original"]),
             definition=self.cog.format_references(entry["definition"]),
             locale=entry["locale"],
-            author=self.determine_author(entry["author"]),
+            author=self.cog.determine_author(entry["author"]),
             category=", ".join(entry["category"].split(",")),
         )
 
@@ -108,10 +100,7 @@ class NounSource(menus.ListPageSource):
             return "Unknown"
         return author
 
-    def format_info(self, entries: dict[str, Any]):
-        # I'm not entirely sure whether I like this approach or not
-        # But we basically need to merge the plural versions together into one list
-
+    def format_info(self, entries: dict[str, Any]) -> NounInfo:
         def _fmt_prefix(value: str) -> str:
             if value:
                 return f"- {value}"
@@ -147,6 +136,50 @@ class NounPages(CatherinePages):
         self.embed = Embed()
 
 
+class InclusiveSource(menus.ListPageSource):
+    def __init__(self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int = 1):
+        super().__init__(entries=entries, per_page=per_page)
+        self.cog: Dictionary = bot.get_cog("dictionary")  # type: ignore
+
+    def format_info(self, entries: dict[str, Any]) -> InclusiveInfo:
+        return InclusiveInfo(
+            instead_of="\n".join(
+                map(lambda value: f"- ~~{value}~~", entries["insteadOf"].split("|"))
+            ),
+            say="\n".join(map(lambda value: f"- **{value}**", entries["say"].split("|"))),
+            because=entries["because"],
+            clarification=entries["clarification"],
+            author=self.cog.determine_author(entries["author"]),
+        )
+
+    async def format_page(self, menu: "InclusivePages", entries: dict[str, Any]):
+        menu.embed.clear_fields()
+        entry = self.format_info(entries)
+
+        menu.embed.description = (
+            f"### Instead of \n{entry.instead_of}\n"
+            f"### Better say\n{entry.say}\n"
+            f"### Because\n{entry.because}\n"
+        )
+
+        if entry.clarification:
+            menu.embed.description += f"### Clarification\n{entry.clarification}"
+
+        menu.embed.set_footer(text=f"Page {menu.current_page + 1}/{self.get_max_pages()}")
+
+        menu.embed.add_field(name="Author", value=entry.author)
+        return menu.embed
+
+
+class InclusivePages(CatherinePages):
+    def __init__(self, entries: list[dict[str, Any]], *, interaction: discord.Interaction):
+        self.bot: Catherine = interaction.client  # type: ignore
+        super().__init__(
+            source=InclusiveSource(entries, bot=self.bot, per_page=1), interaction=interaction
+        )
+        self.embed = Embed()
+
+
 class Dictionary(commands.GroupCog, name="dictionary"):
     """The to-go LGBTQ+ dictionary"""
 
@@ -179,11 +212,11 @@ class Dictionary(commands.GroupCog, name="dictionary"):
             "ja": "用語",
         }
 
+    ### Term utilities
+
     def split_flags(self, content: str) -> list[str]:
         regex = re.compile(r"(?<=\[).*(?=\])")
         return regex.findall(content)
-
-    ### Term utilities
 
     def determine_image_url(self, entry: dict[str, Any]) -> str:
         flags = self.split_flags(entry["flags"])
@@ -253,6 +286,15 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     def format_references(self, content: str) -> str:
         return self.format_inline_term_reference(content, self.extract_reference(content))
 
+    ### General utilities
+
+    def determine_author(self, author: Optional[str]) -> str:
+        author_base_url = URL("https://pronouns.page/")
+        if author is None:
+            return "Unknown"
+        author_link = str(author_base_url / f"@{author}")
+        return f"[{author}]({author_link})"
+
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
     async def terms(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
@@ -300,95 +342,12 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         if term:
             url = url / "search" / term
         async with self.session.get(url) as r:
-            data = await r.json(loads=orjson.loads)
+            data = await r.json(loads=self.decoder.decode)
             if len(data) == 0:
                 await interaction.followup.send("No inclusive terms were found")
                 return
-            converted = [
-                InclusiveEntity(
-                    content=InclusiveContent(
-                        instead_of=entry["insteadOf"],
-                        say=entry["say"],
-                        because=entry["because"],
-                        clarification=entry["clarification"],
-                    ),
-                    author=entry["author"],
-                )
-                for entry in data
-            ]
-            pages = InclusivePages(entries=converted, interaction=interaction)
+            pages = InclusivePages(entries=data, interaction=interaction)
             await pages.start()
-
-    @app_commands.command(name="lookup")
-    @app_commands.describe(
-        pronouns="The pronouns to look up. Examples include she/her, etc. Defaults to all pronouns."
-    )
-    async def lookup(
-        self, interaction: discord.Interaction, pronouns: Optional[str] = None
-    ) -> None:
-        """Lookup info about the given pronouns
-
-        Pronouns include she/her, they/them and many others. Singular pronouns (eg 'she') also work.
-        """
-        await interaction.response.defer()
-        url = URL("https://en.pronouns.page/api/pronouns/")
-        if pronouns:
-            url = url / pronouns
-        async with self.session.get(url) as r:
-            data = await r.json(loads=orjson.loads)
-            if data is None:
-                await interaction.followup.send("The pronouns requested were not found")
-                return
-
-            if pronouns is not None:
-                pronouns_entry = PronounsEntity(
-                    name=data["name"],
-                    canonical_name=data["canonicalName"],
-                    description=data["description"],
-                    aliases=data["aliases"],
-                    normative=data["normative"],
-                    morphemes=PronounsMorphemes(
-                        pronoun_subject=data["morphemes"]["pronoun_subject"],
-                        pronoun_object=data["morphemes"]["pronoun_object"],
-                        possessive_determiner=data["morphemes"]["possessive_determiner"],
-                        possessive_pronoun=data["morphemes"]["possessive_pronoun"],
-                        reflexive=data["morphemes"]["reflexive"],
-                    ),
-                    examples=data["examples"],
-                    history=data["history"],
-                    sources_info=data["sourcesInfo"],
-                )
-
-                pronouns_info = format_pronouns_info(pronouns_entry)
-                embed = Embed()
-                embed.title = pronouns_info["title"]
-                embed.description = pronouns_info["desc"]
-                embed.add_field(name="Aliases", value=", ".join(pronouns_entry.aliases).rstrip(","))
-                embed.add_field(name="Normative", value=pronouns_entry.normative)
-                await interaction.followup.send(embed=embed)
-            else:
-                converted = [
-                    PronounsEntity(
-                        name=entry["canonicalName"],
-                        canonical_name=entry["canonicalName"],
-                        description=entry["description"],
-                        aliases=entry["aliases"],
-                        normative=entry["normative"],
-                        morphemes=PronounsMorphemes(
-                            pronoun_subject=entry["morphemes"]["pronoun_subject"],
-                            pronoun_object=entry["morphemes"]["pronoun_object"],
-                            possessive_determiner=entry["morphemes"]["possessive_determiner"],
-                            possessive_pronoun=entry["morphemes"]["possessive_pronoun"],
-                            reflexive=entry["morphemes"]["reflexive"],
-                        ),
-                        examples=entry["examples"],
-                        history=entry["history"],
-                        sources_info=entry["sourcesInfo"],
-                    )
-                    for entry in data.values()
-                ]
-                pages = PronounsPages(entries=converted, interaction=interaction)
-                await pages.start()
 
 
 async def setup(bot: Catherine) -> None:
