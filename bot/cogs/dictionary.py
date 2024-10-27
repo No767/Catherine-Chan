@@ -216,7 +216,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
         url = URL.build(scheme="https", host="en.pronouns.page", path="/terminology")
         replacements = {}
-        cleaned_content = re.sub(r"\{|\}", "", content)
+        cleaned_content = re.sub(r"[\{\}]", "", content)
 
         # The order of formatting goes like this:
         # 1. Hashtag term references
