@@ -201,12 +201,12 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     def determine_image_url(self, entry: dict[str, Any]) -> str:
         flags = self.split_flags(entry["flags"])
         if len(flags[0]) != 0:
-            flag_entity = flags[0].replace('"', "")
-            return str(CDN_FLAGS_URL / f"{flag_entity}.png")
+            flag_entity = flags[0].replace('"', "").split(",")
+            return str(PRONOUNS_FLAGS_URL / f"{flag_entity[0]}.png")
         elif entry["images"] and "[object Object]" not in entry["images"]:
             asset = entry["images"].split(",")
             return str(
-                PRONOUNS_FLAGS_URL / f"{asset[0]}-flag.png"
+                CDN_FLAGS_URL / f"{asset[0]}-flag.png"
             )  # For general use, we'll just use the first flag shown
         return ""
 
@@ -247,7 +247,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
             elif entity.startswith("/"):
                 # For other languages, this is the slash for the path that would be used
                 # Since we are only using english for now, this doesn't matter
-                pronouns_parts = entity[1].partition("=")
+                pronouns_parts = entity[1:].partition("=")
                 pronouns_url = URL.build(
                     scheme="https", host="en.pronouns.page", path=f"/{pronouns_parts[0]}"
                 )
