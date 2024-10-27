@@ -251,7 +251,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 )
                 replacements.update({entity: f"[{pronouns_parts[-1]}]({pronouns_url})"})
             else:
-                replacements.update({entity: f"[{entity}]({url.with_query({"filter": entity})})"})
+                replacements.update({entity: f"[{entity}]({url.with_query({'filter': entity})})"})
 
         fmt_regex = re.compile(r"(%s)" % "|".join(map(re.escape, replacements.keys())))
         return fmt_regex.sub(lambda mo: replacements[mo.group()], cleaned_content)
