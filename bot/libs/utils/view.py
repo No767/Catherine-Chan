@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import discord
 
-from .embeds import FullErrorEmbed, TimeoutEmbed
+from .embeds import FullErrorEmbed
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
@@ -26,6 +26,16 @@ async def prompt(
     view.response = await interaction.original_response()
     await view.wait()
     return view.value
+
+
+class TimeoutEmbed(discord.Embed):
+    """Timed out embed"""
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("color", discord.Color.from_rgb(214, 6, 6))
+        kwargs.setdefault("title", "\U00002757 Timed Out")
+        kwargs.setdefault("description", "Timed out waiting for a response. Cancelling action.")
+        super().__init__(**kwargs)
 
 
 class CatherineView(discord.ui.View):
