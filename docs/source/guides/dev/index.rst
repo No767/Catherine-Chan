@@ -9,5 +9,3 @@ Catherine offers a developer guide so future developers can easily get started w
    
    requirements
    setup
-   contributing
-   internals

@@ -25,13 +25,13 @@ Some of the ways you can contribute are:
 - Proposing new features
 - Improving or editing documentation
 
-Note that if you plan on proposing new features, please first discuss them with the webmaster and the team on the issues page.
+Note that if you plan on proposing new features, please first discuss them with the owner and others on the issues page.
 
 ## Writing Good Bug Reports
 
 Please be aware of the following when you submit a bug report:
 
-1. Ask on the server first (this is preferred). If you are unsure about an issue, please contact the webmaster for clarification.
+1. Ask on the server first (this is preferred). If you are unsure about an issue, please contact the owner for clarification.
 2. Don't open duplicate issues. Please search your issue to see if it has been asked already. Duplicate issues will be closed.
 3. When filing a bug about exceptions or stacktrace, please include the complete stacktrace. Without the complete stacktrace the issue might be unsolvable and you will be asked to provide more information.
 
@@ -42,7 +42,9 @@ be asked in order to aid in this process.
 ## Submitting a Pull Request
 
 This process is fairly straight forward, but make sure to focus your pull request on a single aspect doesn't manage to have scope creep and it's probably good to go.
-Ideally the style needs to be consistent but this is fine if it is not met. This project follows PEP-8 guidelines, with an column limit of 80.
+Ideally the style needs to be consistent but this is fine if it is not met. This project follows PEP-8 guidelines, with an column limit of 88.
+
+Ideally for new features, your pull request should also include unit tests. For more detail, please see the `bot/tests` directory.
 
 ## Git Commit Guidelines
 
