@@ -22,7 +22,9 @@ def test_format_title(cog: PrideProfiles):
     assert format_title("sexual_orientation") == "Sexual Orientation"
 
 
-def test_disambiguate(cog: PrideProfiles, filled_rows: list[dict[str, str]], empty_rows: list):
+def test_disambiguate(
+    cog: PrideProfiles, filled_rows: list[dict[str, str]], empty_rows: list
+):
     filled = cog.disambiguate(filled_rows)
     assert filled.startswith("Profile not found. Did you mean...")
 

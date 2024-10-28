@@ -52,7 +52,9 @@ class InclusiveInfo(msgspec.Struct, frozen=True):
 
 ### UI components (Page Sources, Pages)
 class TermSource(menus.ListPageSource):
-    def __init__(self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int = 1):
+    def __init__(
+        self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int = 1
+    ):
         super().__init__(entries=entries, per_page=per_page)
         self.cog: Dictionary = bot.get_cog("dictionary")  # type: ignore
 
@@ -72,7 +74,9 @@ class TermSource(menus.ListPageSource):
 
         menu.embed.title = entry.term
         menu.embed.set_thumbnail(url=self.cog.determine_image_url(entries))
-        menu.embed.set_footer(text=f"Page {menu.current_page + 1}/{self.get_max_pages()}")
+        menu.embed.set_footer(
+            text=f"Page {menu.current_page + 1}/{self.get_max_pages()}"
+        )
 
         menu.embed.description = f"{entry.original}\n\n{entry.definition}"
 
@@ -84,7 +88,9 @@ class TermSource(menus.ListPageSource):
 
 
 class TermsPages(CatherinePages):
-    def __init__(self, entries: list[dict[str, Any]], *, interaction: discord.Interaction):
+    def __init__(
+        self, entries: list[dict[str, Any]], *, interaction: discord.Interaction
+    ):
         self.bot: Catherine = interaction.client  # type: ignore
         self.entries = entries
         super().__init__(
@@ -111,8 +117,12 @@ class NounSource(menus.ListPageSource):
             return value
 
         return NounInfo(
-            masc="\n".join(map(_fmt_prefix, f"{entries['masc']}|{entries['mascPl']}".split("|"))),
-            fem="\n".join(map(_fmt_prefix, f"{entries['fem']}|{entries['femPl']}".split("|"))),
+            masc="\n".join(
+                map(_fmt_prefix, f"{entries['masc']}|{entries['mascPl']}".split("|"))
+            ),
+            fem="\n".join(
+                map(_fmt_prefix, f"{entries['fem']}|{entries['femPl']}".split("|"))
+            ),
             neutral="\n".join(
                 map(_fmt_prefix, f"{entries['neutr']}|{entries['neutrPl']}".split("|"))
             ),
@@ -134,14 +144,20 @@ class NounSource(menus.ListPageSource):
 
 
 class NounPages(CatherinePages):
-    def __init__(self, entries: list[dict[str, Any]], *, interaction: discord.Interaction):
+    def __init__(
+        self, entries: list[dict[str, Any]], *, interaction: discord.Interaction
+    ):
         self.bot: Catherine = interaction.client  # type: ignore
-        super().__init__(source=NounSource(entries, per_page=1), interaction=interaction)
+        super().__init__(
+            source=NounSource(entries, per_page=1), interaction=interaction
+        )
         self.embed = Embed()
 
 
 class InclusiveSource(menus.ListPageSource):
-    def __init__(self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int = 1):
+    def __init__(
+        self, entries: list[dict[str, Any]], *, bot: Catherine, per_page: int = 1
+    ):
         super().__init__(entries=entries, per_page=per_page)
         self.cog: Dictionary = bot.get_cog("dictionary")  # type: ignore
 
@@ -150,7 +166,9 @@ class InclusiveSource(menus.ListPageSource):
             instead_of="\n".join(
                 map(lambda value: f"- ~~{value}~~", entries["insteadOf"].split("|"))
             ),
-            say="\n".join(map(lambda value: f"- **{value}**", entries["say"].split("|"))),
+            say="\n".join(
+                map(lambda value: f"- **{value}**", entries["say"].split("|"))
+            ),
             because=entries["because"],
             clarification=entries["clarification"],
             author=self.cog.determine_author(entries["author"]),
@@ -169,17 +187,22 @@ class InclusiveSource(menus.ListPageSource):
         if entry.clarification:
             menu.embed.description += f"### Clarification\n{entry.clarification}"
 
-        menu.embed.set_footer(text=f"Page {menu.current_page + 1}/{self.get_max_pages()}")
+        menu.embed.set_footer(
+            text=f"Page {menu.current_page + 1}/{self.get_max_pages()}"
+        )
 
         menu.embed.add_field(name="Author", value=entry.author)
         return menu.embed
 
 
 class InclusivePages(CatherinePages):
-    def __init__(self, entries: list[dict[str, Any]], *, interaction: discord.Interaction):
+    def __init__(
+        self, entries: list[dict[str, Any]], *, interaction: discord.Interaction
+    ):
         self.bot: Catherine = interaction.client  # type: ignore
         super().__init__(
-            source=InclusiveSource(entries, bot=self.bot, per_page=1), interaction=interaction
+            source=InclusiveSource(entries, bot=self.bot, per_page=1),
+            interaction=interaction,
         )
         self.embed = Embed()
 
@@ -249,11 +272,15 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 # Since we are only using english for now, this doesn't matter
                 pronouns_parts = entity[1:].partition("=")
                 pronouns_url = URL.build(
-                    scheme="https", host="en.pronouns.page", path=f"/{pronouns_parts[0]}"
+                    scheme="https",
+                    host="en.pronouns.page",
+                    path=f"/{pronouns_parts[0]}",
                 )
                 replacements.update({entity: f"[{pronouns_parts[-1]}]({pronouns_url})"})
             else:
-                replacements.update({entity: f"[{entity}]({url.with_query({'filter': entity})})"})
+                replacements.update(
+                    {entity: f"[{entity}]({url.with_query({'filter': entity})})"}
+                )
 
         fmt_regex = re.compile(r"(%s)" % "|".join(map(re.escape, replacements.keys())))
         return fmt_regex.sub(lambda mo: replacements[mo.group()], cleaned_content)
@@ -262,7 +289,9 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         return re.findall(r"{(.*?)}", content)
 
     def format_references(self, content: str) -> str:
-        return self.format_inline_term_reference(content, self.extract_reference(content))
+        return self.format_inline_term_reference(
+            content, self.extract_reference(content)
+        )
 
     ### General utilities
 
@@ -274,7 +303,9 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
-    async def terms(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
+    async def terms(
+        self, interaction: discord.Interaction, query: Optional[str] = None
+    ) -> None:
         """Looks up LGBTQ+ terms up"""
         await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/terms")
@@ -290,7 +321,9 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     @app_commands.command(name="nouns")
     @app_commands.describe(query="The noun to look for")
-    async def nouns(self, interaction: discord.Interaction, query: Optional[str] = None) -> None:
+    async def nouns(
+        self, interaction: discord.Interaction, query: Optional[str] = None
+    ) -> None:
         """Looks up gender neutral nouns and language"""
         url = URL("https://en.pronouns.page/api/nouns")
         if query:
@@ -313,7 +346,9 @@ class Dictionary(commands.GroupCog, name="dictionary"):
 
     @app_commands.command(name="inclusive")
     @app_commands.describe(term="The inclusive term to look for")
-    async def inclusive(self, interaction: discord.Interaction, term: Optional[str] = None) -> None:
+    async def inclusive(
+        self, interaction: discord.Interaction, term: Optional[str] = None
+    ) -> None:
         """Provides inclusive terms for users to learn about"""
         await interaction.response.defer()
         url = URL("https://en.pronouns.page/api/inclusive")

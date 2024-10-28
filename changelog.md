@@ -12,7 +12,12 @@
 - New requirements.txt for dependencies (https://github.com/No767/Catherine-Chan/pull/173)
 - Fixed pygit2 deprecations (https://github.com/No767/Catherine-Chan/pull/176)
 - Fixed inaccurate member counts with Prometheus (https://github.com/No767/Catherine-Chan/pull/181)
-- General codebase maintenance (https://github.com/No767/Catherine-Chan/pull/204)
+- General codebase maintenance (https://github.com/No767/Catherine-Chan/pull/204, https://github.com/No767/Catherine-Chan/pull/223)
+- Migrated to Lefthook and optimized pre-commit hooks (https://github.com/No767/Catherine-Chan/pull/218)
+- Use JSON decoder provided by msgspec (https://github.com/No767/Catherine-Chan/pull/222)
+- Use proper type checking imports (https://github.com/No767/Catherine-Chan/pull/216)
+- Fix exception violations with pronouns tester (https://github.com/No767/Catherine-Chan/pull/212)
+- Migrate from Bandit, Black, Autoflake and Isort to Ruff (https://github.com/No767/Catherine-Chan/pull/218, https://github.com/No767/Catherine-Chan/pull/223)
 
 ## ✨ Additions
 
@@ -27,8 +32,10 @@
   - HRT Conversion (https://github.com/No767/Catherine-Chan/pull/200)
   - Pronouns (https://github.com/No767/Catherine-Chan/pull/207)
   - Dictionary (https://github.com/No767/Catherine-Chan/pull/221)
+  - Documentation (https://github.com/No767/Catherine-Chan/pull/224)
 - Include Taskfile (https://github.com/No767/Catherine-Chan/pull/208)
 
 ## ➖ Removals
 
 - Tonetags (https://github.com/No767/Catherine-Chan/pull/183)
+- pre-commit (https://github.com/No767/Catherine-Chan/pull/218)

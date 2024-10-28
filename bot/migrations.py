@@ -57,7 +57,9 @@ def coro(f):
 class Revision:
     __slots__ = ("kind", "version", "description", "file")
 
-    def __init__(self, *, kind: str, version: int, description: str, file: Path) -> None:
+    def __init__(
+        self, *, kind: str, version: int, description: str, file: Path
+    ) -> None:
         self.kind: str = kind
         self.version: int = version
         self.description: str = description
@@ -137,7 +139,9 @@ class Migrations:
         with open(path, "w", encoding="utf-8", newline="\n") as fp:
             fp.write(stub)
 
-        return Revision(kind=kind, description=reason, version=self.version + 1, file=path)
+        return Revision(
+            kind=kind, description=reason, version=self.version + 1, file=path
+        )
 
     async def upgrade(self) -> int:
         ordered = self.ordered_revisions
@@ -147,7 +151,9 @@ class Migrations:
                 if revision.version > self.version:
                     sql = revision.file.read_text("utf-8")
                     await self.conn.execute(sql)
-                    await self.conn.execute(INSERT_VERSION, revision.version, revision.description)
+                    await self.conn.execute(
+                        INSERT_VERSION, revision.version, revision.description
+                    )
                     successes += 1
 
         self.version += successes
@@ -187,7 +193,9 @@ async def init():
             )
         except Exception:
             traceback.print_exc()
-            click.secho("failed to initialize and apply migrations due to error", fg="red")
+            click.secho(
+                "failed to initialize and apply migrations due to error", fg="red"
+            )
 
 
 @main.command()
@@ -197,8 +205,12 @@ async def migrate(reason: str):
     """Creates a new revision for you to edit"""
     async with Migrations() as mg:
         if mg.is_next_revision_taken():
-            click.echo("an unapplied migration already exists for the next version, exiting")
-            click.secho("hint: apply pending migrations with the `upgrade` command", bold=True)
+            click.echo(
+                "an unapplied migration already exists for the next version, exiting"
+            )
+            click.secho(
+                "hint: apply pending migrations with the `upgrade` command", bold=True
+            )
             return
         revision = mg.create_revision(reason)
         click.echo(f"Created revision V{revision.version!r}")
@@ -224,7 +236,9 @@ async def upgrade(sql):
 
         try:
             applied = await mg.upgrade()
-            click.secho(f"Applied {applied} revisions(s) (Current: V{mg.version})", fg="green")
+            click.secho(
+                f"Applied {applied} revisions(s) (Current: V{mg.version})", fg="green"
+            )
         except Exception:
             traceback.print_exc()
             click.secho("failed to apply migrations due to error", fg="red")
@@ -239,7 +253,11 @@ async def log(reverse):
     migrations = Migrations(no_conn=True)
 
     # Revisions is oldest first already
-    revs = reversed(migrations.ordered_revisions) if not reverse else migrations.ordered_revisions
+    revs = (
+        reversed(migrations.ordered_revisions)
+        if not reverse
+        else migrations.ordered_revisions
+    )
     for rev in revs:
         as_yellow = click.style(f"V{rev.version:>03}", fg="yellow")
         click.echo(f'{as_yellow} {rev.description.replace("_", " ")}')
