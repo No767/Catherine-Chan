@@ -9,10 +9,16 @@ Catherine-Chan
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: Guides
+   :caption: User Guide
 
-   guides/dev/index
-   guides/user/index
+   user-guide/index
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Development Guide
+
+   dev-intro
 
 .. toctree::
    :maxdepth: 2
@@ -30,7 +36,7 @@ Catherine-Chan
    terms-of-service/privacy-policy.rst
 
 
-.. figure:: /_static/pride_smaller.png
+.. figure:: /_assets/pride_smaller.png
    :align: right
 
 .. image:: https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver
@@ -60,8 +66,8 @@ Guides
 
 Are you interested in contributing to Catherine-Chan as a developer? Or are you interested in learning the different features of Catherine-chan? This is the place to get started!
 
-- :doc:`guides/dev/index`
-- :doc:`guides/user/index`
+- :doc:`dev-intro`
+- :doc:`user-guide/index`
 
 Resources and Links
 -------------------

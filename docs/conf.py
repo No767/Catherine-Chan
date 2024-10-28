@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Catherine-Chan"
-copyright = "2023, No767"
+copyright = "2024, No767"
 author = "No767"
 
 # -- General configuration ---------------------------------------------------
@@ -16,7 +16,7 @@ author = "No767"
 extensions = ["sphinxext.opengraph", "sphinx_copybutton"]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 latex_elements = {
     "sphinxsetup": "verbatimwithframe=false",
