@@ -36,7 +36,11 @@ class PrideProfile(msgspec.Struct, frozen=True):
     views: int
 
     def to_format_dict(self):
-        return {f: getattr(self, f) for f in self.__struct_fields__ if f not in ("id", "views")}
+        return {
+            f: getattr(self, f)
+            for f in self.__struct_fields__
+            if f not in ("id", "views")
+        }
 
 
 class IndexedPrideProfile(msgspec.Struct, frozen=True):
@@ -80,7 +84,9 @@ class IndexedPrideProfilePages(CatherinePages):
 
 
 class EditProfileModal(CatherineModal, title="Edit Profile"):
-    def __init__(self, interaction: discord.Interaction, profile_type: str, bot: Catherine) -> None:
+    def __init__(
+        self, interaction: discord.Interaction, profile_type: str, bot: Catherine
+    ) -> None:
         super().__init__(interaction=interaction)
         self.pool = bot.pool
         self.profile_type = profile_type
@@ -110,7 +116,9 @@ class EditProfileModal(CatherineModal, title="Edit Profile"):
             constraint = "SET romantic_orientation = $2"
 
         # You could remove the profile type check to make even more harsher
-        if self.profile_type == "name" and re.match(MENTION_REGEX, self.profile_category.value):
+        if self.profile_type == "name" and re.match(
+            MENTION_REGEX, self.profile_category.value
+        ):
             raise RuntimeError("Nuh uh uh! You can't use everyone or here mentions!")
 
         query = f"""
@@ -131,15 +139,21 @@ class SelectPrideCategory(discord.ui.Select):
             discord.SelectOption(label="Name", value="name"),
             discord.SelectOption(label="Pronouns", value="pronouns"),
             discord.SelectOption(label="Gender Identity", value="gender_identity"),
-            discord.SelectOption(label="Sexual Orientation", value="sexual_orientation"),
-            discord.SelectOption(label="Romantic Orientation", value="romantic_orientation"),
+            discord.SelectOption(
+                label="Sexual Orientation", value="sexual_orientation"
+            ),
+            discord.SelectOption(
+                label="Romantic Orientation", value="romantic_orientation"
+            ),
         ]
         super().__init__(placeholder="Select a category", options=options, row=0)
         self.bot = bot
 
     async def callback(self, interaction: discord.Interaction) -> None:
         profile_type = self.values[0]
-        await interaction.response.send_modal(EditProfileModal(interaction, profile_type, self.bot))
+        await interaction.response.send_modal(
+            EditProfileModal(interaction, profile_type, self.bot)
+        )
 
 
 class ConfigureView(CatherineView):
@@ -148,7 +162,9 @@ class ConfigureView(CatherineView):
         self.add_item(SelectPrideCategory(bot))
 
     @discord.ui.button(label="Finish", style=discord.ButtonStyle.green, row=1)
-    async def finish(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+    async def finish(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ) -> None:
         await interaction.response.defer()
         await interaction.delete_original_response()
         self.stop()
@@ -163,9 +179,13 @@ class ProfileName(app_commands.Transformer):
 
         if len(lowered) < 3:
             # I'm not really sure if this is the correct error or not
-            raise app_commands.AppCommandError("Your query must have 3 characters or more.")
+            raise app_commands.AppCommandError(
+                "Your query must have 3 characters or more."
+            )
         elif len(lowered) > 50:
-            raise app_commands.AppCommandError("Your query must have less than 50 characters.")
+            raise app_commands.AppCommandError(
+                "Your query must have less than 50 characters."
+            )
 
         if re.match(value, MENTION_REGEX):
             raise app_commands.AppCommandError("Can't use everyone or here mentions!")
@@ -190,7 +210,9 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         names = "\n".join(r["name"] for r in rows)
         return f"Profile not found. Did you mean...\n{names}"
 
-    async def send_profile(self, interaction: discord.Interaction, profile: PrideProfile) -> None:
+    async def send_profile(
+        self, interaction: discord.Interaction, profile: PrideProfile
+    ) -> None:
         query = """
         UPDATE pride_profiles
         SET views = views + 1
@@ -238,7 +260,9 @@ class PrideProfiles(commands.GroupCog, name="pride-profiles"):
         VALUES ($1, $2);
         """
         try:
-            await self.pool.execute(query, interaction.user.id, interaction.user.global_name)
+            await self.pool.execute(
+                query, interaction.user.id, interaction.user.global_name
+            )
         except asyncpg.UniqueViolationError:
             await interaction.response.send_message(
                 "Sorry, but you already have an active profile!"

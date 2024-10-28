@@ -1,9 +1,5 @@
 pre-commit:
   commands:
-    bandit:
-      glob: "*.py" 
-      staged_files: true
-      run: bandit {staged_files} -c pyproject.toml
     ruff-check:
       glob: "*.py" 
       staged_files: true

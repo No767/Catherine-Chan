@@ -106,7 +106,9 @@ def test_parse_pronouns_sentence(
         ),
     ],
 )
-def test_pronouns_tester(cog: Pronouns, replacements: dict[str, str], sentence: str, expected: str):
+def test_pronouns_tester(
+    cog: Pronouns, replacements: dict[str, str], sentence: str, expected: str
+):
     parsed_sentence = cog.parse_pronouns_sentence(replacements, sentence)
     completed_sentence = cog.convert_to_proper_sentence(parsed_sentence)
     assert completed_sentence == expected
