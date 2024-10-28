@@ -34,7 +34,9 @@ class TimeoutEmbed(discord.Embed):
     def __init__(self, **kwargs):
         kwargs.setdefault("color", discord.Color.from_rgb(214, 6, 6))
         kwargs.setdefault("title", "\U00002757 Timed Out")
-        kwargs.setdefault("description", "Timed out waiting for a response. Cancelling action.")
+        kwargs.setdefault(
+            "description", "Timed out waiting for a response. Cancelling action."
+        )
         super().__init__(**kwargs)
 
 
@@ -62,7 +64,9 @@ class CatherineView(discord.ui.View):
 
     async def on_timeout(self) -> None:
         if self.original_response:
-            await self.original_response.edit(embed=TimeoutEmbed(), view=None, delete_after=15.0)
+            await self.original_response.edit(
+                embed=TimeoutEmbed(), view=None, delete_after=15.0
+            )
 
     async def on_error(
         self,
@@ -74,7 +78,9 @@ class CatherineView(discord.ui.View):
         self.bot.logger.exception(
             "Ignoring view exception from %s: ", self.__class__.__name__, exc_info=error
         )
-        await interaction.response.send_message(embed=FullErrorEmbed(error), ephemeral=True)
+        await interaction.response.send_message(
+            embed=FullErrorEmbed(error), ephemeral=True
+        )
         self.stop()
 
 
@@ -117,7 +123,9 @@ class ConfirmationView(discord.ui.View):
         bot.logger.exception(
             "Ignoring view exception from %s: ", self.__class__.__name__, exc_info=error
         )
-        await interaction.response.send_message(embed=FullErrorEmbed(error), ephemeral=True)
+        await interaction.response.send_message(
+            embed=FullErrorEmbed(error), ephemeral=True
+        )
         self.stop()
 
     @discord.ui.button(
@@ -125,7 +133,9 @@ class ConfirmationView(discord.ui.View):
         style=discord.ButtonStyle.green,
         emoji="<:greenTick:596576670815879169>",
     )
-    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+    async def confirm(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ) -> None:
         self.value = True
         await interaction.response.defer()
         if self.delete_after:
@@ -138,7 +148,9 @@ class ConfirmationView(discord.ui.View):
         style=discord.ButtonStyle.red,
         emoji="<:redTick:596576672149667840>",
     )
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
+    async def cancel(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ) -> None:
         self.value = False
         await interaction.response.defer()
         await interaction.delete_original_response()

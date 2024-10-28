@@ -7,7 +7,9 @@ from discord.ext import commands, menus
 
 
 class NumberedPageModal(discord.ui.Modal, title="Go to page"):
-    page = discord.ui.TextInput(label="Page", placeholder="Enter a number", min_length=1)
+    page = discord.ui.TextInput(
+        label="Page", placeholder="Enter a number", min_length=1
+    )
 
     def __init__(self, max_pages: Optional[int]) -> None:
         super().__init__()
@@ -73,7 +75,9 @@ class CatherinePages(discord.ui.View):
         else:
             return {}
 
-    async def show_page(self, interaction: discord.Interaction, page_number: int) -> None:
+    async def show_page(
+        self, interaction: discord.Interaction, page_number: int
+    ) -> None:
         page = await self.source.get_page(page_number)
         self.current_page = page_number
         kwargs = await self._get_kwargs_from_page(page)
@@ -89,8 +93,12 @@ class CatherinePages(discord.ui.View):
         self.go_to_first_page.disabled = page_number == 0
         if self.compact:
             max_pages = self.source.get_max_pages()
-            self.go_to_last_page.disabled = max_pages is None or (page_number + 1) >= max_pages
-            self.go_to_next_page.disabled = max_pages is not None and (page_number + 1) >= max_pages
+            self.go_to_last_page.disabled = (
+                max_pages is None or (page_number + 1) >= max_pages
+            )
+            self.go_to_next_page.disabled = (
+                max_pages is not None and (page_number + 1) >= max_pages
+            )
             self.go_to_previous_page.disabled = page_number == 0
             return
 
@@ -111,7 +119,9 @@ class CatherinePages(discord.ui.View):
                 self.go_to_previous_page.disabled = True
                 self.go_to_previous_page.label = "…"
 
-    async def show_checked_page(self, interaction: discord.Interaction, page_number: int) -> None:
+    async def show_checked_page(
+        self, interaction: discord.Interaction, page_number: int
+    ) -> None:
         max_pages = self.source.get_max_pages()
         try:
             if max_pages is None:
@@ -150,7 +160,9 @@ class CatherinePages(discord.ui.View):
         else:
             await interaction.response.send_message(error_msg, ephemeral=True)
 
-    async def start(self, *, content: Optional[str] = None, ephemeral: bool = False) -> None:
+    async def start(
+        self, *, content: Optional[str] = None, ephemeral: bool = False
+    ) -> None:
         if self.check_embeds and not self.interaction.permissions.embed_links:
             await self.interaction.response.send_message(
                 "Bot doesn't have embed link perms in this channel", ephemeral=True
@@ -167,15 +179,21 @@ class CatherinePages(discord.ui.View):
 
         # Fixes the issue of somehow the interaction failing for /pronouns profile
         if self.interaction.response.is_done():
-            await self.interaction.followup.send(**kwargs, view=self, ephemeral=ephemeral)
+            await self.interaction.followup.send(
+                **kwargs, view=self, ephemeral=ephemeral
+            )
             self.followup = await self.interaction.original_response()
             return
 
-        await self.interaction.response.send_message(**kwargs, view=self, ephemeral=ephemeral)
+        await self.interaction.response.send_message(
+            **kwargs, view=self, ephemeral=ephemeral
+        )
         self.followup = await self.interaction.original_response()
 
     @discord.ui.button(label="≪", style=discord.ButtonStyle.grey)
-    async def go_to_first_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_first_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """go to the first page"""
         await self.show_page(interaction, 0)
 
@@ -188,22 +206,30 @@ class CatherinePages(discord.ui.View):
 
     # Shows the current button
     @discord.ui.button(label="Current", style=discord.ButtonStyle.grey, disabled=True)
-    async def go_to_current_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_current_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """show current page"""
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
-    async def go_to_next_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_next_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """go to the next page"""
         await self.show_checked_page(interaction, self.current_page + 1)
 
     @discord.ui.button(label="≫", style=discord.ButtonStyle.grey)
-    async def go_to_last_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_last_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """go to the last page"""
         # The call here is safe because it's guarded by skip_if
         await self.show_page(interaction, self.source.get_max_pages() - 1)  # type: ignore
 
     @discord.ui.button(label="Skip to page...", style=discord.ButtonStyle.grey)
-    async def numbered_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def numbered_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """lets you type a page number to go to"""
         if self.followup is None:
             return
@@ -216,7 +242,9 @@ class CatherinePages(discord.ui.View):
             await interaction.followup.send("Took too long", ephemeral=True)
             return
         elif self.is_finished():
-            await modal.interaction.response.send_message("Took too long", ephemeral=True)
+            await modal.interaction.response.send_message(
+                "Took too long", ephemeral=True
+            )
             return
 
         value = str(modal.page.value)
@@ -233,7 +261,9 @@ class CatherinePages(discord.ui.View):
             await modal.interaction.response.send_message(error, ephemeral=True)
 
     @discord.ui.button(label="Quit", style=discord.ButtonStyle.red)
-    async def stop_pages(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def stop_pages(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """stops the pagination session."""
         await interaction.response.defer()
         await interaction.delete_original_response()
@@ -280,7 +310,9 @@ class CatherineContextPages(discord.ui.View):
         else:
             return {}
 
-    async def show_page(self, interaction: discord.Interaction, page_number: int) -> None:
+    async def show_page(
+        self, interaction: discord.Interaction, page_number: int
+    ) -> None:
         page = await self.source.get_page(page_number)
         self.current_page = page_number
         kwargs = await self.get_kwargs_from_page(page)
@@ -292,7 +324,9 @@ class CatherineContextPages(discord.ui.View):
             else:
                 await interaction.response.edit_message(**kwargs, view=self)
 
-    async def show_checked_page(self, interaction: discord.Interaction, page_number: int) -> None:
+    async def show_checked_page(
+        self, interaction: discord.Interaction, page_number: int
+    ) -> None:
         max_pages = self.source.get_max_pages()
         try:
             if max_pages is None:
@@ -334,13 +368,20 @@ class CatherineContextPages(discord.ui.View):
     def _update_labels(self, page_number: int) -> None:
         self.go_to_first_page.disabled = page_number == 0
         max_pages = self.source.get_max_pages()
-        self.go_to_last_page.disabled = max_pages is None or (page_number + 1) >= max_pages
-        self.go_to_next_page.disabled = max_pages is not None and (page_number + 1) >= max_pages
+        self.go_to_last_page.disabled = (
+            max_pages is None or (page_number + 1) >= max_pages
+        )
+        self.go_to_next_page.disabled = (
+            max_pages is not None and (page_number + 1) >= max_pages
+        )
         self.go_to_previous_page.disabled = page_number == 0
 
-    async def start(self, *, content: Optional[str] = None, ephemeral: bool = False) -> None:
+    async def start(
+        self, *, content: Optional[str] = None, ephemeral: bool = False
+    ) -> None:
         if (
-            self.check_embeds and not self.ctx.channel.permissions_for(self.ctx.me).embed_links  # type: ignore
+            self.check_embeds
+            and not self.ctx.channel.permissions_for(self.ctx.me).embed_links  # type: ignore
         ):
             await self.ctx.send(
                 "Bot does not have embed links permission in this channel.",
@@ -358,7 +399,9 @@ class CatherineContextPages(discord.ui.View):
         self.message = await self.ctx.send(**kwargs, view=self, ephemeral=ephemeral)
 
     @discord.ui.button(label="≪", style=discord.ButtonStyle.grey)
-    async def go_to_first_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_first_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """go to the first page"""
         await self.show_page(interaction, 0)
 
@@ -370,19 +413,25 @@ class CatherineContextPages(discord.ui.View):
         await self.show_checked_page(interaction, self.current_page - 1)
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
-    async def go_to_next_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_next_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """go to the next page"""
 
         await self.show_checked_page(interaction, self.current_page + 1)
 
     @discord.ui.button(label="≫", style=discord.ButtonStyle.grey)
-    async def go_to_last_page(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def go_to_last_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """go to the last page"""
         # The call here is safe because it's guarded by skip_if
         await self.show_page(interaction, self.source.get_max_pages() - 1)  # type: ignore
 
     @discord.ui.button(label="Quit", style=discord.ButtonStyle.red)
-    async def stop_pages(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def stop_pages(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
         """stops the pagination session."""
         await interaction.response.defer()
         await interaction.delete_original_response()

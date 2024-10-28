@@ -40,7 +40,9 @@ class Fun(commands.Cog):
 
     @app_commands.command(name="who-would-win")
     @app_commands.describe(user="The user to place your bets against")
-    async def who_would_win(self, interaction: discord.Interaction, user: discord.Member) -> None:
+    async def who_would_win(
+        self, interaction: discord.Interaction, user: discord.Member
+    ) -> None:
         """Who would win template with friends!"""
         params = {
             "image1": interaction.user.display_avatar.url,

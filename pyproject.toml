@@ -21,8 +21,7 @@ typeCheckingMode = "basic"
 reportUnnecessaryTypeIgnoreComment = "warning"
 
 [tool.ruff]
-line-length = 100
-indent-width = 4
+line-length = 88
 
 [tool.ruff.lint]
 ignore = [
