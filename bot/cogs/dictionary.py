@@ -303,10 +303,11 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         return f"[{author}]({author_link})"
 
     async def _handle_invalid_response(
-        self, interaction: discord.Interaction, error: app_commands.CommandInvokeError
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
         if (
-            isinstance(error.original, aiohttp.ContentTypeError)
+            isinstance(error, app_commands.CommandInvokeError)
+            and isinstance(error.original, aiohttp.ContentTypeError)
             and error.original.status == 403
         ):
             await interaction.response.send_message(
@@ -380,22 +381,19 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     async def on_terms_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        if isinstance(error, app_commands.CommandInvokeError):
-            await self._handle_invalid_response(interaction, error)
+        await self._handle_invalid_response(interaction, error)
 
     @nouns.error
     async def on_nouns_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        if isinstance(error, app_commands.CommandInvokeError):
-            await self._handle_invalid_response(interaction, error)
+        await self._handle_invalid_response(interaction, error)
 
     @inclusive.error
     async def on_inclusive_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        if isinstance(error, app_commands.CommandInvokeError):
-            await self._handle_invalid_response(interaction, error)
+        await self._handle_invalid_response(interaction, error)
 
 
 async def setup(bot: Catherine) -> None:
