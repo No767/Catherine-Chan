@@ -305,7 +305,10 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     async def _handle_invalid_response(
         self, interaction: discord.Interaction, error: app_commands.CommandInvokeError
     ) -> None:
-        if isinstance(error.original, aiohttp.ContentTypeError):
+        if (
+            isinstance(error.original, aiohttp.ContentTypeError)
+            and error.original.status == 403
+        ):
             await interaction.response.send_message(
                 "Unable to validate forbidden query"
             )
