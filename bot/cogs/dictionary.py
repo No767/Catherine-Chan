@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, Optional
 
+import aiohttp
 import discord
 import msgspec
 from discord import app_commands
@@ -10,7 +11,6 @@ from discord.ext import commands, menus
 from libs.utils import Embed
 from libs.utils.pages import CatherinePages
 from yarl import URL
-import aiohttp
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
