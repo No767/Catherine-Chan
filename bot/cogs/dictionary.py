@@ -10,6 +10,7 @@ from discord.ext import commands, menus
 from libs.utils import Embed
 from libs.utils.pages import CatherinePages
 from yarl import URL
+import aiohttp
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
@@ -301,6 +302,14 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         author_link = str(BASE_URL / f"@{author}")
         return f"[{author}]({author_link})"
 
+    async def _handle_invalid_response(
+        self, interaction: discord.Interaction, error: app_commands.CommandInvokeError
+    ) -> None:
+        if isinstance(error.original, aiohttp.ContentTypeError):
+            await interaction.response.send_message(
+                "Unable to validate forbidden query"
+            )
+
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
     async def terms(
@@ -332,7 +341,7 @@ class Dictionary(commands.GroupCog, name="dictionary"):
             # If people start using this for pronouns, then a generator shows up
             # so that's in case this happens
             if r.status == 204:
-                await interaction.response.send_message("Uhhhhhhhhhhhh what")
+                await interaction.response.send_message("Did you just insert pronouns?")
                 return
 
             data = await r.json(loads=self.decoder.decode)
@@ -361,6 +370,29 @@ class Dictionary(commands.GroupCog, name="dictionary"):
                 return
             pages = InclusivePages(entries=data, interaction=interaction)
             await pages.start()
+
+    ### Error Handlers
+
+    @terms.error
+    async def on_terms_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
+        if isinstance(error, app_commands.CommandInvokeError):
+            await self._handle_invalid_response(interaction, error)
+
+    @nouns.error
+    async def on_nouns_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
+        if isinstance(error, app_commands.CommandInvokeError):
+            await self._handle_invalid_response(interaction, error)
+
+    @inclusive.error
+    async def on_inclusive_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
+        if isinstance(error, app_commands.CommandInvokeError):
+            await self._handle_invalid_response(interaction, error)
 
 
 async def setup(bot: Catherine) -> None:
