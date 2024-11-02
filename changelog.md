@@ -18,6 +18,7 @@
 - Use proper type checking imports (https://github.com/No767/Catherine-Chan/pull/216)
 - Fix exception violations with pronouns tester (https://github.com/No767/Catherine-Chan/pull/212)
 - Migrate from Bandit, Black, Autoflake and Isort to Ruff (https://github.com/No767/Catherine-Chan/pull/218, https://github.com/No767/Catherine-Chan/pull/223)
+- Prevent unsanitized queries from creating Cloudflare errors (https://github.com/No767/Catherine-Chan/pull/226)
 
 ## ✨ Additions
 
