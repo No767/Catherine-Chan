@@ -71,11 +71,6 @@ class CatherineCommandTree(app_commands.CommandTree):
                     interaction.command.qualified_name,  # type: ignore
                     exc_info=original,
                 )
-                if interaction.response.is_done():
-                    await interaction.followup.send(
-                        embed=FullErrorEmbed(error), ephemeral=True
-                    )
-                    return
                 await interaction.response.send_message(
                     embed=FullErrorEmbed(error), ephemeral=True
                 )
