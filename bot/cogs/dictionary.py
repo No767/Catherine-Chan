@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 BASE_URL = URL("https://pronouns.page/")
 CDN_FLAGS_URL = URL("https://dclu0bpcdglik.cloudfront.net/images/")
 PRONOUNS_FLAGS_URL = URL("https://en.pronouns.page/flags/")
+FORBIDDEN_MESSAGE = "Unable to validate forbidden query"
 
 ### Structs
 
@@ -303,16 +304,17 @@ class Dictionary(commands.GroupCog, name="dictionary"):
         return f"[{author}]({author_link})"
 
     async def _handle_invalid_response(
-        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+        self, interaction: discord.Interaction, error: app_commands.CommandInvokeError
     ) -> None:
         if (
-            isinstance(error, app_commands.CommandInvokeError)
-            and isinstance(error.original, aiohttp.ContentTypeError)
-            and error.original.status == 403
+            isinstance(error.original, aiohttp.ContentTypeError)
+            and error.original.headers
+            and error.original.headers["Content-Type"] == "text/html; charset=UTF-8"
         ):
-            await interaction.response.send_message(
-                "Unable to validate forbidden query"
-            )
+            if interaction.response.is_done():
+                await interaction.followup.send(FORBIDDEN_MESSAGE)
+                return
+            await interaction.response.send_message(FORBIDDEN_MESSAGE)
 
     @app_commands.command(name="terms")
     @app_commands.describe(query="The term to look for")
@@ -381,19 +383,22 @@ class Dictionary(commands.GroupCog, name="dictionary"):
     async def on_terms_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        await self._handle_invalid_response(interaction, error)
+        if isinstance(error, app_commands.CommandInvokeError):
+            await self._handle_invalid_response(interaction, error)
 
     @nouns.error
     async def on_nouns_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        await self._handle_invalid_response(interaction, error)
+        if isinstance(error, app_commands.CommandInvokeError):
+            await self._handle_invalid_response(interaction, error)
 
     @inclusive.error
     async def on_inclusive_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
-        await self._handle_invalid_response(interaction, error)
+        if isinstance(error, app_commands.CommandInvokeError):
+            await self._handle_invalid_response(interaction, error)
 
 
 async def setup(bot: Catherine) -> None:
