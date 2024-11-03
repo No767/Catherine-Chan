@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, Optional, Sequence, Union
 
+import aiohttp
 import discord
 import msgspec
 from discord import app_commands
@@ -11,6 +12,7 @@ from libs.utils.embeds import Embed, FullErrorEmbed
 from libs.utils.modal import CatherineModal
 from libs.utils.pages import CatherinePages
 from yarl import URL
+from cogs.dictionary import FORBIDDEN_MESSAGE
 
 if TYPE_CHECKING:
     from catherinecore import Catherine
@@ -702,6 +704,21 @@ class Pronouns(commands.GroupCog, name="pronouns"):
             }
             pages = ProfilePages(entries=entries, interaction=interaction)
             await pages.start()
+
+    ## Error Handlers
+
+    @profile.error
+    async def on_profile_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
+        if isinstance(error, app_commands.CommandInvokeError):
+            original = error.original
+            if (
+                isinstance(original, aiohttp.ContentTypeError)
+                and original.headers
+                and original.headers["Content-Type"] == "text/html; charset=UTF-8"
+            ):
+                await interaction.followup.send(FORBIDDEN_MESSAGE)
 
 
 async def setup(bot: Catherine) -> None:
