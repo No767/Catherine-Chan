@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import aiohttp
 import discord
 from discord import app_commands
 
@@ -71,6 +72,16 @@ class CatherineCommandTree(app_commands.CommandTree):
                     interaction.command.qualified_name,  # type: ignore
                     exc_info=original,
                 )
+
+                # Basically just ignore all content type errors for responses
+                # Since we already have them printed to stderr, it makes no sense to send a response back to the user when a response is already sent.
+                # In this case, it actually does more harm by giving the attackers more information than less.
+                if (
+                    isinstance(original, aiohttp.ContentTypeError)
+                    and original.status == 0
+                ):
+                    return
+
                 await interaction.response.send_message(
                     embed=FullErrorEmbed(error), ephemeral=True
                 )
