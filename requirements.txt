@@ -4,7 +4,7 @@ winloop>=0.1.1,<1 ; sys_platform == "win32"
 asyncpg>=0.29.0,<1
 discord-ext-menus @ git+https://github.com/Rapptz/discord-ext-menus@8686b5d1bbc1d3c862292eb436ab630d6e9c9b53
 python-dateutil>=2.9.0,<3
-msgspec>=0.18.6,<1
+msgspec @ git+https://github.com/jcrist/msgspec@e06e9c9fbacf372f71afbb41e3b772bf94d753e6
 pygit2>=1.14.1,<2
 psutil>=6.0.0,<7
 prometheus-client>=0.20.0,<1
