@@ -15,11 +15,11 @@ env:
 jobs: 
   Test:
     name: Test (${{ matrix.version }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
