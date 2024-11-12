@@ -1,5 +1,7 @@
 > [!CAUTION]
-> This release essentially is a rewrite. Stuff **will** break, and changes are not finalized.
+> This release essentially is a rewrite.
+> The codebase has been thoroughly tested and monitored for stability.
+> As of writing (11/11/2024), all changes are finalized and is deployed to production.
 > If you run into any issues, feel free to submit a GitHub issues report.
 
 ## ✨ TD;LR
@@ -19,6 +21,7 @@
 - Fix exception violations with pronouns tester (https://github.com/No767/Catherine-Chan/pull/212)
 - Migrate from Bandit, Black, Autoflake and Isort to Ruff (https://github.com/No767/Catherine-Chan/pull/218, https://github.com/No767/Catherine-Chan/pull/223)
 - Prevent unsanitized queries from creating Cloudflare errors (https://github.com/No767/Catherine-Chan/pull/226, https://github.com/No767/Catherine-Chan/pull/227, https://github.com/No767/Catherine-Chan/pull/228)
+- Migrate workflows to Ubuntu 24.04 labels (https://github.com/No767/Catherine-Chan/pull/231)
 
 ## ✨ Additions
 
@@ -35,6 +38,8 @@
   - Dictionary (https://github.com/No767/Catherine-Chan/pull/221)
   - Documentation (https://github.com/No767/Catherine-Chan/pull/224)
 - Include Taskfile (https://github.com/No767/Catherine-Chan/pull/208)
+- Python 3.13 support (https://github.com/No767/Catherine-Chan/pull/220)
+- PostgreSQL 17 support (https://github.com/No767/Catherine-Chan/pull/230)
 
 ## ➖ Removals
 
