@@ -1,6 +1,6 @@
 [project]
 name = "catherine-chan"
-version = "1.0.0-beta"
+version = "1.0.0-final"
 description = "An informational LGBTQ based discord bot"
 readme = "README.md"
 license = {file = "LICENSE"}
