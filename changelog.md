@@ -1,5 +1,7 @@
 > [!CAUTION]
-> This release essentially is a rewrite. Stuff **will** break, and changes are not finalized.
+> This release essentially is a rewrite.
+> The codebase has been thoroughly tested and monitored for stability.
+> As of writing (11/11/2024), all changes are finalized and is deployed to production.
 > If you run into any issues, feel free to submit a GitHub issues report.
 
 ## ✨ TD;LR
@@ -35,6 +37,7 @@
   - Dictionary (https://github.com/No767/Catherine-Chan/pull/221)
   - Documentation (https://github.com/No767/Catherine-Chan/pull/224)
 - Include Taskfile (https://github.com/No767/Catherine-Chan/pull/208)
+- Python 3.13 support (https://github.com/No767/Catherine-Chan/pull/220)
 
 ## ➖ Removals
 
