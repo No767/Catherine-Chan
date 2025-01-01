@@ -82,7 +82,7 @@ class Meta(commands.Cog):
         # For Kumiko, it's done differently
         # R. Danny's way of doing it is probably close enough anyways
         memory_usage = self.process.memory_full_info().uss / 1024**2
-        cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
+        cpu_usage = self.process.cpu_percent() / psutil.cpu_count() # type: ignore # Pyright is still complaining
 
         revisions = self.get_last_commits()
         embed = Embed()
