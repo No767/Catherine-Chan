@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+    
+  pull_request:
+    branches:
+      - main
+
+env:
+  POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/postgres
+  
+jobs: 
+  Test:
+    name: Test (${{ matrix.version }})
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [3.9, '3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pg_trgm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-client
+          psql $POSTGRES_URI -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm;'
+
+      - name: Set up Python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.version }}
+
+      - name: Install Tox
+        run: |
+          pip install "tox>=4.13.0,<5"
+
+      - name: Run Tests
+        run: |
+          RAW_PYTHON_VERSION=${{ matrix.version }}
+          PYTHON_VERSION=$(echo $RAW_PYTHON_VERSION | sed 's/\.//')
+          tox -e $PYTHON_VERSION

@@ -6,11 +6,11 @@ class VersionInfo(NamedTuple):
     major: int
     minor: int
     micro: int
-    releaselevel: Literal["dev", "staging", "final"]
+    releaselevel: Literal["alpha", "beta", "final"]
 
     def __str__(self) -> str:
         return f"{self.major}.{self.minor}.{self.micro}-{self.releaselevel}"
 
 
 EXTENSIONS = [module.name for module in iter_modules(__path__, f"{__package__}.")]
-VERSION: VersionInfo = VersionInfo(major=0, minor=7, micro=3, releaselevel="final")
+VERSION: VersionInfo = VersionInfo(major=1, minor=0, micro=0, releaselevel="final")

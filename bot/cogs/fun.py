@@ -1,9 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import discord
-from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
 from libs.utils import Embed
 from yarl import URL
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
 
 
 class Fun(commands.Cog):

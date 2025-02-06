@@ -1,15 +1,20 @@
+from __future__ import annotations
+
 import datetime
 import itertools
 import platform
+from typing import TYPE_CHECKING
 
 import discord
 import psutil
 import pygit2
-from catherinecore import Catherine
 from discord import app_commands
 from discord.ext import commands
-from discord.utils import format_dt, oauth_url
 from libs.utils import Embed, human_timedelta
+from pygit2.enums import SortMode
+
+if TYPE_CHECKING:
+    from catherinecore import Catherine
 
 
 class Meta(commands.Cog):
@@ -26,7 +31,7 @@ class Meta(commands.Cog):
 
     def format_commit(self, commit: pygit2.Commit) -> str:
         short, _, _ = commit.message.partition("\n")
-        short_sha2 = commit.hex[0:6]
+        short_sha2 = str(commit.id)[0:6]
         commit_tz = datetime.timezone(
             datetime.timedelta(minutes=commit.commit_time_offset)
         )
@@ -35,15 +40,16 @@ class Meta(commands.Cog):
         )
 
         # [`hash`](url) message (offset)
-        offset = format_dt(commit_time.astimezone(datetime.timezone.utc), "R")
-        return f"[`{short_sha2}`](https://github.com/No767/Catherine-Chan/commit/{commit.hex}) {short} ({offset})"
+        offset = discord.utils.format_dt(
+            commit_time.astimezone(datetime.timezone.utc), "R"
+        )
+        commit_id = str(commit.id)
+        return f"[`{short_sha2}`](https://github.com/No767/Catherine-Chan/commit/{commit_id}) {short} ({offset})"
 
     def get_last_commits(self, count: int = 5):
-        repo = pygit2.Repository(".git")
+        repo = pygit2.Repository(".git")  # type: ignore # Pyright is incorrect
         commits = list(
-            itertools.islice(
-                repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count
-            )
+            itertools.islice(repo.walk(repo.head.target, SortMode.TOPOLOGICAL), count)
         )
         return "\n".join(self.format_commit(c) for c in commits)
 
@@ -76,18 +82,21 @@ class Meta(commands.Cog):
         # For Kumiko, it's done differently
         # R. Danny's way of doing it is probably close enough anyways
         memory_usage = self.process.memory_full_info().uss / 1024**2
-        cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
+        cpu_usage = self.process.cpu_percent() / psutil.cpu_count() # type: ignore # Pyright is still complaining
 
         revisions = self.get_last_commits()
         embed = Embed()
-        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)  # type: ignore
+        embed.set_author(
+            name=self.bot.user.name,  # type: ignore
+            icon_url=self.bot.user.display_avatar.url,  # type: ignore
+        )
         embed.title = "Support Server Invite"
         embed.url = "https://discord.gg/ns3e74frqn"
         desc = [
             "Catherine-Chan is designed for members of the LGBTQ+ community ",
             "and serves as an informational toolkit for those who want to express themselves or learn more. "
             "Features include an pronouns tester, find LGBTQ+ terms and definitions, and many more!\n",
-            f"Latest Changes (Stable):\n {revisions}",
+            f"Latest Changes:\n {revisions}",
         ]
         embed.description = "\n".join(desc)
         embed.set_footer(
@@ -112,7 +121,7 @@ class Meta(commands.Cog):
         # This should be filled in by the time the bot is fully ready
         if self.bot.application is None:
             return
-        invite_url = oauth_url(client_id=self.bot.application.id)
+        invite_url = discord.utils.oauth_url(client_id=self.bot.application.id)
         await interaction.response.send_message(
             f"Invite Catherine-Chan using this link: {invite_url}"
         )
@@ -120,7 +129,7 @@ class Meta(commands.Cog):
     @app_commands.command(name="support")
     async def support(self, interaction: discord.Interaction):
         """Ways you can support Catherine-Chan!"""
-        invite_url = oauth_url(client_id=self.bot.application.id)  # type: ignore # By the time the bot is ready, the app id is already there
+        invite_url = discord.utils.oauth_url(client_id=self.bot.application.id)  # type: ignore # By the time the bot is ready, the app id is already there
         desc = f"""
         **Upvoting on Top.gg**: https://top.gg/bot/1142620675517984808
         **Joining the support server**: https://discord.gg/ns3e74frqn

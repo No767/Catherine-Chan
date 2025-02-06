@@ -70,6 +70,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/build
 
 # PyBuilder
 .pybuilder/
@@ -128,6 +129,12 @@ ENV/
 env.bak/
 venv.bak/
 
+# Configuration file
+config.yml
+
+# Catherine-Chan Blacklist file
+blacklist.json
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -176,3 +183,6 @@ test-scripts/
 
 # Ruff cache
 .ruff_cache/
+
+# Old stuff
+old/

@@ -8,19 +8,15 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     commit-message:
       prefix: "[pip]"
       include: "scope"
     target-branch: "main"
-    ignore:
-    # Ignore cystemd bc the newest release breaks all workflows
-      - dependency-name: "cysystemd"
-        update-types: ["version-update:semver-minor", "version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     commit-message:
       prefix: "[Actions]"
       include: "scope"
