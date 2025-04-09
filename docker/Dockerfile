@@ -1,34 +1,29 @@
-####################################################################################################
-## Final image
-####################################################################################################
 FROM python:3.13-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive 
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-  tini \
   bash \
-  netcat-traditional \
-  git \
+  tini \
   && apt-get clean
 
 WORKDIR /catherine
 COPY /bot/ /catherine/bot
 COPY /requirements.txt /catherine/requirements.txt
 COPY /docker/start.sh /catherine/start.sh
-COPY /docker/wait-for /catherine/wait-for
 
 RUN adduser --disabled-password --gecos "" catherine \
   && chown -R catherine:catherine /catherine \
-  && chmod +x /catherine/start.sh \
-  && chmod +x /catherine/wait-for
+  && chmod +x /catherine/start.sh
 
 USER catherine
 
 ENV PATH="${PATH}:/home/catherine/.local/bin"
 
 RUN pip install --user -r requirements.txt
+
+EXPOSE 6789
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 

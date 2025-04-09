@@ -12,8 +12,9 @@ services:
     ports:
       - 6789:6789
     depends_on:
-      - database
-    command: sh -c '/catherine/wait-for database:5432 -- echo "[Wait-for] PostgreSQL is fully up. Starting Catherine-Chan." && /catherine/start.sh'
+      database:
+        condition: service_healthy
+        restart: true
     restart: always
 
   database:
