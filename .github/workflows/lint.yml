@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  Analyze:
+  Check:
+    name: Check (${{ matrix.version }})
     runs-on: ubuntu-24.04
 
     strategy:
