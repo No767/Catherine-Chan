@@ -45,7 +45,7 @@ jobs:
 
       - name: Set up application configuration
         run: |
-          cp config.dist.yml config.yml
+          cp .config.dist.yml config.yml
 
       - name: Create Docker network for running Testcontainers
         run: |
