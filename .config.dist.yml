@@ -1,0 +1,10 @@
+token: ""
+dev_mode: False
+approval_channel_id: 123456
+
+prometheus:
+  enabled: False
+  host: "127.0.0.1"
+  port: 6789
+
+postgres_uri: ""

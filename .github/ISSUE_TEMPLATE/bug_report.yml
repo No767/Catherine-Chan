@@ -1,20 +1,22 @@
 name: Bug Report
-description: Report broken or incorrect behaviour
+description: Report broken or incorrect behavior
 labels: ["unconfirmed bug"]
 body:
   - type: markdown
     attributes:
       value: >
         Thanks for taking the time to fill out a bug.
-        If you want real-time support, consider joining our Discord at [insert link] instead.
+        If you want real-time support, consider joining our Discord at https://discord.gg/ns3e74frqn instead.
 
         Please note that this form is for bugs only!
+
   - type: input
     attributes:
       label: Summary
       description: A simple summary of your bug report
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Reproduction Steps
@@ -22,6 +24,7 @@ body:
          What you did to make it happen.
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Expected Results
@@ -29,6 +32,7 @@ body:
         What did you expect to happen?
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: Actual Results
@@ -36,6 +40,7 @@ body:
         What actually happened?
     validations:
       required: true
+
   - type: input
     attributes:
       label: Error Message
@@ -43,6 +48,7 @@ body:
         If there was an error message, please paste it here.
     validations:
       required: true
+
   - type: checkboxes
     attributes:
       label: Checklist
@@ -53,6 +59,7 @@ body:
           required: true
         - label: This bug was found on the official version of Catherine-Chan and not on any self-hosted versions or forks.
           required: true
+          
   - type: textarea
     attributes:
       label: Additional Context

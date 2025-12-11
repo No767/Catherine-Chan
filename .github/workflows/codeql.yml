@@ -2,12 +2,11 @@ name: "CodeQL"
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     
   pull_request:
-    branches:
-      - main
+    branches: [main]
+
   schedule:
     - cron: '36 7 * * 0'
 
@@ -20,36 +19,49 @@ jobs:
       contents: read
       security-events: write
 
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v5
+    env:
+      UV_CACHE_DIR: /tmp/.uv-cache
+      UV_SYSTEM_PYTHON: 1
 
-    - name: Set up Python 3.12
-      id: setup-python
+    steps:
+    - name: Checkout Repository  
+      uses: actions/checkout@v6
+
+    - name: Set up Python
       uses: actions/setup-python@v6
       with:
-        python-version: '3.12'
-        
-    - name: Cache Dependencies
-      id: cache-pip
+        python-version: "3.x"
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        version: "latest"
+
+    - name: Cache dependencies
+      id: cache-deps
       uses: actions/cache@v4
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-codeql-pip-${{ hashFiles('**/requirements.txt') }}
+        path: /tmp/.uv-cache
+        key: uv-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
         restore-keys: |
-          ${{ runner.os }}-codeql-pip-
+          uv-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+          uv-${{ runner.os }}
     
-    - name: Install Dependencies
-      if: steps.cache-pip.outputs.cache-hit != 'true'
+    - name: Install dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
       run: |
-        pip install -r requirements.txt
+        uv pip install -r requirements.txt
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: python
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v4
       with:
         upload: true
+
+    - name: Minimize uv cache
+      run: |
+        uv cache prune --ci

@@ -22,41 +22,85 @@ services:
     build:
       context: ./pg
       dockerfile: Dockerfile
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE_NAME}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_INITDB_ARGS: '--data-checksums'
     ports:
       - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
       - database:/var/lib/postgresql/data
+      - ../src/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test: pg_isready --dbname='${DB_DATABASE_NAME}' --username='${DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${DB_DATABASE_NAME}' --username='${DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
+      test: pg_isready --dbname='${DB_DATABASE}' --username='${DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${DB_DATABASE}' --username='${DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
       interval: 5m
       start_interval: 30s
       start_period: 5m
     restart: always
 
-  catherine-prometheus:
+  migrate:
+    container_name: catherine_migrate
+    image: arigaio/atlas:latest
+    command: >
+      schema apply
+      --auto-approve
+      --to "file://schema.sql"
+      --url "postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}?search_path=public&sslmode=disable"
+      --dev-url "postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/postgres?search_path=public&sslmode=disable"
+    networks:
+      - default
+      - db_bridge
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ../src/schema.sql:/schema.sql
+
+  prometheus:
     container_name: catherine_prometheus
+    image: prom/prometheus:latest
     ports:
       - 9090:9090
-    image: prom/prometheus:latest
+    networks:
+      - default
+      - proxy_bridge
+    healthcheck:
+      test: wget -q -O /dev/null http://prometheus:9090/api/v1/status/buildinfo || exit 1
+      start_period: 15s
+      interval: 1m
+      start_interval: 15s
     volumes:
+      - prometheus_data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
+    restart: unless-stopped
+    
 
   # first login uses admin/admin
-  # add data source for http://catherine-prometheus:9090 to get started
-  catherine-grafana:
+  # add data source for http://prometheus:9090 to get started
+  grafana:
     container_name: catherine_grafana
-    command: ['./run.sh', '-disable-reporting']
+    image: grafana/grafana-enterprise:latest-ubuntu
+    command: ./run.sh -disable-reporting
     ports:
       - 3000:3000
-    image: grafana/grafana-enterprise:latest-ubuntu
+    networks:
+      - default
+      - proxy_bridge
+    healthcheck:
+      test: wget -q -O /dev/null http://grafana:3000/api/health || exit 1
+      start_period: 15s
+      interval: 1m
+      start_interval: 15s
     volumes:
-      - grafana-data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
 
 volumes:
   database:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  db_bridge:
+    driver: bridge

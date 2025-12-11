@@ -1,12 +1,10 @@
 name: Lint
 on:
   push:
-    branches:
-      - main
+    branches: [main]
       
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   Analyze:
@@ -15,11 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [3.9, '3.10', '3.11', '3.12', '3.13']
+        version: ["3.12", "3.13", "3.14"]
+
+    env:
+      UV_SYSTEM_PYTHON: 1
 
     steps:
       - name: Checkout Repository  
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.version }}
         id: setup-python
@@ -27,10 +28,24 @@ jobs:
         with:
           python-version: ${{ matrix.version }}
 
-      - name: Install Tox
-        run: |
-          pip install "tox>=4.13.0,<5"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
 
-      - name: Lint Codebase
+      - name: Install dependencies
+        run: | 
+          uv pip install -r requirements-dev.txt
+
+      - name: Check typing
         run: |
-          tox -e lint
+          pyright src
+
+      - name: Check codebase
+        run: |
+          ruff check src --exit-non-zero-on-fix
+
+      - name: Check for formatting
+        run: |
+          ruff format src --check
