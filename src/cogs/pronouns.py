@@ -372,22 +372,28 @@ class ProfilePageSource(menus.PageSource):
             return "\U00002753"
 
     def format_info(self, entry: ProfileInfo) -> PartialProfileInfo:
-        return PartialProfileInfo(
-            names="\n".join(
-                f"{self.parse_opinion(sub_entry['opinion'])} {self.determine_bold(sub_entry['value'], sub_entry['opinion'])}"
-                for sub_entry in entry.names
-            ),
-            pronouns="\n".join(
-                f"{self.parse_opinion(sub_entry['opinion'])} {self.determine_bold(sub_entry['value'], sub_entry['opinion'])}"
-                for sub_entry in entry.pronouns
-            ),
-            flags=", ".join(flag for flag in entry.flags),
-            circle="\n".join(
+        fmt_names = {
+            f"{self.parse_opinion(sub_entry['opinion'])} {self.determine_bold(sub_entry['value'], sub_entry['opinion'])}"
+            for sub_entry in entry.names
+        }
+        fmt_pronouns = {
+            f"{self.parse_opinion(sub_entry['opinion'])} {self.determine_bold(sub_entry['value'], sub_entry['opinion'])}"
+            for sub_entry in entry.pronouns
+        }
+        fmt_flags = ", ".join(entry.flags)
+
+        fmt_circle = "None"
+        if len(entry.meta.circle) != 0:
+            fmt_circle = {
                 f"- {self.determine_mutual(entity['username'], mutual=entity['circleMutual'])}\n\t- Relationship: {entity['relationship']}"
                 for entity in entry.meta.circle
-            )
-            if len(entry.meta.circle) != 0
-            else "None",
+            }
+
+        return PartialProfileInfo(
+            names="\n".join(fmt_names),
+            pronouns="\n".join(fmt_pronouns),
+            flags=fmt_flags,
+            circle=fmt_circle,
         )
 
     async def format_page(self, menu: ProfilePages, page: Any):

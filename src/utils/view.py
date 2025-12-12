@@ -17,11 +17,11 @@ async def prompt(
     interaction: discord.Interaction,
     message: str,
     *,
-    timeout: float = 60.0,  # noqa: ASYNC109
+    prompt_timeout: float = 60.0,
     ephemeral: bool = True,
     delete_after: bool = False,
 ) -> Optional[bool]:
-    view = ConfirmationView(interaction, timeout, delete_after)
+    view = ConfirmationView(interaction, prompt_timeout, delete_after=delete_after)
     await interaction.response.send_message(message, view=view, ephemeral=ephemeral)
     view.response = await interaction.original_response()
     await view.wait()
