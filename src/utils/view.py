@@ -81,7 +81,7 @@ class CatherineView(discord.ui.View):
         self.stop()
 
 
-class ConfirmationView(discord.ui.View):
+class ConfirmationView(CatherineView):
     def __init__(
         self,
         interaction: discord.Interaction,
@@ -95,36 +95,11 @@ class ConfirmationView(discord.ui.View):
         self.delete_after = delete_after
         self.response: Optional[discord.InteractionMessage] = None
 
-    async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
-        if interaction.user and interaction.user.id in (
-            self.interaction.client.application.owner.id,  # type: ignore
-            self.interaction.user.id,
-        ):
-            return True
-        await interaction.response.send_message(NO_CONTROL_MSG, ephemeral=True)
-        return False
-
     async def on_timeout(self) -> None:
         if self.delete_after and self.response:
             await self.response.delete()
         elif self.response:
             await self.response.edit(view=None)
-
-    async def on_error(
-        self,
-        interaction: discord.Interaction,
-        error: Exception,
-        item: discord.ui.Item[Any],
-        /,
-    ) -> None:
-        bot: Catherine = interaction.client  # type: ignore
-        bot.logger.exception(
-            "Ignoring view exception from %s: ", self.__class__.__name__, exc_info=error
-        )
-        await interaction.response.send_message(
-            embed=FullErrorEmbed(error), ephemeral=True
-        )
-        self.stop()
 
     @discord.ui.button(
         label="Confirm",
