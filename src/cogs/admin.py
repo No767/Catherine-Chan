@@ -25,12 +25,9 @@ if TYPE_CHECKING:
 
     from core import Catherine
 
-# Although this regex does introduce polynomial backtracing, there is simply
-# no other alternatives as this is used for a partial search
-# Simply the only other choice is to leave it as is,
-# since i have continue to attempt to fix it, i'm simply wasting my own time
-# (the marginal cost is off the roof for this one)
-GIT_PULL_REGEX = re.compile(r"\s+(?P<filename>.*)\b\s+\|\s+[\d]")
+# The optimized regex (Linear complexity, no polynomial backtracking)
+# We use re.MULTILINE so '^' anchors to the start of each line, not just the string start.
+GIT_PULL_REGEX = re.compile(r"^\s+(?P<filename>[^|]+?)\s+\|\s+\d", re.MULTILINE)
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 
 _T = TypeVar("_T")

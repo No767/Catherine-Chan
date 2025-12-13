@@ -87,13 +87,6 @@ class Reloader:
         self._cogs_path = self.root_path / "cogs"
         self._utils_path = self.root_path / "utils"
 
-    async def reload_or_load_extension(self, module: str) -> None:
-        try:
-            await self.bot.reload_extension(module)
-            self.logger.info("Reloaded extension: %s", module)
-        except commands.ExtensionNotLoaded:
-            await self.bot.load_extension(module)
-            self.logger.info("Loaded extension: %s", module)
 
     def reload_utils_modules(self, module: str) -> None:
         try:
@@ -115,6 +108,14 @@ class Reloader:
             return ".".join(parts[utils_index:])
         cog_index = parts.index("cogs")
         return ".".join(parts[cog_index:])
+    
+    async def reload_or_load_extension(self, module: str) -> None:
+        try:
+            await self.bot.reload_extension(module)
+            self.logger.info("Reloaded extension: %s", module)
+        except commands.ExtensionNotLoaded:
+            await self.bot.load_extension(module)
+            self.logger.info("Loaded extension: %s", module)
 
     async def reload_cogs_and_utils(self, ctype: Change, true_module: str) -> None:
         if true_module.startswith("cogs"):

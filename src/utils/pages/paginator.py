@@ -7,6 +7,10 @@ from discord.ext import commands, menus
 
 from utils.embeds import Embed
 
+ERROR_MSG = (
+            "An unknown error occurred, sorry.\n"
+            "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
+        )
 
 class NumberedPageModal(discord.ui.Modal, title="Go to page"):
     page = discord.ui.TextInput(
@@ -86,9 +90,8 @@ class CatherinePages(discord.ui.View):
         kwargs = await self._get_kwargs_from_page(page)
         self._update_labels(page_number)
         if kwargs:
-            if interaction.response.is_done():
-                if self.followup:
-                    await self.followup.edit(**kwargs, view=self)
+            if self.followup and interaction.response.is_done():
+                await self.followup.edit(**kwargs, view=self)
             else:
                 await interaction.response.edit_message(**kwargs, view=self)
 
@@ -152,14 +155,10 @@ class CatherinePages(discord.ui.View):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item
     ) -> None:
-        error_msg = (
-            "An unknown error occurred, sorry.\n"
-            "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
-        )
         if interaction.response.is_done():
-            await interaction.followup.send(error_msg, ephemeral=True)
+            await interaction.followup.send(ERROR_MSG, ephemeral=True)
         else:
-            await interaction.response.send_message(error_msg, ephemeral=True)
+            await interaction.response.send_message(ERROR_MSG, ephemeral=True)
 
     async def start(
         self, *, content: Optional[str] = None, ephemeral: bool = False
@@ -320,9 +319,8 @@ class CatherineContextPages(discord.ui.View):
         kwargs = await self.get_kwargs_from_page(page)
         self._update_labels(page_number)
         if kwargs:
-            if interaction.response.is_done():
-                if self.message:
-                    await self.message.edit(**kwargs, view=self)
+            if self.message and interaction.response.is_done():
+                await self.message.edit(**kwargs, view=self)
             else:
                 await interaction.response.edit_message(**kwargs, view=self)
 
@@ -356,14 +354,10 @@ class CatherineContextPages(discord.ui.View):
     async def on_error(
         self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item
     ) -> None:
-        error_msg = (
-            "An unknown error occurred, sorry.\n"
-            "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
-        )
         if interaction.response.is_done():
-            await interaction.followup.send(error_msg, ephemeral=True)
+            await interaction.followup.send(ERROR_MSG, ephemeral=True)
         else:
-            await interaction.response.send_message(error_msg, ephemeral=True)
+            await interaction.response.send_message(ERROR_MSG, ephemeral=True)
 
     def _update_labels(self, page_number: int) -> None:
         self.go_to_first_page.disabled = page_number == 0
