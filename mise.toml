@@ -66,12 +66,12 @@ run_windows = "atlas schema apply --auto-approve --env local --var url=%DATABASE
 [tasks."bot:towncrier:create"]
 description = "Creates towncrier entry"
 env._.path = ".venv/bin"
-usage = """
-flag '--filename <filename>' help='Filename to use'
-flag '--entry <entry>' help='Entry to put in'
-"""
+usage = '''
+flag "--filename <filename>" help="Filename to use"
+flag "--entry <entry>" help="Entry to put in"
+'''
 dir = "{{ config_root }}"
-run = "towncrier create -c ${usage_entry?} ${usage_filename?}"
+run = "towncrier create  ${usage_filename?} -c ${usage_entry?}"
 
 [tasks."bot:towncrier:build"]
 description = "Builds towncrier changelog"
