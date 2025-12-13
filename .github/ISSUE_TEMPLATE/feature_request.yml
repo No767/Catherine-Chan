@@ -9,6 +9,7 @@ body:
         A short summary of what your feature request is.
     validations:
       required: true
+
   - type: dropdown
     attributes:
       multiple: false
@@ -18,6 +19,7 @@ body:
         - The documentation
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: The Problem
@@ -26,6 +28,7 @@ body:
         What becomes easier or possible when this feature is implemented?
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: The Ideal Solution
@@ -34,6 +37,7 @@ body:
         What would you like this feature to do?
     validations:
       required: true
+
   - type: textarea
     attributes:
       label: The Current Solution
@@ -41,6 +45,7 @@ body:
         What is the current solution to the problem, if any?
     validations:
       required: false
+      
   - type: textarea
     attributes:
       label: Additional Context

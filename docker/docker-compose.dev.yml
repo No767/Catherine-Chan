@@ -9,12 +9,38 @@ services:
       dockerfile: Dockerfile
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}
+    networks:
+      - default
+      - db_bridge
     volumes:
       - database:/var/lib/postgresql/data
+      - ../src/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     ports:
       - 5432:5432
 
+  migrate:
+    container_name: catherine_migrate
+    image: arigaio/atlas:latest
+    command: >
+      schema apply
+      --auto-approve
+      --to "file://schema.sql"
+      --url "postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/${DB_DATABASE}?search_path=public&sslmode=disable"
+      --dev-url "postgres://${DB_USERNAME}:${DB_PASSWORD}@database:5432/postgres?search_path=public&sslmode=disable"
+    networks:
+      - default
+      - db_bridge
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ../src/schema.sql:/schema.sql
+
 volumes:
   database:
+
+networks:
+  db_bridge:
+    driver: bridge

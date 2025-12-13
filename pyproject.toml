@@ -1,37 +1,102 @@
 [project]
-name = "catherine-chan"
-version = "1.0.0-final"
+name = "Catherine-Chan"
+version = "1.0.0"
 description = "An informational LGBTQ based discord bot"
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.12,<4.0"
+
+[tool.towncrier]
+directory = "changes"
+filename = "changelog.md"
+start_string = "<!-- towncrier release notes start -->"
+underlines = ["", "", ""]
+title_format = "## Catherine-Chan [{version}](https://github.com/No767/Catherine-Chan/tree/{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/No767/Catherine/issues/{issue})"
+
+  [[tool.towncrier.section]]
+    path = ""
+
+  [[tool.towncrier.type]]
+    directory = "bugfix"
+    name = "Bug fixes"
+    showcontent = true
+
+  [[tool.towncrier.type]]
+    directory = "feature"
+    name = "Features"
+    showcontent = true
+
+  [[tool.towncrier.type]]
+    directory = "deprecation"
+    name = "Deprecations (removal in next major release)"
+    showcontent = true
+
+  [[tool.towncrier.type]]
+    directory = "breaking"
+    name = "Removals and backward incompatible breaking changes"
+    showcontent = true
+
+  [[tool.towncrier.type]]
+    directory = "doc"
+    name = "Improved documentation"
+    showcontent = true
+
+  [[tool.towncrier.type]]
+    directory = "misc"
+    name = "Miscellaneous internal changes"
+    showcontent = true
 
 [tool.pyright]
-include = ["bot/**"]
-exclude = [
-    "**/__pycache__", 
-    "**/.mypy_cache", 
-    "**/.dmpypy.json", 
-    "docs",
-    "docker",
-    "bot/tests/**"
+include = [
+    "src"
 ]
-reportMissingImports = true
-typeCheckingMode = "basic"
+exclude = [
+    "**/__pycache__",
+    ".venv"
+]
+reportMissingImports = "error"
+typeCheckingMode = "standard"
 reportUnnecessaryTypeIgnoreComment = "warning"
+reportFunctionMemberAccess = "none"
+reportCallIssue = "none"
+reportArgumentType = "none"
 
 [tool.ruff]
 line-length = 88
 
 [tool.ruff.lint]
 ignore = [
-    "E501", 
-    "N999", 
-    "E402", 
-    "S311", 
-    "ASYNC109",
-    "S101",
-    
+    "ANN003",   # Expects TypedDict with Unpack, and I'm not wasting my time doing that
+    "ANN201",   # Fine for our case
+    "ANN202",   # It's fine sometimes
+    "ANN204",   # I would prefer not to
+    "ANN401",   # Any is the correct type in some cases
+    "B901",     # I'm aware of how generators as coroutines work - Sinbad
+    "B903",     # We don't need to use dataclasses for everything
+    "B904",     # Straight up wrong
+    "D1",       # Too lazy
+    "D415",     # I'm not being formal
+    "E501",     # Ruff formats it, so ignore
+    "EM101",    # Incorrect
+    "FBT003",   # Straight up wrong...
+    "INP001",   # I would prefer not to
+    "PLR0912",  # too many branches
+    "PLR0913",  # number of function arguments
+    "PLR0915",  # too many statements.... in an async entrypoint handling graceful shutdown...
+    "PLR0917",  # too many positional arguments
+    "PLR2004",  # Magic numbers
+    "PGH003",   # I'm too lazy
+    "UP007",    # Does not account for union unpacking and I prefer this style
+    "UP045",    # No, I prefer this
+    "TRY003",   # Goes against the standard
+    "RUF029",   # async in interface is fine
+    "S311",     # We all know...
+    "SIM105",   # Would prefer not to do this,
+    "TC001",    # I prefer to avoid if TYPE_CHECKING
+    "TC002",    # I prefer to avoid if TYPE_CHECKING,
+    "W293",     # Multi-line strings are formatted against Discord's markdown, not PEP 8 standards
+
     # These are recommended by Ruff if the formatter is to be used: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
@@ -47,20 +112,36 @@ ignore = [
     "COM819",
     "ISC001",
     "ISC002"
-    ]
-select = ["E", "F", "N", "ASYNC", "S", "ERA"]
+]
+
+# Pulled from https://github.com/mikeshardmind/async-utils/blob/main/pyproject.toml#L149
+select = [
+    "A", "ANN", "ASYNC", "B", "BLE", "C4", "COM", "D", "DTZ", "E",
+    "EM", "ERA", "F", "FA", "FBT", "FURB", "G", "I", "ICN", "INP", "ISC", "LOG",
+    "PD", "PERF", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PTH", "PYI",
+    "Q", "Q003", "RET", "RSE", "RUF", "S", "SIM", "SLOT", "T20", "TC", "TID",
+    "TRY", "UP", "W", "YTT"
+]
 fixable = ["ALL"]
+unfixable = ["E501"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+force-wrap-aliases = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
 
 [tool.ruff.format]
 docstring-code-format = true
 
 [tool.pytest.ini_options]
-minversion = "8.0"
+minversion = "9.0"
 addopts = "-ra"
 testpaths = [
-    "bot/tests"
+    "tests"
 ]
-pythonpath = ["bot"]
+pythonpath = ["src"]
