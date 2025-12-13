@@ -87,7 +87,6 @@ class Reloader:
         self._cogs_path = self.root_path / "cogs"
         self._utils_path = self.root_path / "utils"
 
-
     def reload_utils_modules(self, module: str) -> None:
         try:
             actual_module = sys.modules[module]
@@ -108,7 +107,7 @@ class Reloader:
             return ".".join(parts[utils_index:])
         cog_index = parts.index("cogs")
         return ".".join(parts[cog_index:])
-    
+
     async def reload_or_load_extension(self, module: str) -> None:
         try:
             await self.bot.reload_extension(module)

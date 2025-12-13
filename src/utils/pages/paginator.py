@@ -8,9 +8,10 @@ from discord.ext import commands, menus
 from utils.embeds import Embed
 
 ERROR_MSG = (
-            "An unknown error occurred, sorry.\n"
-            "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
-        )
+    "An unknown error occurred, sorry.\n"
+    "Please visit [Catherine-Chan's Support Server](<https://discord.gg/ns3e74frqn>) to get help"
+)
+
 
 class NumberedPageModal(discord.ui.Modal, title="Go to page"):
     page = discord.ui.TextInput(
