@@ -39,7 +39,7 @@ run = "uv pip install --upgrade -r requirements-dev.txt"
 description = "Lints the codebase by type checking and general linting"
 env._.path = ".venv/bin"
 dir = "{{ config_root }}"
-run = ["pyright src", "ruff check src --fix --unsafe-fixes --exit-non-zero-on-fix"]
+run = ["pyright src", "ruff check src --fix --exit-non-zero-on-fix"]
 
 [tasks."bot:format"]
 description = "Formats the codebase"
