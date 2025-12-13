@@ -26,9 +26,7 @@ if TYPE_CHECKING:
     from core import Catherine
 
 
-GIT_PULL_REGEX = re.compile(
-    r"^(?P<raw_filename>(?>[^|\n]+))\|\s+\d", re.MULTILINE
-)
+GIT_PULL_REGEX = re.compile(r"^(?P<raw_filename>(?>[^|\n]+))\|\s+\d", re.MULTILINE)
 
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 

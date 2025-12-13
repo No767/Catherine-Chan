@@ -19,7 +19,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from core import Catherine
-    
+
+
 def human_timedelta(
     dt: datetime.datetime,
     *,
@@ -36,7 +37,7 @@ def human_timedelta(
         return f"{delim.join(seq[:-1])} {final} {seq[-1]}"
 
     now = source or datetime.datetime.now(datetime.UTC)
-    
+
     # Merge timezone checks
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=datetime.UTC)
@@ -60,12 +61,16 @@ def human_timedelta(
         output_suffix = " ago" if suffix else ""
 
     attrs = [
-        ("year", "y"), ("month", "mo"), ("day", "d"),
-        ("hour", "h"), ("minute", "m"), ("second", "s"),
+        ("year", "y"),
+        ("month", "mo"),
+        ("day", "d"),
+        ("hour", "h"),
+        ("minute", "m"),
+        ("second", "s"),
     ]
 
     output = []
-    
+
     for attr, brief_attr in attrs:
         elem = getattr(delta, attr + "s")
         if not elem:
@@ -92,7 +97,7 @@ def human_timedelta(
 
     if brief:
         return " ".join(output) + output_suffix
-        
+
     return _human_join(output, final="and") + output_suffix
 
 
