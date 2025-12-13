@@ -25,9 +25,6 @@ if TYPE_CHECKING:
 
     from core import Catherine
 
-# The optimized regex (Linear complexity, no polynomial backtracking)
-# We use re.MULTILINE so '^' anchors to the start of each line, not just the string start.
-GIT_PULL_REGEX = re.compile(r"^\s+(?P<filename>[^|]+?)\s+\|\s+\d", re.MULTILINE)
 
 # 1. ANCHOR (^): We use '^' with re.MULTILINE to force the match to start
 #    only at the beginning of a line. This prevents the O(n^2) "sliding window"
