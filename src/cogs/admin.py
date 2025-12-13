@@ -26,18 +26,7 @@ if TYPE_CHECKING:
     from core import Catherine
 
 
-# 1. ANCHOR (^): We use '^' with re.MULTILINE to force the match to start
-#    only at the beginning of a line. This prevents the O(n^2) "sliding window"
-#    search described in the security warning.
-
-# 2. ATOMIC GROUPING (?>...): We use (?>...) around the filename capture.
-#    Once the engine matches non-pipe characters, it strictly "possesses" them.
-#    It will NEVER backtrack into the filename if the rest of the regex fails.
-
-# 3. NEGATED CLASS [^|\n]: We explicitly exclude pipes AND newlines
-#    to prevent "overshooting" lines.
-
-SECURE_GIT_PULL_REGEX = re.compile(
+GIT_PULL_REGEX = re.compile(
     r"^(?P<raw_filename>(?>[^|\n]+))\|\s+\d", re.MULTILINE
 )
 
@@ -148,7 +137,7 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
     def find_modules_from_git(self, output: str) -> list[tuple[int, str]]:
         changed_files = [
             match.group("raw_filename").strip()
-            for match in SECURE_GIT_PULL_REGEX.finditer(output)
+            for match in GIT_PULL_REGEX.finditer(output)
         ]
 
         ret: list[tuple[int, str]] = []

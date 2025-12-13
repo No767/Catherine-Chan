@@ -19,10 +19,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from core import Catherine
-
-
-# The old system does work, but as noted, can be inaccurate
-# This system is from RDanny and should provide more accurate results
+    
 def human_timedelta(
     dt: datetime.datetime,
     *,
@@ -32,22 +29,17 @@ def human_timedelta(
     suffix: bool = True,
 ) -> str:
     def _human_join(seq: Sequence[str], delim: str = ", ", final: str = "or") -> str:
-        size = len(seq)
-        if size == 0:
+        if not seq:
             return ""
-
-        if size == 1:
+        if len(seq) == 1:
             return seq[0]
-
-        if size == 2:
-            return f"{seq[0]} {final} {seq[1]}"
-
-        return delim.join(seq[:-1]) + f" {final} {seq[-1]}"
+        return f"{delim.join(seq[:-1])} {final} {seq[-1]}"
 
     now = source or datetime.datetime.now(datetime.UTC)
+    
+    # Merge timezone checks
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=datetime.UTC)
-
     if now.tzinfo is None:
         now = now.replace(tzinfo=datetime.UTC)
 
@@ -68,45 +60,40 @@ def human_timedelta(
         output_suffix = " ago" if suffix else ""
 
     attrs = [
-        ("year", "y"),
-        ("month", "mo"),
-        ("day", "d"),
-        ("hour", "h"),
-        ("minute", "m"),
-        ("second", "s"),
+        ("year", "y"), ("month", "mo"), ("day", "d"),
+        ("hour", "h"), ("minute", "m"), ("second", "s"),
     ]
 
     output = []
+    
     for attr, brief_attr in attrs:
         elem = getattr(delta, attr + "s")
         if not elem:
             continue
 
-        if attr == "day":
+        # Handle weeks logic inside the 'day' iteration
+        if attr == "day" and delta.weeks:
             weeks = delta.weeks
-            if weeks:
-                elem -= weeks * 7
-                if not brief:
-                    output.append(format(Plural(weeks), "week"))
-                else:
-                    output.append(f"{weeks}w")
+            elem -= weeks * 7
+            output.append(f"{weeks}w" if brief else format(Plural(weeks), "week"))
 
+        # Skip if elem is <= 0 (specifically for days after week subtraction)
         if elem <= 0:
             continue
 
-        if brief:
-            output.append(f"{elem}{brief_attr}")
-        else:
-            output.append(format(Plural(elem), attr))
+        # Merged formatting logic
+        output.append(f"{elem}{brief_attr}" if brief else format(Plural(elem), attr))
 
     if accuracy is not None:
         output = output[:accuracy]
 
-    if len(output) == 0:
+    if not output:
         return "now"
-    if not brief:
-        return _human_join(output, final="and") + output_suffix
-    return " ".join(output) + output_suffix
+
+    if brief:
+        return " ".join(output) + output_suffix
+        
+    return _human_join(output, final="and") + output_suffix
 
 
 class Plural:
