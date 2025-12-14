@@ -14,7 +14,7 @@ pin = true
 _.file = [{ path = "{{ config_root }}/.env" }]
 DATABASE_URL = "postgres://{{env.DB_USERNAME}}:{{env.DB_PASSWORD}}@localhost:5432/{{env.DB_DATABASE}}?sslmode=disable&search_path=public"
 
-
+# Bot-focused tasks
 [tasks."bot:up"]
 alias = ["bot:start", "bot:dev"]
 depends = ["bot:check-config"]
@@ -63,22 +63,6 @@ description = "Applies schema diffs to database"
 run = "atlas schema apply --auto-approve --env local --var url=$DATABASE_URL"
 run_windows = "atlas schema apply --auto-approve --env local --var url=%DATABASE_URL%"
 
-[tasks."bot:towncrier:create"]
-description = "Creates towncrier entry"
-env._.path = ".venv/bin"
-usage = '''
-flag "--filename <filename>" help="Filename to use"
-flag "--entry <entry>" help="Entry to put in"
-'''
-dir = "{{ config_root }}"
-run = "towncrier create  ${usage_filename?} -c ${usage_entry?}"
-
-[tasks."bot:towncrier:build"]
-description = "Builds towncrier changelog"
-env._.path = ".venv/bin"
-dir = "{{ config_root }}"
-run = "towncrier build --yes"
-
 [tasks."bot:check-env"]
 hide = true
 run = "test -f {{ config_root }}/.env"
@@ -106,3 +90,33 @@ depends = ["bot:check-env"]
 description = "Tears down the development databases through Docker Compose"
 dir = "{{ config_root }}"
 run = "docker compose -f docker/docker-compose.dev.yml --env-file .env down -v=True"
+
+# Docs tasks
+[tasks."docs:auto:build"]
+description = "Builds documentation and serves using sphinx-autobuild"
+env._.path = ".venv/bin"
+dir ="{{ config_root }}/docs"
+run = "uv run sphinx-autobuild -nTW . ./_build/dev/html"
+
+[tasks."docs:preview:build"]
+description = "Builds the documentation for production"
+env._.path = ".venv/bin"
+dir ="{{ config_root }}/docs"
+run = "uv run sphinx-build -aEnTW --keep-going . ./_build/dist/html"
+
+# Towncrier tasks
+[tasks."bot:towncrier:create"]
+description = "Creates towncrier entry"
+env._.path = ".venv/bin"
+usage = '''
+flag "--filename <filename>" help="Filename to use"
+flag "--entry <entry>" help="Entry to put in"
+'''
+dir = "{{ config_root }}"
+run = "towncrier create  ${usage_filename?} -c ${usage_entry?}"
+
+[tasks."bot:towncrier:build"]
+description = "Builds towncrier changelog"
+env._.path = ".venv/bin"
+dir = "{{ config_root }}"
+run = "towncrier build --yes"

@@ -6,21 +6,16 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Catherine-Chan"
-copyright = "2024, No767"
-author = "No767"
+project = 'Catherine-Chan'
+copyright = '2024-Present, No767'
+author = 'No767'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinxext.opengraph", "sphinx_copybutton"]
+extensions = ["sphinx_design"]
 
-templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
-
-latex_elements = {
-    "sphinxsetup": "verbatimwithframe=false",
-}
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_title = "Catherine-Chan"
 
@@ -28,6 +23,7 @@ html_title = "Catherine-Chan"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "furo"
+html_static_path = ['_static']
 
 html_theme_options = {
     "dark_css_variables": {
@@ -39,5 +35,3 @@ html_theme_options = {
         "color-brand-content": "#CE7BB0",
     },
 }
-
-ogp_site_url = "https://catherine-chan.readthedocs.io"
