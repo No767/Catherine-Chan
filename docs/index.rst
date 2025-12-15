@@ -20,7 +20,7 @@ Catherine-Chan
    misc/privacy-policy.rst
 
 
-.. figure:: /_images/pride_smaller.png
+.. figure:: /_assets/pride_smaller.png
    :align: right
 
 .. figure:: https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver

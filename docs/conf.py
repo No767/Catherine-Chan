@@ -40,7 +40,7 @@ ogp_custom_meta_tags = [
 ogp_social_cards = {
     "enable": True,
     "image": "./_static/pride.png",
-    "site_url": "https://catherine-chan.readthedocs.io/en/latest/"
+    "line_color": "#2ea44f"
 }
 
 # -- Options for HTML output -------------------------------------------------
