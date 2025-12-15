@@ -15,6 +15,5 @@ testcontainers>=4.13.3,<5
 sphinx>=8.2.3,<10
 sphinx-autobuild>=2025.08.25,<2026
 sphinxext-opengraph[social-cards]>=0.13.0,<1
-sphinx-social-previews @ git+https://github.com/choldgraf/sphinx-social-previews@7612d37737a9445a92d19e9aed4814969c05a446
 furo>=2025.9.25,<2026
 sphinx_design>=0.6.1,<7
