@@ -13,11 +13,27 @@ author = 'No767'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx_design"]
+extensions = ["sphinx_design", "sphinxext.opengraph"]
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_title = "Catherine-Chan"
+
+# -- Open Graph (OGP) options ------------------------------------------------
+# https://sphinxext-opengraph.readthedocs.io/en/latest/
+
+ogp_image = "./_static/public/favicon.ico"
+ogp_description_length = 175
+ogp_type = "website"
+
+ogp_custom_meta_tags = [
+    '<link rel="icon" type="image/png" href="/_static/public/favicon-96x96.png" sizes="96x96" />'
+    '<link rel="icon" type="image/svg+xml" href="/_static/public/favicon.svg" />',
+    '<link rel="shortcut icon" href="/_static/public/favicon.ico" />',
+    '<link rel="apple-touch-icon" sizes="180x180" href="/_static/public/apple-touch-icon.png" />',
+    '<meta name="apple-mobile-web-app-title" content="Catherine-Chan Documentation" />',
+    '<link rel="manifest" href="/_static/public/site.webmanifest" />'
+]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
