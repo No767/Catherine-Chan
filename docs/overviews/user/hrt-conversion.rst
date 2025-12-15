@@ -44,5 +44,5 @@ For the input ``unit``, there are two special cases:
 
 And here is an example of how the output looks like. 
 
-.. image:: /_assets/conversion_shot.png
+.. image:: /_images/conversion_shot.png
     :alt: Example of HRT Conversion

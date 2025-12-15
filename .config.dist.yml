@@ -7,4 +7,4 @@ prometheus:
   host: "127.0.0.1"
   port: 6789
 
-postgres_uri: ""
+postgres_uri: "postgres://postgres:<password>@localhost:5432/catherine"
