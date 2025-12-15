@@ -30,12 +30,14 @@ jobs:
           python-version: ${{ matrix.version }}
 
       - name: Install uv
+        id: setup-uv
         uses: astral-sh/setup-uv@v7
         with:
           version: "latest"
           enable-cache: true
 
       - name: Install dependencies
+        if: steps.setup-uv.outputs.cache-hit != 'true'
         run: | 
           uv pip install -r requirements-dev.txt
 

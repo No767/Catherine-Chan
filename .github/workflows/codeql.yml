@@ -33,23 +33,15 @@ jobs:
         python-version: "3.x"
 
     - name: Install uv
+      id: setup-uv
       uses: astral-sh/setup-uv@v7
       with:
         version: "latest"
+        enable-cache: true
 
-    - name: Cache dependencies
-      id: cache-deps
-      uses: actions/cache@v4
-      with:
-        path: /tmp/.uv-cache
-        key: uv-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          uv-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
-          uv-${{ runner.os }}
-    
     - name: Install dependencies
-      if: steps.cache-deps.outputs.cache-hit != 'true'
-      run: |
+      if: steps.setup-uv.outputs.cache-hit != 'true'
+      run: | 
         uv pip install -r requirements.txt
 
     - name: Initialize CodeQL
