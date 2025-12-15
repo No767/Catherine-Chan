@@ -35,6 +35,11 @@ ogp_custom_meta_tags = [
     '<link rel="manifest" href="/_static/public/site.webmanifest" />'
 ]
 
+
+ogp_social_cards = {
+    "image": "_images/pride_smaller.png",
+}
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
