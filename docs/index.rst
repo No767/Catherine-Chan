@@ -23,13 +23,13 @@ Catherine-Chan
 .. figure:: /_images/pride_smaller.png
    :align: right
 
-.. image:: https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver
+.. figure:: https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver
    :target: https://github.com/No767/Catherine-Chan/releases/latest
 
-.. image:: https://img.shields.io/github/license/No767/Catherine-Chan?label=License&logo=github
+.. figure:: https://img.shields.io/github/license/No767/Catherine-Chan?label=License&logo=github
    :target: https://github.com/No767/Catherine-Chan/blob/main/LICENSE
 
-.. image:: https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink
+.. figure:: https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink
    :target: https://github.com/No767/Catherine-Chan
 
 
