@@ -38,7 +38,8 @@ ogp_custom_meta_tags = [
 
 
 ogp_social_cards = {
-    "image": "_images/pride.png",
+    "enable": True,
+    "image": "./_images/pride.png",
     "site_url": "https://catherine-chan.readthedocs.io/en/latest/"
 }
 
