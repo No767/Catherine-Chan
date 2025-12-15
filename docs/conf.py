@@ -23,7 +23,6 @@ html_title = "Catherine-Chan"
 # https://sphinxext-opengraph.readthedocs.io/en/latest/
 
 ogp_site_name = "Catherine-Chan Documentation"
-ogp_image = "./_static/pride.png"
 ogp_description_length = 125
 ogp_type = "website"
 
@@ -40,7 +39,7 @@ ogp_custom_meta_tags = [
 ogp_social_cards = {
     "enable": True,
     "image": "./_static/pride.png",
-    "line_color": "#2ea44f"
+    "line_color": "#FFABE1"
 }
 
 # -- Options for HTML output -------------------------------------------------

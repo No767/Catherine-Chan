@@ -20,21 +20,19 @@ Catherine-Chan
    misc/privacy-policy.rst
 
 
-.. figure:: /_assets/pride_smaller.png
+.. figure:: /_images/pride_smaller.png
    :align: right
 
-.. figure:: https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver
+.. image:: https://img.shields.io/github/v/release/No767/Catherine-Chan?label=Release&logo=github&sort=semver
    :target: https://github.com/No767/Catherine-Chan/releases/latest
 
-.. figure:: https://img.shields.io/github/license/No767/Catherine-Chan?label=License&logo=github
+.. image:: https://img.shields.io/github/license/No767/Catherine-Chan?label=License&logo=github
    :target: https://github.com/No767/Catherine-Chan/blob/main/LICENSE
 
-.. figure:: https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink
+.. image:: https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink
    :target: https://github.com/No767/Catherine-Chan
 
-
 The modern all-in-one toolkit for LGBTQ+ folks. Instead of separated pride bots that do the same thing, Catherine-Chan aims to merge them all into one inclusive bot.
-
 
 Features
 --------
