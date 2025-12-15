@@ -7,6 +7,9 @@ jobs:
   Release:
     name: Release
     runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write
     
     if: contains(github.event.head_commit.message, '#major') || contains(github.event.head_commit.message, '#minor') || contains(github.event.head_commit.message, '#patch')
     steps:
@@ -15,18 +18,26 @@ jobs:
       with:
         fetch-depth: '0'
 
+    - name: Generate release notes
+      uses: no767/get-releasenote@v0
+      with:
+        name: Catherine-Chan
+        changes_file: changelog.md
+        output_file: output.md
+        version_file: bot/cogs/__init__.py
+
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.75.0
       id: tag_version
       env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         RELEASE_BRANCHES: main
         
     - name: Release New Version
       uses: ncipollo/release-action@v1
       with:
-        bodyFile: "changelog.md"
-        token: ${{ secrets.PAT_TOKEN }}
+        bodyFile: "output.md"
+        token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: ${{ steps.tag_version.outputs.new_tag }}
