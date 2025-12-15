@@ -22,8 +22,9 @@ html_title = "Catherine-Chan"
 # -- Open Graph (OGP) options ------------------------------------------------
 # https://sphinxext-opengraph.readthedocs.io/en/latest/
 
-ogp_image = "./_static/public/favicon.ico"
-ogp_description_length = 150
+ogp_site_name = "Catherine-Chan Documentation"
+ogp_image = "./_images/pride.png"
+ogp_description_length = 125
 ogp_type = "website"
 
 ogp_custom_meta_tags = [
