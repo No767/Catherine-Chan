@@ -32,7 +32,9 @@ Catherine-Chan
 .. image:: https://img.shields.io/badge/Catherine-Kano%20(穫野)-pink
    :target: https://github.com/No767/Catherine-Chan
 
+
 The modern all-in-one toolkit for LGBTQ+ folks. Instead of separated pride bots that do the same thing, Catherine-Chan aims to merge them all into one inclusive bot.
+
 
 Features
 --------
