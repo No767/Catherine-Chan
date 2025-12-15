@@ -23,7 +23,7 @@ html_title = "Catherine-Chan"
 # https://sphinxext-opengraph.readthedocs.io/en/latest/
 
 ogp_image = "./_static/public/favicon.ico"
-ogp_description_length = 175
+ogp_description_length = 150
 ogp_type = "website"
 
 ogp_custom_meta_tags = [
