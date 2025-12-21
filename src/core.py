@@ -16,6 +16,7 @@ import aiohttp
 import asyncpg
 import discord
 import msgspec
+import zstandard
 from aiohttp import ClientSession
 from discord import app_commands
 from discord.ext import commands
@@ -41,7 +42,7 @@ if TYPE_CHECKING:
 def find_config() -> Optional[Path]:
     try:
         cred_dir = Path(os.environ["CREDENTIALS_DIRECTORY"]) / "bot_config"
-        
+
         return cred_dir.resolve()
     except KeyError:
         path = Path("config.yml")
@@ -230,8 +231,13 @@ class Blacklist[T]:
         return self._db
 
 
-class GzipRotatingFileHandler(RotatingFileHandler):
-    def __init__(self, *, max_bytes: int, backup_count: int):
+class CompressionRotatingFileHandler(RotatingFileHandler):
+    MAX_BYTES = 32 * 1024 * 1024  # 32 MiB
+    BACKUP_COUNT = 5
+
+    def __init__(self, *, use_zstd: Optional[bool] = False):
+        self.use_zstd = use_zstd
+
         self.rotator = self._rotator
         self.namer = self._namer
 
@@ -239,8 +245,8 @@ class GzipRotatingFileHandler(RotatingFileHandler):
             filename=self._determine_filename(),
             encoding="utf-8",
             mode="w",
-            maxBytes=max_bytes,
-            backupCount=backup_count,
+            maxBytes=self.MAX_BYTES,
+            backupCount=self.BACKUP_COUNT,
         )
 
     def _determine_filename(self) -> Path:
@@ -259,19 +265,23 @@ class GzipRotatingFileHandler(RotatingFileHandler):
             return final_logs_dir.resolve()
 
     def _namer(self, name: str) -> str:
+        if self.use_zstd:
+            return name + ".zst"
         return name + ".gz"
 
     def _rotator(self, source: str, dest: str) -> None:
-        with Path.open(source, mode="rb") as f_source, gzip.open(dest, "wb") as f_dest:
-            shutil.copyfileobj(f_source, f_dest)
+        with Path.open(source, mode="rb") as f_source:
+            if self.use_zstd:
+                with zstandard.open(dest, "wb") as f_dest:
+                    shutil.copyfileobj(f_source, f_dest)
+            else:
+                with gzip.open(dest, "wb") as f_dest:
+                    shutil.copyfileobj(f_source, f_dest)
 
         Path.unlink(source)
 
 
 class CatherineLogger:
-    MAX_BYTES = 32 * 1024 * 1024  # 32 MiB
-    BACKUP_COUNT = 5
-
     def __init__(self) -> None:
         self._disable_watchfiles_logger()
 
@@ -303,10 +313,7 @@ class CatherineLogger:
         handler.setFormatter(self._get_formatter())
 
         if not self._is_docker():
-            file_handler = GzipRotatingFileHandler(
-                max_bytes=self.MAX_BYTES,
-                backup_count=self.BACKUP_COUNT,
-            )
+            file_handler = CompressionRotatingFileHandler()
             file_handler.setFormatter(self._get_formatter())
 
             discord_logger.addHandler(file_handler)
