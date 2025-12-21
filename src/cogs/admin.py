@@ -224,7 +224,7 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
         self,
         ctx: commands.Context,
         guilds: commands.Greedy[discord.Object],
-        spec: Optional[Literal["~", "*", "^"]] = None,
+        spec: Optional[Literal["~", "*", "^", "&"]] = None,
     ) -> None:
         """Performs a sync of the tree. This will sync, copy globally, or clear the tree."""
         await ctx.defer()
@@ -238,6 +238,9 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
                 self.bot.tree.clear_commands(guild=ctx.guild)
                 await self.bot.tree.sync(guild=ctx.guild)
                 synced = []
+            elif spec == "&":
+                self.bot.tree.clear_commands()
+                synced = await self.bot.tree.sync()
             else:
                 synced = await self.bot.tree.sync()
 

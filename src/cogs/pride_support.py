@@ -19,7 +19,7 @@ class PrideSupport(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="pride-support")
-    @app_commands.describe(type="The type of support your are looking for")
+    @app_commands.describe(support_type="The type of support your are looking for")
     @app_commands.rename(support_type="type")
     async def pride_support(
         self,

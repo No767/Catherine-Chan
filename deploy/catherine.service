@@ -1,0 +1,95 @@
+[Unit]
+Description=catherine
+After=network.target
+Requires=postgresql.service
+
+[Service]
+Type=simple
+
+# ===============================
+# Directories
+# ===============================
+
+StateDirectory=catherine
+LogsDirectory=catherine
+CacheDirectory=catherine
+ConfigurationDirectory=catherine
+ConfigurationDirectoryMode=0700
+
+
+WorkingDirectory=/opt/catherine-chan
+
+# ===============================
+# Exec and Restart
+# ===============================
+
+# Required for logs to not be stuck in a buffer, thus not showing on journalctl
+Environment=PYTHONUNBUFFERED=1
+
+ExecStartPre=+/bin/sh -c 'chown -R root:root /etc/catherine && chmod 600 /etc/catherine/config.yml'
+ExecStart=/opt/catherine-chan/.venv/bin/python3 /opt/catherine-chan/src/main.py
+
+LoadCredential=bot_config:/etc/catherine/config.yml
+
+KillSignal=SIGTERM
+Restart=on-failure
+RestartSec=10s
+
+# ===============================
+# Kernel and Privileges
+# ===============================
+KeyringMode=private
+LockPersonality=yes
+NoNewPrivileges=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+
+# ===============================
+# Network Hardening
+# ===============================
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# ===============================
+# System calls
+# ===============================
+SystemCallArchitectures=native
+SystemCallErrorNumber=EPERM
+SystemCallFilter=@system-service
+
+# ===============================
+# Capabilities
+# ===============================
+CapabilityBoundingSet=
+
+# ===============================
+# Users
+# ===============================
+DynamicUser=yes
+
+# ===============================
+# Protect
+# ===============================
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectProc=invisible
+ProtectSystem=strict
+
+# ===============================
+# Private
+# ===============================
+PrivateDevices=yes
+PrivateTmp=yes
+
+# ===============================
+# Modern Options
+# ===============================
+RemoveIPC=yes
+
+[Install]
+WantedBy=multi-user.target

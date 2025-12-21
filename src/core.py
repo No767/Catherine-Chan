@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+import gzip
 import importlib
 import logging
 import os
+import shutil
 import sys
 import uuid
 from logging.handlers import RotatingFileHandler
@@ -14,6 +16,7 @@ import aiohttp
 import asyncpg
 import discord
 import msgspec
+import zstandard
 from aiohttp import ClientSession
 from discord import app_commands
 from discord.ext import commands
@@ -37,17 +40,22 @@ if TYPE_CHECKING:
 
 
 def find_config() -> Optional[Path]:
-    path = Path("config.yml")
+    try:
+        cred_dir = Path(os.environ["CREDENTIALS_DIRECTORY"]) / "bot_config"
 
-    if not path.exists():
-        alt_location = path.parent.joinpath("src", "config.yml")
+        return cred_dir.resolve()
+    except KeyError:
+        path = Path("config.yml")
 
-        if not alt_location.exists():
-            return None
+        if not path.exists():
+            alt_location = path.parent.joinpath("src", "config.yml")
 
-        return alt_location.resolve()
+            if not alt_location.exists():
+                return None
 
-    return path.resolve()
+            return alt_location.resolve()
+
+        return path.resolve()
 
 
 ### Application configuration
@@ -223,9 +231,57 @@ class Blacklist[T]:
         return self._db
 
 
-class CatherineLogger:
+class CompressionRotatingFileHandler(RotatingFileHandler):
     MAX_BYTES = 32 * 1024 * 1024  # 32 MiB
+    BACKUP_COUNT = 5
 
+    def __init__(self, *, use_zstd: Optional[bool] = False):
+        self.use_zstd = use_zstd
+
+        self.rotator = self._rotator
+        self.namer = self._namer
+
+        super().__init__(
+            filename=self._determine_filename(),
+            encoding="utf-8",
+            mode="w",
+            maxBytes=self.MAX_BYTES,
+            backupCount=self.BACKUP_COUNT,
+        )
+
+    def _determine_filename(self) -> Path:
+        try:
+            # Checks for whether systemd's log directory is set. If set, send the logs to /var/lib/catherine
+            logs_dir = Path(os.environ["LOGS_DIRECTORY"]) / "catherine.log"
+            return logs_dir.resolve()
+
+        except KeyError:
+            logs_parent_dir = Path("logs/catherine.log").parent
+
+            if not logs_parent_dir.exists():
+                logs_parent_dir.mkdir()
+
+            final_logs_dir = logs_parent_dir / "catherine.log"
+            return final_logs_dir.resolve()
+
+    def _namer(self, name: str) -> str:
+        if self.use_zstd:
+            return name + ".zst"
+        return name + ".gz"
+
+    def _rotator(self, source: str, dest: str) -> None:
+        with Path.open(source, mode="rb") as f_source:
+            if self.use_zstd:
+                with zstandard.open(dest, "wb") as f_dest:
+                    shutil.copyfileobj(f_source, f_dest)
+            else:
+                with gzip.open(dest, "wb") as f_dest:
+                    shutil.copyfileobj(f_source, f_dest)
+
+        Path.unlink(source)
+
+
+class CatherineLogger:
     def __init__(self) -> None:
         self._disable_watchfiles_logger()
 
@@ -257,13 +313,7 @@ class CatherineLogger:
         handler.setFormatter(self._get_formatter())
 
         if not self._is_docker():
-            file_handler = RotatingFileHandler(
-                filename="catherine.log",
-                encoding="utf-8",
-                mode="w",
-                maxBytes=self.MAX_BYTES,
-                backupCount=5,
-            )
+            file_handler = CompressionRotatingFileHandler()
             file_handler.setFormatter(self._get_formatter())
 
             discord_logger.addHandler(file_handler)
