@@ -1,0 +1,29 @@
+[Unit]
+Description=catherine
+After=network.target
+Requires=postgresql.service
+
+[Service]
+Type=simple
+
+
+DynamicUser=true
+NoNewPrivileges=yes
+
+
+WorkingDirectory=/home/noelle/bots/Catherine-Chan
+ExecStart=/home/noelle/bots/Catherine-Chan/.venv/bin/python3 /home/noelle/bots/Catherine-Chan/bot/catherinebot.py
+Restart=on-failure
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+
+ProtectSystem=strict
+PrivateTmp=true
+ProtectHome=yes
+PrivateDevices=yes
+
+
+
+[Install]
+WantedBy=multi-user.target
