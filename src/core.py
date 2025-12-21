@@ -39,17 +39,22 @@ if TYPE_CHECKING:
 
 
 def find_config() -> Optional[Path]:
-    path = Path("config.yml")
+    try:
+        cred_dir = Path(os.environ["CREDENTIALS_DIRECTORY"]) / "bot_config"
+        
+        return cred_dir.resolve()
+    except KeyError:
+        path = Path("config.yml")
 
-    if not path.exists():
-        alt_location = path.parent.joinpath("src", "config.yml")
+        if not path.exists():
+            alt_location = path.parent.joinpath("src", "config.yml")
 
-        if not alt_location.exists():
-            return None
+            if not alt_location.exists():
+                return None
 
-        return alt_location.resolve()
+            return alt_location.resolve()
 
-    return path.resolve()
+        return path.resolve()
 
 
 ### Application configuration
