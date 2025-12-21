@@ -1,29 +1,89 @@
 [Unit]
 Description=catherine
 After=network.target
-Requires=postgresql.service
+# Requires=postgresql.service
 
 [Service]
 Type=simple
 
+# ===============================
+# Directories
+# ===============================
 
-DynamicUser=true
-NoNewPrivileges=yes
+StateDirectory=catherine
+LogsDirectory=catherine
+CacheDirectory=catherine
 
+WorkingDirectory=/opt/catherine-chan
 
-WorkingDirectory=/home/noelle/bots/Catherine-Chan
-ExecStart=/home/noelle/bots/Catherine-Chan/.venv/bin/python3 /home/noelle/bots/Catherine-Chan/bot/catherinebot.py
+# ===============================
+# Exec and Restart
+# ===============================
+
+# Required for logs to not be stuck in a buffer, thus not showing on journalctl
+Environment=PYTHONUNBUFFERED=1
+
+ExecStart=/opt/catherine-chan/.venv/bin/python3 /opt/catherine-chan/src/main.py
+
+KillSignal=SIGTERM
 Restart=on-failure
-ExecReload=/bin/kill -s HUP $MAINPID
-KillMode=mixed
-TimeoutStopSec=5
+RestartSec=10s
 
-ProtectSystem=strict
-PrivateTmp=true
+# ===============================
+# Kernel and Privileges
+# ===============================
+KeyringMode=private
+LockPersonality=yes
+NoNewPrivileges=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+
+# ===============================
+# Network Hardening
+# ===============================
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# ===============================
+# System calls
+# ===============================
+SystemCallArchitectures=native
+SystemCallErrorNumber=EPERM
+SystemCallFilter=@system-service
+
+# ===============================
+# Capabilities
+# ===============================
+CapabilityBoundingSet=
+
+# ===============================
+# Users
+# ===============================
+DynamicUser=yes
+
+# ===============================
+# Protect
+# ===============================
+ProtectClock=yes
+ProtectControlGroups=yes
 ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectProc=invisible
+ProtectSystem=strict
+
+# ===============================
+# Private
+# ===============================
 PrivateDevices=yes
+PrivateTmp=yes
 
-
+# ===============================
+# Modern Options
+# ===============================
+RemoveIPC=yes
 
 [Install]
 WantedBy=multi-user.target

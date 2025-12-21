@@ -17,6 +17,11 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
       - ../src/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: pg_isready --dbname='${DB_DATABASE}' --username='${DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${DB_DATABASE}' --username='${DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
+      interval: 5m
+      start_interval: 30s
+      start_period: 5m
     ports:
       - 5432:5432
 
