@@ -1,7 +1,7 @@
 [Unit]
 Description=catherine
 After=network.target
-Requires=postgresql.service
+# Requires=postgresql.service
 
 [Service]
 Type=simple
