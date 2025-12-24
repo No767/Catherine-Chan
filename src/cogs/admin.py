@@ -160,7 +160,7 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
 
     async def run_process(self, command: str) -> list[str]:
         process = await asyncio.create_subprocess_shell(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, user="noelle", group="noelle"
         )
         result = await process.communicate()
 
