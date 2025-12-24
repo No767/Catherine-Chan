@@ -184,15 +184,22 @@ class Blacklist[T]:
             await self.loop.run_in_executor(None, self.load_from_file)
 
     def _dump(self):
-        temp = Path(f"{uuid.uuid4()}-{self.filepath.name}.tmp")
-        with temp.open("w", encoding="utf-8") as tmp:
+        temp_id = uuid.uuid4()
+        temp_file = Path(f"{temp_id}-{self.filepath.name}.tmp")
+
+        systemd_cache = os.getenv("CACHE_DIRECTORY")
+
+        if systemd_cache:
+            temp_file = Path(systemd_cache) / temp_file
+
+        with temp_file.open("w", encoding="utf-8") as tmp:
             encoded = msgspec.json.format(
                 self.encoder.encode(self._db.copy()), indent=2
             )
             tmp.write(encoded.decode())
 
         # atomically move the file
-        temp.replace(self.filepath)
+        temp_file.replace(self.filepath)
 
     async def save(self) -> None:
         async with self.lock:
