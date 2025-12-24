@@ -295,6 +295,10 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
             else:
                 statuses = await self.reload_exts(module)
 
+        if not statuses:
+            await ctx.send("No modules were reloaded")
+            return
+
         await ctx.send(self.format_results(statuses))
 
     @commands.guild_only()
