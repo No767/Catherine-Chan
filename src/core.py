@@ -187,10 +187,10 @@ class Blacklist[T]:
         temp_id = uuid.uuid4()
         temp_file = Path(f"{temp_id}-{self.filepath.name}.tmp")
 
-        systemd_cache = os.getenv("CACHE_DIRECTORY")
+        systemd_state = os.getenv("STATE_DIRECTORY")
 
-        if systemd_cache:
-            temp_file = Path(systemd_cache) / temp_file
+        if systemd_state:
+            temp_file = Path(systemd_state) / temp_file
 
         with temp_file.open("w", encoding="utf-8") as tmp:
             encoded = msgspec.json.format(
