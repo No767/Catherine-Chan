@@ -495,8 +495,6 @@ class Catherine(commands.Bot):
             self.logger.exception("Ignoring exception:", exc_info=error)
             return
 
-        # return
-
     async def setup_hook(self) -> None:
         self.add_view(ApprovePronounsExampleView(self, "", 0, 10))
 

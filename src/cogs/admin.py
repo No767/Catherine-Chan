@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import NamedTuple
-
 import asyncio
 import importlib
 import re
@@ -12,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    NamedTuple,
     Optional,
     TypeVar,
     Union,
@@ -34,9 +33,11 @@ NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 
 _T = TypeVar("_T")
 
+
 class ReloadModule(NamedTuple):
     status: bool
     module: str
+
 
 class BlacklistPageSource(menus.AsyncIteratorPageSource):
     def __init__(self, entries: dict[str, Union[_T, Any]]):
@@ -184,12 +185,13 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
 
     def format_results(self, statuses: list[ReloadModule]) -> str:
         desc = "\U00002705 - Successful reload | \U0000274c - Failed reload | \U000023e9 - Skipped\n\n"
-        status = "\n".join(f"- {self.tick(opt=status)}: `{module}`" for status, module in statuses)
+        status = "\n".join(
+            f"- {self.tick(opt=status)}: `{module}`" for status, module in statuses
+        )
         desc += status
         return desc
 
     async def reload_ext(self, module: str) -> ReloadModule:
-
         try:
             await self.reload_or_load_extension(module)
             return ReloadModule(True, module)
