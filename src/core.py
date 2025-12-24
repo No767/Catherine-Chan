@@ -487,7 +487,6 @@ class Catherine(commands.Bot):
         except KeyError:
             pass
 
-    # Basically silence all prefixed errors
     async def on_command_error(
         self, ctx: commands.Context, error: commands.CommandError
     ) -> None:
