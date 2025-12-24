@@ -1,3 +1,6 @@
+-- Move the creation of this extension to here to reduce brittleness during initialization 
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 CREATE TABLE IF NOT EXISTS pride_profiles (
     id BIGINT PRIMARY KEY,
     name TEXT,
@@ -9,7 +12,7 @@ CREATE TABLE IF NOT EXISTS pride_profiles (
 );
 
 CREATE TABLE IF NOT EXISTS pronouns_test_examples (
-    id SERIAL PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     owner_id BIGINT,
     content TEXT NOT NULL,
     approved BOOLEAN DEFAULT FALSE,
@@ -17,5 +20,5 @@ CREATE TABLE IF NOT EXISTS pronouns_test_examples (
 );
 
 CREATE INDEX IF NOT EXISTS pride_profiles_name_idx ON pride_profiles (name);
-CREATE INDEX IF NOT EXISTS pride_profiles_name_trgm_idx ON pride_profiles USING GIN (name gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS pride_profiles_name_lower_idx ON pride_profiles (LOWER(name));
+CREATE INDEX IF NOT EXISTS pride_profiles_name_trgm_idx ON pride_profiles USING GIN (name gin_trgm_ops);

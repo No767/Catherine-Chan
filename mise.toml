@@ -60,8 +60,8 @@ run_windows = "atlas schema plan --to file://src/schema.sql --env local --var ur
 [tasks."bot:schema:apply"]
 depends = ["bot:check-env"]
 description = "Applies schema diffs to database"
-run = "atlas schema apply --auto-approve --env local --var url=$DATABASE_URL"
-run_windows = "atlas schema apply --auto-approve --env local --var url=%DATABASE_URL%"
+run = "atlas schema apply --env local --var url=$DATABASE_URL"
+run_windows = "atlas schema apply --env local --var url=%DATABASE_URL%"
 
 [tasks."bot:check-env"]
 hide = true
