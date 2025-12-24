@@ -158,11 +158,11 @@ class Blacklist[T]:
 
     def __init__(
         self,
-        name: Path,
+        filepath: Path,
         *,
         load_later: bool = False,
     ):
-        self.name = name
+        self.filepath = filepath
         self.encoder = msgspec.json.Encoder()
         self.loop = asyncio.get_running_loop()
         self.lock = asyncio.Lock()
@@ -174,7 +174,7 @@ class Blacklist[T]:
 
     def load_from_file(self):
         try:
-            with self.name.open(mode="r", encoding="utf-8") as f:
+            with self.filepath.open(mode="r", encoding="utf-8") as f:
                 self._db = msgspec.json.decode(f.read())
         except FileNotFoundError:
             self._db = {}
@@ -184,15 +184,22 @@ class Blacklist[T]:
             await self.loop.run_in_executor(None, self.load_from_file)
 
     def _dump(self):
-        temp = Path(f"{uuid.uuid4()}-{self.name}.tmp")
-        with temp.open("w", encoding="utf-8") as tmp:
+        temp_id = uuid.uuid4()
+        temp_file = Path(f"{temp_id}-{self.filepath.name}.tmp")
+
+        systemd_state = os.getenv("STATE_DIRECTORY")
+
+        if systemd_state:
+            temp_file = Path(systemd_state) / temp_file
+
+        with temp_file.open("w", encoding="utf-8") as tmp:
             encoded = msgspec.json.format(
                 self.encoder.encode(self._db.copy()), indent=2
             )
             tmp.write(encoded.decode())
 
         # atomically move the file
-        temp.replace(self.name)
+        temp_file.replace(self.filepath)
 
     async def save(self) -> None:
         async with self.lock:
@@ -448,8 +455,7 @@ class Catherine(commands.Bot):
             owner_id=454357482102587393,
             tree_cls=CatherineCommandTree,
         )
-        # TODO: handle state management in here. ie, write this to /var/lib/catherine instead
-        self.blacklist: Blacklist[bool] = Blacklist(self.FILE_ROOT / "blacklist.json")
+        self.blacklist: Blacklist[bool] = Blacklist(self._determine_blacklist_path())
         self.logger: logging.Logger = logging.getLogger("catherine")
         self.metrics = prometheus.MetricCollector(self)
         self.session = session
@@ -465,6 +471,12 @@ class Catherine(commands.Bot):
     @property
     def approval_channel_id(self) -> int:
         return self._config.approval_channel_id
+
+    def _determine_blacklist_path(self) -> Path:
+        try:
+            return Path(os.environ["STATE_DIRECTORY"]) / "blacklist.json"
+        except KeyError:
+            return self.FILE_ROOT.parent / "blacklist.json"
 
     async def add_to_blacklist(self, object_id: int) -> None:
         await self.blacklist.put(object_id, True)

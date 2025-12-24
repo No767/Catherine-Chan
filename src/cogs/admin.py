@@ -10,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Literal,
+    NamedTuple,
     Optional,
     TypeVar,
     Union,
@@ -31,6 +32,11 @@ GIT_PULL_REGEX = re.compile(r"^(?P<raw_filename>(?>[^|\n]+))\|\s+\d", re.MULTILI
 NO_CONTROL_MSG = "This view cannot be controlled by you, sorry!"
 
 _T = TypeVar("_T")
+
+
+class ReloadModule(NamedTuple):
+    status: bool
+    module: str
 
 
 class BlacklistPageSource(menus.AsyncIteratorPageSource):
@@ -177,33 +183,30 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
             return f"{emoji}: {label}"
         return emoji
 
-    def format_results(self, statuses: list) -> str:
+    def format_results(self, statuses: list[ReloadModule]) -> str:
         desc = "\U00002705 - Successful reload | \U0000274c - Failed reload | \U000023e9 - Skipped\n\n"
-        status = "\n".join(f"- {status}: `{module}`" for status, module in statuses)
+        status = "\n".join(
+            f"- {self.tick(opt=status)}: `{module}`" for status, module in statuses
+        )
         desc += status
         return desc
 
-    async def reload_exts(self, module: str) -> list[tuple[str, str]]:
-        statuses = []
+    async def reload_ext(self, module: str) -> ReloadModule:
         try:
             await self.reload_or_load_extension(module)
-            statuses.append((self.tick(opt=True), module))
+            return ReloadModule(True, module)
         except commands.ExtensionError:
-            statuses.append((self.tick(opt=False), module))
+            return ReloadModule(False, module)
 
-        return statuses
-
-    def reload_lib_modules(self, module: str) -> list[tuple[str, str]]:
-        statuses = []
+    def reload_lib_module(self, module: str) -> ReloadModule:
         try:
             actual_module = sys.modules[module]
             importlib.reload(actual_module)
-            statuses.append((self.tick(opt=True), module))
+            return ReloadModule(True, module)
         except KeyError:
-            statuses.append((self.tick(opt=None), module))
+            return ReloadModule(None, module)
         except (ImportError, SyntaxError):
-            statuses.append((self.tick(opt=False), module))
-        return statuses
+            return ReloadModule(False, module)
 
     async def prompt(
         self,
@@ -288,12 +291,17 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
             await ctx.send("Aborting....")
             return
 
-        statuses = []
+        statuses: list[ReloadModule] = []
         for is_submodule, module in modules:
             if is_submodule:
-                statuses = self.reload_lib_modules(module)
+                statuses.extend(self.reload_lib_module(module))
             else:
-                statuses = await self.reload_exts(module)
+                ext = await self.reload_ext(module)
+                statuses.extend(ext)
+
+        if not statuses:
+            await ctx.send("No modules were reloaded")
+            return
 
         await ctx.send(self.format_results(statuses))
 
