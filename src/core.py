@@ -487,11 +487,29 @@ class Catherine(commands.Bot):
         except KeyError:
             pass
 
-    # Basically silence all prefixed errors
     async def on_command_error(
         self, ctx: commands.Context, error: commands.CommandError
     ) -> None:
-        return
+        if self._dev_mode:
+            self.logger.exception("Ignoring exception:", exc_info=error)
+            return
+
+        if isinstance(error, commands.NoPrivateMessage):
+            await ctx.author.send("This command cannot be used in private messages")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(
+                f"You are missing the following argument(s): {error.param.name}"
+            )
+        elif isinstance(error, commands.CommandInvokeError):
+            original = error.original
+            if not isinstance(original, discord.HTTPException):
+                self.logger.exception(
+                    "In %s:",
+                    ctx.command.qualified_name,  # type: ignore
+                    exc_info=original,
+                )
+        elif isinstance(error, commands.ObjectNotFound):
+            await ctx.send(str(error))
 
     async def setup_hook(self) -> None:
         self.add_view(ApprovePronounsExampleView(self, "", 0, 10))
