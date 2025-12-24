@@ -33,16 +33,14 @@ jobs:
         python-version: "3.x"
 
     - name: Install uv
-      id: setup-uv
       uses: astral-sh/setup-uv@v7
       with:
         version: "latest"
-        enable-cache: true
-
+        enable-cache: false
+        
     - name: Install dependencies
-      if: steps.setup-uv.outputs.cache-hit != 'true'
       run: | 
-        uv pip install -r requirements.txt
+        uv pip install -r requirements-dev.txt
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
