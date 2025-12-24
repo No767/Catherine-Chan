@@ -160,7 +160,7 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
 
     async def run_process(self, command: str) -> list[str]:
         process = await asyncio.create_subprocess_shell(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, user="noelle", group="noelle"
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         result = await process.communicate()
 
@@ -296,7 +296,7 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
                 statuses = await self.reload_exts(module)
 
         if not statuses:
-            await ctx.send("No modules were reloaded - only applies to `cogs` and `utils` modules")
+            await ctx.send("No modules were reloaded")
             return
 
         await ctx.send(self.format_results(statuses))
