@@ -3,6 +3,7 @@ redactions = ["DB_PASSWORD"]
 [tools]
 uv = "latest"
 atlas = "latest"
+act = "0.2.83"
 
 
 [settings]
