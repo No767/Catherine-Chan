@@ -1,5 +1,12 @@
 <!-- towncrier release notes start -->
 
+## Catherine-Chan [1.1.1](https://github.com/No767/Catherine-Chan/tree/1.1.1) - 2025-12-24
+
+### Bug fixes
+
+- Fix links for issues/pull request numbers ([#266])
+
+
 ## Catherine-Chan [1.1.0](https://github.com/No767/Catherine-Chan/tree/1.1.0) - 2025-12-24
 
 ### Bug fixes
