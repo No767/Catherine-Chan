@@ -1,6 +1,6 @@
 [project]
 name = "Catherine-Chan"
-version = "1.1.0"
+version = "1.1.1"
 description = "An informational LGBTQ based discord bot"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -12,7 +12,7 @@ filename = "changelog.md"
 start_string = "<!-- towncrier release notes start -->"
 underlines = ["", "", ""]
 title_format = "## Catherine-Chan [{version}](https://github.com/No767/Catherine-Chan/tree/{version}) - {project_date}"
-issue_format = "[#{issue}](https://github.com/No767/Catherine/issues/{issue})"
+issue_format = "[#{issue}]"
 
   [[tool.towncrier.section]]
     path = ""

@@ -1,7 +1,7 @@
 from pkgutil import iter_modules
 from typing import Literal, NamedTuple
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 
 class VersionInfo(NamedTuple):
@@ -15,4 +15,4 @@ class VersionInfo(NamedTuple):
 
 
 EXTENSIONS = [module.name for module in iter_modules(__path__, f"{__package__}.")]
-VERSION: VersionInfo = VersionInfo(major=1, minor=0, micro=0, releaselevel="final")
+VERSION: VersionInfo = VersionInfo(major=1, minor=1, micro=1, releaselevel="final")
