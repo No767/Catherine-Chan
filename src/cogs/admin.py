@@ -296,7 +296,7 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
                 statuses = await self.reload_exts(module)
 
         if not statuses:
-            await ctx.send("No modules were reloaded")
+            await ctx.send("No modules were reloaded - only applies to `cogs` and `utils` modules")
             return
 
         await ctx.send(self.format_results(statuses))
