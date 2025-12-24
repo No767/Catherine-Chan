@@ -24,7 +24,7 @@ jobs:
         name: Catherine-Chan
         changes_file: changelog.md
         output_file: output.md
-        version_file: bot/cogs/__init__.py
+        version_file: src/cogs/__init__.py
 
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.75.0
