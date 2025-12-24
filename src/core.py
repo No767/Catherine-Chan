@@ -488,10 +488,10 @@ class Catherine(commands.Bot):
             pass
 
     # Basically silence all prefixed errors
-    async def on_command_error(
-        self, ctx: commands.Context, error: commands.CommandError
-    ) -> None:
-        return
+    # async def on_command_error(
+    #     self, ctx: commands.Context, error: commands.CommandError
+    # ) -> None:
+    #     return
 
     async def setup_hook(self) -> None:
         self.add_view(ApprovePronounsExampleView(self, "", 0, 10))

@@ -1,7 +1,7 @@
 [Unit]
 Description=catherine
 After=network.target
-Requires=postgresql.service
+# Requires=postgresql.service
 
 [Service]
 Type=simple
@@ -25,9 +25,6 @@ WorkingDirectory=/opt/catherine-chan
 
 # Required for logs to not be stuck in a buffer, thus not showing on journalctl
 Environment=PYTHONUNBUFFERED=1
-
-# We want to write to /var/cache because /opt can't be accessed. But we still want the bytecode optimization as well
-Environment=PYTHONPYCACHEPREFIX=/var/cache/catherine
 
 ExecStartPre=+/bin/sh -c 'chown -R root:root /etc/catherine && chmod 600 /etc/catherine/config.yml'
 ExecStart=/opt/catherine-chan/.venv/bin/python3 /opt/catherine-chan/src/main.py
