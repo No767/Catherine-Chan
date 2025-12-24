@@ -158,11 +158,11 @@ class Blacklist[T]:
 
     def __init__(
         self,
-        name: Path,
+        filepath: Path,
         *,
         load_later: bool = False,
     ):
-        self.name = name
+        self.filepath = filepath
         self.encoder = msgspec.json.Encoder()
         self.loop = asyncio.get_running_loop()
         self.lock = asyncio.Lock()
@@ -174,7 +174,7 @@ class Blacklist[T]:
 
     def load_from_file(self):
         try:
-            with self.name.open(mode="r", encoding="utf-8") as f:
+            with self.filepath.open(mode="r", encoding="utf-8") as f:
                 self._db = msgspec.json.decode(f.read())
         except FileNotFoundError:
             self._db = {}
@@ -184,7 +184,7 @@ class Blacklist[T]:
             await self.loop.run_in_executor(None, self.load_from_file)
 
     def _dump(self):
-        temp = Path(f"{uuid.uuid4()}-{self.name}.tmp")
+        temp = Path(f"{uuid.uuid4()}-{self.filepath.name}.tmp")
         with temp.open("w", encoding="utf-8") as tmp:
             encoded = msgspec.json.format(
                 self.encoder.encode(self._db.copy()), indent=2
@@ -192,7 +192,7 @@ class Blacklist[T]:
             tmp.write(encoded.decode())
 
         # atomically move the file
-        temp.replace(self.name)
+        temp.replace(self.filepath)
 
     async def save(self) -> None:
         async with self.lock:
@@ -466,17 +466,10 @@ class Catherine(commands.Bot):
         return self._config.approval_channel_id
 
     def _determine_blacklist_path(self) -> Path:
-        state_dir = os.getenv("STATE_DIRECTORY")
-
-        if state_dir:
-            blacklist_file = Path(state_dir) / "blacklist.json"
-
-            if not blacklist_file.exists():
-                blacklist_file.exists()
-
-            return blacklist_file
-
-        return self.FILE_ROOT.parent / "blacklist.json"
+        try:
+            return Path(os.environ["STATE_DIRECTORY"]) / "blacklist.json"
+        except KeyError:
+            return self.FILE_ROOT.parent / "blacklist.json"
 
     async def add_to_blacklist(self, object_id: int) -> None:
         await self.blacklist.put(object_id, True)
