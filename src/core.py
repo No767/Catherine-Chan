@@ -466,10 +466,17 @@ class Catherine(commands.Bot):
         return self._config.approval_channel_id
 
     def _determine_blacklist_path(self) -> Path:
-        try:
-            return Path(os.environ["STATE_DIRECTORY"]) / "blacklist.json"
-        except KeyError:
-            return self.FILE_ROOT.parent / "blacklist.json"
+        state_dir = os.getenv("STATE_DIRECTORY")
+
+        if state_dir:
+            blacklist_file = Path(state_dir) / "blacklist.json"
+
+            if not blacklist_file.exists():
+                blacklist_file.exists()
+
+            return blacklist_file
+
+        return self.FILE_ROOT.parent / "blacklist.json"
 
     async def add_to_blacklist(self, object_id: int) -> None:
         await self.blacklist.put(object_id, True)
