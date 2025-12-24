@@ -448,8 +448,7 @@ class Catherine(commands.Bot):
             owner_id=454357482102587393,
             tree_cls=CatherineCommandTree,
         )
-        # TODO: handle state management in here. ie, write this to /var/lib/catherine instead
-        self.blacklist: Blacklist[bool] = Blacklist(self.FILE_ROOT / "blacklist.json")
+        self.blacklist: Blacklist[bool] = Blacklist(self._determine_blacklist_path())
         self.logger: logging.Logger = logging.getLogger("catherine")
         self.metrics = prometheus.MetricCollector(self)
         self.session = session
@@ -465,6 +464,12 @@ class Catherine(commands.Bot):
     @property
     def approval_channel_id(self) -> int:
         return self._config.approval_channel_id
+
+    def _determine_blacklist_path(self) -> Path:
+        try:
+            return Path(os.environ["STATE_DIRECTORY"]) / "blacklist.json"
+        except KeyError:
+            return self.FILE_ROOT.parent / "blacklist.json"
 
     async def add_to_blacklist(self, object_id: int) -> None:
         await self.blacklist.put(object_id, True)
