@@ -1,2 +1,2 @@
-FROM postgres:18
-COPY /init.sh /docker-entrypoint-initdb.d/
+FROM postgres:18-trixie
+COPY /src/schema.sql /docker-entrypoint-initdb.d/

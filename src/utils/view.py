@@ -89,7 +89,7 @@ class ConfirmationView(CatherineView):
         *,
         delete_after: bool = True,
     ):
-        super().__init__(timeout=timeout)
+        super().__init__(interaction, timeout=timeout)
         self.interaction = interaction
         self.value: Optional[bool] = None
         self.delete_after = delete_after

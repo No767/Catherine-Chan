@@ -65,7 +65,7 @@ class TestBot(commands.Bot):
 
 @pytest.fixture(scope="session")
 def db_setup() -> Generator[PostgresContainer, None, None]:
-    with DockerImage(path=DOCKER_ROOT, dockerfile_path=DOCKER_ROOT / "Dockerfile") as image:
+    with DockerImage(path=ROOT, dockerfile_path=DOCKER_ROOT / "Dockerfile") as image:
         with PostgresContainer(str(image)) as postgres:
             postgres.waiting_for(LogMessageWaitStrategy("ready"))
 

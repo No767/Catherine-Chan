@@ -4,9 +4,7 @@ name: catherine_dev
 services:
   database:
     container_name: catherine_postgres
-    build:
-      context: ./pg
-      dockerfile: Dockerfile
+    image: postgres:18-trixie
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
@@ -15,7 +13,7 @@ services:
       - default
       - db_bridge
     volumes:
-      - database:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/18/docker
       - ../src/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: pg_isready --dbname='${DB_DATABASE}' --username='${DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${DB_DATABASE}' --username='${DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1

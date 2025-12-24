@@ -448,6 +448,7 @@ class Catherine(commands.Bot):
             owner_id=454357482102587393,
             tree_cls=CatherineCommandTree,
         )
+        # TODO: handle state management in here. ie, write this to /var/lib/catherine instead
         self.blacklist: Blacklist[bool] = Blacklist(self.FILE_ROOT / "blacklist.json")
         self.logger: logging.Logger = logging.getLogger("catherine")
         self.metrics = prometheus.MetricCollector(self)
