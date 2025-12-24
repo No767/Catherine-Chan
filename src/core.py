@@ -493,7 +493,7 @@ class Catherine(commands.Bot):
         if self._dev_mode:
             self.logger.exception("Ignoring exception:", exc_info=error)
             return
-        
+
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.author.send("This command cannot be used in private messages")
         elif isinstance(error, commands.MissingRequiredArgument):
