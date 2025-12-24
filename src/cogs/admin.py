@@ -16,8 +16,6 @@ from typing import (
     Union,
 )
 
-import logging
-
 import discord
 from discord.ext import commands, menus
 
@@ -301,9 +299,6 @@ class Admin(commands.Cog, command_attrs={"hidden": True}):
                 ext = await self.reload_ext(module)
                 statuses.extend(ext)
 
-        logger = logging.getLogger("catherine")
-        logger.info("%s", str(statuses))
-        
         if not statuses:
             await ctx.send("No modules were reloaded")
             return
