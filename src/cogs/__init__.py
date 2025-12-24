@@ -3,6 +3,7 @@ from typing import Literal, NamedTuple
 
 __version__ = "1.1.0"
 
+
 class VersionInfo(NamedTuple):
     major: int
     minor: int
