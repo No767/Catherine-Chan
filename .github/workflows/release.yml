@@ -19,7 +19,7 @@ jobs:
         fetch-depth: '0'
 
     - name: Generate release notes
-      uses: no767/get-releasenote@028f0b79a30c8a16426deae045008c23972f2295
+      uses: no767/get-releasenote@3eedfc5c134cf232520bb18ccc856838dbdc0b3f
       with:
         name: Catherine-Chan
         changes_file: changelog.md
