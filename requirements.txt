@@ -4,7 +4,7 @@ uvloop>=0.22.1,<1 ; sys_platform != "win32"
 winloop>=0.5.0,<1 ; sys_platform == "win32"
 asyncpg>=0.31.0,<1
 python-dateutil>=2.9.0.post0,<3
-msgspec>=0.20.0,<1
+msgspec>=0.21.1,<1
 pygit2>=1.19.1,<2
 psutil>=7.2.1,<8
 prometheus-client>=0.24.1,<1
