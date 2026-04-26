@@ -1,7 +1,7 @@
 -r requirements.txt
 
 # Development libraries
-pyright[nodejs]>=1.1.408,<2
+pyright[nodejs]>=1.1.409,<2
 ruff>=0.14.13,<1
 towncrier>=25.8.0,<26
 
